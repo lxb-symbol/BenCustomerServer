@@ -17,7 +17,6 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
     override fun initData() {
         mViewModel.getDataMessages().observe(this) {
             Log.e("symbol result", "${it.size}")
-
         }
     }
 
