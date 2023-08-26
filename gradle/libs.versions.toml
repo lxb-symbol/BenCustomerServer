@@ -1,0 +1,60 @@
+[versions]
+# 版本号以 vs开头（verison)
+target-sdk = "33"
+min-sdk = "23"
+compile-sdk = "33"
+agp = "8.1.1"
+org-jetbrains-kotlin-android = "1.9.0"
+core-ktx = "1.10.1"
+junit = "4.13.2"
+androidx-test-ext-junit = "1.1.5"
+espresso-core = "3.5.1"
+appcompat = "1.6.1"
+material = "1.9.0"
+vs-coroutine = "1.6.4"
+vs-brvh = "4.0.1"
+vs-gson = "2.10.1"
+vs-gson-coverter = "2.9.0"
+vs-retrofit = "2.9.0"
+vs-logging-intercepter = "4.11.0"
+vs-arouter-compiler = "1.5.2"
+vs-arouter-api = "1.5.2"
+vs-glide = "4.16.0"
+vs-kapt = "1.10.1"
+vs-koin-scope = "2.1.5"
+vs-koin-viewmodel = "2.1.5"
+vs-kotlin-reflect = "1.9.0"
+vs-lifcycle-extention = "2.2.0"
+vs-lifcycle-viemodel = "2.6.1"
+
+
+[libraries]
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+vrvh = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper", version.ref = "vs-brvh" }
+coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "vs-coroutine" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "vs-gson" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "vs-retrofit" }
+logging-intercepter = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "vs-logging-intercepter" }
+gson-coverter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "vs-gson-coverter" }
+koin-scope = { group = "org.koin", name = "koin-androidx-scope", version.ref = "vs-koin-scope" }
+koin-viewmodel = { group = "org.koin", name = "koin-androidx-viewmodel", version.ref = "vs-koin-viewmodel" }
+koin-fragment = { group = "org.koin", name = "koin-androidx-fragment", version.ref = "vs-koin-scope" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "vs-kotlin-reflect" }
+lifcycle-exteion = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "vs-lifcycle-extention" }
+viewmodel-lifcycle={group="androidx.lifecycle",name ="lifecycle-viewmodel-ktx",version.ref="vs-lifcycle-viemodel"}
+
+[plugins]
+com-android-application = { id = "com.android.application", version.ref = "agp" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
+com-android-library = { id = "com.android.library", version.ref = "agp" }
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "vs-kapt" }
+
+[bundles]
+nets = ["retrofit", "gson", "coroutines", "gson-coverter", "logging-intercepter"]
+koins = ["koin-fragment", "koin-scope", "koin-viewmodel"]
+
