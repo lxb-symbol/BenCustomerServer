@@ -72,7 +72,7 @@ class EaseInputEditText @JvmOverloads constructor(
          * when send button clicked
          * @param content
          */
-        fun onClickKeyboardSendBtn(content: String?)
+        fun onClickKeyboardSendBtn(content: String)
 
         /**
          * if edit text has focus

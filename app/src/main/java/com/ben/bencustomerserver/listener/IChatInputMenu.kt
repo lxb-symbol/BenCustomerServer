@@ -1,6 +1,7 @@
 package com.ben.bencustomerserver.listener
 
 interface IChatInputMenu {
+
     /**
      * 设置自定义菜单
      * @param menu
@@ -11,13 +12,13 @@ interface IChatInputMenu {
      * 设置自定义表情
      * @param menu
      */
-    fun setCustomEmojiconMenu(menu: IChatEmojiconMenu?)
+    fun setCustomEmojiconMenu(menu: IChatEmojiconMenu)
 
     /**
      * 设置自定义扩展菜单
      * @param menu
      */
-    fun setCustomExtendMenu(menu: IChatExtendMenu?)
+    fun setCustomExtendMenu(menu: IChatExtendMenu)
 
     /**
      * 隐藏扩展区域（包含表情和扩展菜单）
@@ -51,19 +52,19 @@ interface IChatInputMenu {
      * 获取菜单
      * @return
      */
-    val primaryMenu: IChatPrimaryMenu?
+    var primaryMenu: IChatPrimaryMenu?
 
     /**
      * 获取表情菜单
      * @return
      */
-    val emojiconMenu: IChatEmojiconMenu?
+    var emojiconMenu: IChatEmojiconMenu?
 
     /**
      * 获取扩展菜单
      * @return
      */
-    val chatExtendMenu: IChatExtendMenu?
+    var  chatExtendMenu: IChatExtendMenu?
 
     /**
      * 点击返回

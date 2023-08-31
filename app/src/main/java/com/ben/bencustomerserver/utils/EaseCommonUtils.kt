@@ -275,7 +275,7 @@ object EaseCommonUtils {
     fun dip2px(context: Context, value: Int): Float {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            value,
+            value.toFloat(),
             context.resources.displayMetrics
         )
     }

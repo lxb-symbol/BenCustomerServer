@@ -7,7 +7,7 @@ interface ChatInputMenuListener {
     /**
      * when typing on the edit-text layout.
      */
-    fun onTyping(s: CharSequence?, start: Int, before: Int, count: Int)
+    fun onTyping(s: CharSequence, start: Int, before: Int, count: Int)
 
     /**
      * when send message button pressed
@@ -15,7 +15,7 @@ interface ChatInputMenuListener {
      * @param content
      * message content
      */
-    fun onSendMessage(content: String?)
+    fun onSendMessage(content: String)
 
     /**
      * when big icon pressed
@@ -29,7 +29,7 @@ interface ChatInputMenuListener {
      * @param event
      * @return
      */
-    fun onPressToSpeakBtnTouch(v: View?, event: MotionEvent?): Boolean
+    fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean
 
     /**
      * when click the item of extend menu

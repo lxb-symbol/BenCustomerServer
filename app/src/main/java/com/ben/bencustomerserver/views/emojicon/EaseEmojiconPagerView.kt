@@ -87,7 +87,7 @@ class EaseEmojiconPagerView @JvmOverloads constructor(
     fun getGroupGridViews(groupEntity: EaseEmojiconGroupEntity): List<View> {
         val emojiconList = groupEntity.emojiconList
         var itemSize = emojiconColumns * emojiconRows
-        val totalSize = emojiconList.size
+        val totalSize = if (emojiconList.isNullOrEmpty()) 0 else emojiconList.size
         val emojiType = groupEntity.type
         if (emojiType == EaseEmojicon.Type.BIG_EXPRESSION) {
             itemSize = bigEmojiconColumns * bigEmojiconRows
@@ -105,16 +105,16 @@ class EaseEmojiconPagerView @JvmOverloads constructor(
             }
             val list: MutableList<EaseEmojicon?> = ArrayList()
             if (i != pageSize - 1) {
-                list.addAll(emojiconList.subList(i * itemSize, (i + 1) * itemSize))
+                emojiconList?.subList(i * itemSize, (i + 1) * itemSize)?.let { list.addAll(it) }
             } else {
-                list.addAll(emojiconList.subList(i * itemSize, totalSize))
+                emojiconList?.subList(i * itemSize, totalSize)?.let { list.addAll(it) }
             }
             //            if(emojiType != Type.BIG_EXPRESSION){
 //                EaseEmojicon deleteIcon = new EaseEmojicon();
 //                deleteIcon.setEmojiText(EaseSmileUtils.DELETE_KEY);
 //                list.add(deleteIcon);
 //            }
-            val gridAdapter = EmojiconGridAdapter(context, 1, list, emojiType)
+            val gridAdapter = EmojiconGridAdapter(context, 1, list, emojiType!!)
             gv.adapter = gridAdapter
             gv.onItemClickListener =
                 AdapterView.OnItemClickListener { parent: AdapterView<*>?, view1: View?, position: Int, id: Long ->
@@ -172,7 +172,7 @@ class EaseEmojiconPagerView @JvmOverloads constructor(
     private fun getPageSize(groupEntity: EaseEmojiconGroupEntity): Int {
         val emojiconList = groupEntity.emojiconList
         var itemSize = emojiconColumns * emojiconRows - 1
-        val totalSize = emojiconList.size
+        val totalSize = if (emojiconList.isNullOrEmpty()) 0 else emojiconList.size
         val emojiType = groupEntity.type
         if (emojiType == EaseEmojicon.Type.BIG_EXPRESSION) {
             itemSize = bigEmojiconColumns * bigEmojiconRows

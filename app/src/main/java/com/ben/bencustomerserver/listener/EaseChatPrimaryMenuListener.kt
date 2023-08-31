@@ -8,18 +8,18 @@ interface EaseChatPrimaryMenuListener {
      * when send button clicked
      * @param content
      */
-    fun onSendBtnClicked(content: String?)
+    fun onSendBtnClicked(content: String)
 
     /**
      * when typing on the edit-text layout.
      */
-    fun onTyping(s: CharSequence?, start: Int, before: Int, count: Int)
+    fun onTyping(s: CharSequence, start: Int, before: Int, count: Int)
 
     /**
      * when speak button is touched
      * @return
      */
-    fun onPressToSpeakBtnTouch(v: View?, event: MotionEvent?): Boolean
+    fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean
 
     /**
      * toggle on/off voice button

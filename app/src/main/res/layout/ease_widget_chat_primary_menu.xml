@@ -23,9 +23,9 @@
         android:paddingBottom="4dp">
 
         <ImageView
+            android:layout_marginStart="@dimen/dp_8"
             android:id="@+id/btn_set_mode_voice"
             style="@style/ease_chat_input_button_size"
-            android:layout_marginLeft="16dp"
             android:layout_marginBottom="5dp"
             android:src="@drawable/ease_chatting_setmode_voice_btn"
             android:visibility="visible" />
@@ -81,7 +81,6 @@
                 android:id="@+id/et_sendmessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
                 android:background="@drawable/ease_send_message_et_bg"
                 android:focusableInTouchMode="true"
                 android:gravity="center_vertical"
@@ -131,7 +130,7 @@
             android:layout_width="@dimen/ease_chat_primary_menu_more_icon_size"
             android:layout_height="26dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/dp_16"
+            android:layout_marginRight="@dimen/dp_8"
             android:background="@drawable/ease_type_select_btn"
             android:button="@null"
             android:visibility="visible" />

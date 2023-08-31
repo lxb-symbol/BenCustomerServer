@@ -160,6 +160,10 @@ class EaseChatExtendMenu @JvmOverloads constructor(
         }
     }
 
+
+
+
+
     /**
      * register menu item
      *
@@ -169,10 +173,10 @@ class EaseChatExtendMenu @JvmOverloads constructor(
      * @param listener    on click event of item
      */
     fun registerMenuItem(
-        name: String?,
-        drawableRes: Int,
-        itemId: Int,
-        listener: EaseChatExtendMenuItemClickListener?
+        name: String? ="",
+        drawableRes: Int=0,
+        itemId: Int=0,
+        listener: EaseChatExtendMenuItemClickListener?=null
     ) {
         if (!itemMap.containsKey(itemId)) {
             val item = ChatMenuItemModel()
@@ -286,23 +290,19 @@ class EaseChatExtendMenu @JvmOverloads constructor(
         }
     }
 
-    override fun registerMenuItem(name: String, drawableRes: Int, itemId: Int) {
+    override fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int,orderInt: Int) {
         registerMenuItem(name, drawableRes, itemId, null)
     }
 
-    override fun registerMenuItem(name: String, drawableRes: Int, itemId: Int, order: Int) {
-        registerMenuItem(name, drawableRes, itemId, order, null)
-    }
 
-    override fun registerMenuItem(nameRes: Int, drawableRes: Int, itemId: Int) {
-        registerMenuItem(nameRes, drawableRes, itemId, null)
-    }
 
-    override fun registerMenuItem(nameRes: Int, drawableRes: Int, itemId: Int, order: Int) {
-        registerMenuItem(nameRes, drawableRes, itemId, order, null)
-    }
 
-    override fun setEaseChatExtendMenuItemClickListener(listener: EaseChatExtendMenuItemClickListener) {
+
+
+
+
+
+    override fun setEaseChatExtendMenuItemClickListener(listener: EaseChatExtendMenuItemClickListener?) {
         itemListener = listener
     }
 

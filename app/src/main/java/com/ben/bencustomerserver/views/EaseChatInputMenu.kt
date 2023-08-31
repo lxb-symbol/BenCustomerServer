@@ -24,19 +24,20 @@ import com.ben.bencustomerserver.utils.EaseSmileUtils.getSmiledText
 /**
  * 包含 聊天输入布局，和表情
  */
-class EaseChatInputMenu @JvmOverloads constructor(
+class EaseChatInputMenu  constructor(
     context: Context?,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
+    override var primaryMenu: IChatPrimaryMenu?,
+    override var emojiconMenu: IChatEmojiconMenu?,
+    override var chatExtendMenu: IChatExtendMenu?,
 ) : LinearLayout(context, attrs, defStyleAttr),
     IChatInputMenu, EaseChatPrimaryMenuListener,
     EaseEmojiconMenuListener, EaseChatExtendMenuItemClickListener {
+
     private var chatMenuContainer: LinearLayout? = null
     private var primaryMenuContainer: FrameLayout? = null
-    private var extendMenuContainer: FrameLayout? = null
-    private var primaryMenu: IChatPrimaryMenu? = null
-    private var emojiconMenu: IChatEmojiconMenu? = null
-    private var extendMenu: IChatExtendMenu? = null
+    private var chatExtendMenuContainer: FrameLayout? = null
     private var menuListener: ChatInputMenuListener? = null
 
     init {
@@ -47,15 +48,15 @@ class EaseChatInputMenu @JvmOverloads constructor(
         super.onFinishInflate()
         chatMenuContainer = findViewById(R.id.chat_menu_container)
         primaryMenuContainer = findViewById(R.id.primary_menu_container)
-        extendMenuContainer = findViewById(R.id.extend_menu_container)
+        chatExtendMenuContainer = findViewById(R.id.extend_menu_container)
         init()
     }
 
     private fun init() {
         showPrimaryMenu()
-        if (extendMenu == null) {
-            extendMenu = EaseChatExtendMenu(context)
-            (extendMenu as EaseChatExtendMenu).init()
+        if ( chatExtendMenu== null) {
+            chatExtendMenu = EaseChatExtendMenu(context)
+            (chatExtendMenu as EaseChatExtendMenu).init()
         }
         if (emojiconMenu == null) {
             emojiconMenu = EaseEmojiconMenu(context)
@@ -63,7 +64,7 @@ class EaseChatInputMenu @JvmOverloads constructor(
         }
     }
 
-    override fun setCustomPrimaryMenu(menu: IChatPrimaryMenu) {
+    override fun setCustomPrimaryMenu(menu: IChatPrimaryMenu?) {
         primaryMenu = menu
         showPrimaryMenu()
     }
@@ -73,19 +74,19 @@ class EaseChatInputMenu @JvmOverloads constructor(
     }
 
     override fun setCustomExtendMenu(menu: IChatExtendMenu) {
-        extendMenu = menu
+        chatExtendMenu = menu
     }
 
     override fun hideExtendContainer() {
         primaryMenu!!.showNormalStatus()
-        extendMenuContainer!!.visibility = GONE
+        chatExtendMenuContainer!!.visibility = GONE
     }
 
     override fun showEmojiconMenu(show: Boolean) {
         if (show) {
             showEmojiconMenu()
         } else {
-            extendMenuContainer!!.visibility = GONE
+            chatExtendMenuContainer!!.visibility = GONE
         }
     }
 
@@ -93,7 +94,7 @@ class EaseChatInputMenu @JvmOverloads constructor(
         if (show) {
             showExtendMenu()
         } else {
-            extendMenuContainer!!.visibility = GONE
+            chatExtendMenuContainer!!.visibility = GONE
             if (primaryMenu != null) {
                 primaryMenu!!.hideExtendStatus()
             }
@@ -106,25 +107,14 @@ class EaseChatInputMenu @JvmOverloads constructor(
         }
     }
 
-    override fun setChatInputMenuListener(listener: ChatInputMenuListener) {
-        menuListener = listener
+    override fun setChatInputMenuListener(listener: ChatInputMenuListener?) {
+        
     }
 
-    override fun getPrimaryMenu(): IChatPrimaryMenu {
-        return primaryMenu!!
-    }
-
-    override fun getEmojiconMenu(): IChatEmojiconMenu {
-        return emojiconMenu!!
-    }
-
-    override fun getChatExtendMenu(): IChatExtendMenu {
-        return extendMenu!!
-    }
 
     override fun onBackPressed(): Boolean {
-        if (extendMenuContainer!!.visibility == VISIBLE) {
-            extendMenuContainer!!.visibility = GONE
+        if (chatExtendMenuContainer!!.visibility == VISIBLE) {
+            chatExtendMenuContainer!!.visibility = GONE
             return false
         }
         return true
@@ -149,23 +139,23 @@ class EaseChatInputMenu @JvmOverloads constructor(
     }
 
     private fun showExtendMenu() {
-        if (extendMenu == null) {
-            extendMenu = EaseChatExtendMenu(context)
-            (extendMenu as EaseChatExtendMenu).init()
+        if (chatExtendMenu == null) {
+            chatExtendMenu = EaseChatExtendMenu(context)
+            (chatExtendMenu as EaseChatExtendMenu).init()
         }
-        if (extendMenu is View) {
-            extendMenuContainer!!.visibility = VISIBLE
-            extendMenuContainer!!.removeAllViews()
-            extendMenuContainer!!.addView(extendMenu as View?)
-            extendMenu?.setEaseChatExtendMenuItemClickListener(this)
+        if (chatExtendMenu is View) {
+            chatExtendMenuContainer!!.visibility = VISIBLE
+            chatExtendMenuContainer!!.removeAllViews()
+            chatExtendMenuContainer!!.addView(chatExtendMenu as View?)
+            chatExtendMenu?.setEaseChatExtendMenuItemClickListener(this)
         }
-        if (extendMenu is Fragment && context is AppCompatActivity) {
-            extendMenuContainer!!.visibility = VISIBLE
+        if (chatExtendMenu is Fragment && context is AppCompatActivity) {
+            chatExtendMenuContainer!!.visibility = VISIBLE
             val manager = (context as AppCompatActivity).supportFragmentManager
             manager.beginTransaction()
-                .replace(R.id.extend_menu_container, (extendMenu as Fragment?)!!)
+                .replace(R.id.extend_menu_container, (chatExtendMenu as Fragment?)!!)
                 .commitAllowingStateLoss()
-            extendMenu?.setEaseChatExtendMenuItemClickListener(this)
+            chatExtendMenu?.setEaseChatExtendMenuItemClickListener(this)
         }
     }
 
@@ -175,13 +165,13 @@ class EaseChatInputMenu @JvmOverloads constructor(
             (emojiconMenu as EaseEmojiconMenu).init()
         }
         if (emojiconMenu is View) {
-            extendMenuContainer!!.visibility = VISIBLE
-            extendMenuContainer!!.removeAllViews()
-            extendMenuContainer!!.addView(emojiconMenu as View?)
+            chatExtendMenuContainer!!.visibility = VISIBLE
+            chatExtendMenuContainer!!.removeAllViews()
+            chatExtendMenuContainer!!.addView(emojiconMenu as View?)
             emojiconMenu?.setEmojiconMenuListener(this)
         }
         if (emojiconMenu is Fragment && context is AppCompatActivity) {
-            extendMenuContainer!!.visibility = VISIBLE
+            chatExtendMenuContainer!!.visibility = VISIBLE
             val manager = (context as AppCompatActivity).supportFragmentManager
             manager.beginTransaction()
                 .replace(R.id.extend_menu_container, (emojiconMenu as Fragment?)!!)
@@ -238,7 +228,7 @@ class EaseChatInputMenu @JvmOverloads constructor(
         Log.i(TAG, "onEditTextHasFocus: hasFocus = $hasFocus")
     }
 
-    override fun onExpressionClicked(emojicon: Any) {
+    override fun onExpressionClicked(emojicon: Any?) {
         Log.i(TAG, "onExpressionClicked")
         if (emojicon is EaseEmojicon) {
             val easeEmojicon = emojicon

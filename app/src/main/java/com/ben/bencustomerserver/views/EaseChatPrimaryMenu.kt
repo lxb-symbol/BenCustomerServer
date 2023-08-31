@@ -30,7 +30,7 @@ import com.ben.bencustomerserver.views.EaseInputEditText.OnEditTextChangeListene
  * 包含对话框，发送按钮，语音按钮的具体实现
  *
  */
-open class EaseChatPrimaryMenu @JvmOverloads constructor(
+class EaseChatPrimaryMenu @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -42,16 +42,18 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
     private var buttonSetModeKeyboard: ImageView? = null
     private var buttonPressToSpeak: FrameLayout? = null
     private var edittext_layout: FrameLayout? = null
-    private var editText: EaseInputEditText? = null
+    override var editText: EaseInputEditText? = null
+
+
     private var faceLayout: RelativeLayout? = null
     private var faceNormal: ImageView? = null
     private var faceChecked: ImageView? = null
     private var buttonMore: CheckBox? = null
     private var buttonSend: Button? = null
     private var listener: EaseChatPrimaryMenuListener? = null
-    private var menuType = EaseInputMenuStyle.All //菜单展示形式
-     private var inputManager: InputMethodManager
-     private var activity: Activity
+    private var menuType = EaseInputMenuStyle.All//菜单展示形式
+    private var inputManager: InputMethodManager
+    private var activity: Activity
 
     init {
         LayoutInflater.from(context).inflate(R.layout.ease_widget_chat_primary_menu, this)
@@ -86,11 +88,9 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
         editText!!.setOnClickListener(this)
         editText!!.setOnEditTextChangeListener(this)
         editText!!.addTextChangedListener(this)
-        buttonPressToSpeak!!.setOnTouchListener { v: View?, event: MotionEvent? ->
-            if (listener != null) {
-                return@setOnTouchListener listener!!.onPressToSpeakBtnTouch(v, event)
-            }
-            false
+
+        buttonPressToSpeak!!.setOnTouchListener { v: View, event: MotionEvent ->
+            listener?.onPressToSpeakBtnTouch(v, event) ?: false
         }
     }
 
@@ -109,10 +109,11 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
         editText!!.removeTextChangedListener(this)
     }
 
-    override fun setMenuShowType(style: EaseInputMenuStyle) {
-        menuType = style
+    override fun setMenuShowType(style: EaseInputMenuStyle?) {
+        menuType = style!!
         checkMenuType()
     }
+
 
     override fun showNormalStatus() {
         hideSoftKeyboard()
@@ -193,7 +194,7 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
         showNormalFaceImage()
     }
 
-    override fun onEmojiconInputEvent(emojiContent: CharSequence) {
+    override fun onEmojiconInputEvent(emojiContent: CharSequence?) {
         editText!!.append(emojiContent)
     }
 
@@ -205,23 +206,25 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
         }
     }
 
-    override fun onTextInsert(text: CharSequence) {
+
+    override fun onTextInsert(text: CharSequence?) {
         val start = editText!!.selectionStart
         val editable = editText!!.editableText
         editable.insert(start, text)
         showTextStatus()
     }
 
-    override fun getEditText(): EditText {
-        return editText!!
-    }
 
-    override fun setMenuBackground(bg: Drawable) {
+    override fun setMenuBackground(bg: Drawable?) {
         rlBottom!!.background = bg
     }
 
-    override fun setSendButtonBackground(bg: Drawable) {
+    override fun setSendButtonBackground(bg: Drawable?) {
         buttonSend!!.background = bg
+    }
+
+    override fun setEaseChatPrimaryMenuListener(listener: EaseChatPrimaryMenuListener?) {
+        this.listener = listener
     }
 
     override fun onClick(v: View) {
@@ -250,6 +253,7 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
             listener!!.onSendBtnClicked(content)
         }
     }
+
 
     override fun onEditTextHasFocus(hasFocus: Boolean) {
         if (listener != null) {
@@ -314,6 +318,7 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
         }
     }
 
+
     /**
      * show soft keyboard
      * @param et
@@ -326,9 +331,6 @@ open class EaseChatPrimaryMenu @JvmOverloads constructor(
         inputManager.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    override fun setEaseChatPrimaryMenuListener(listener: EaseChatPrimaryMenuListener) {
-        this.listener = listener
-    }
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {

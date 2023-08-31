@@ -13,13 +13,7 @@ interface IChatExtendMenu {
      */
     fun setMenuOrder(itemId: Int, order: Int)
 
-    /**
-     * 添加新的扩展功能
-     * @param name
-     * @param drawableRes
-     * @param itemId
-     */
-    fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int)
+
 
     /**
      * 添加新的扩展功能
@@ -28,24 +22,9 @@ interface IChatExtendMenu {
      * @param itemId
      * @param order
      */
-    fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int, order: Int)
+    fun registerMenuItem(name: String?="", drawableRes: Int=0, itemId: Int=0, order: Int=0)
 
-    /**
-     * 添加新的扩展功能
-     * @param nameRes
-     * @param drawableRes
-     * @param itemId
-     */
-    fun registerMenuItem(nameRes: Int, drawableRes: Int, itemId: Int)
 
-    /**
-     * 添加新的扩展功能
-     * @param nameRes
-     * @param drawableRes
-     * @param itemId
-     * @param order
-     */
-    fun registerMenuItem(nameRes: Int, drawableRes: Int, itemId: Int, order: Int)
 
     /**
      * 设置条目监听
