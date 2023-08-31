@@ -29,15 +29,15 @@ abstract class BaseFragment<T : ViewModel, M : ViewDataBinding> : Fragment() {
 
     abstract fun getLayoutResId(): Int
 
-    abstract fun initData()
-
     abstract fun initView()
+
+    abstract fun initData()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewModel = initViewModel()
-        initData()
         initView()
+        initData()
     }
 
     abstract  fun initViewModel(): T

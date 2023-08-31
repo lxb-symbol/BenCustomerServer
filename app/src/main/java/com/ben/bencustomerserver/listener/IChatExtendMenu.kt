@@ -1,17 +1,17 @@
-package com.ben.bencustomerserver.views;
+package com.ben.bencustomerserver.listener
 
-public interface IChatExtendMenu {
+interface IChatExtendMenu {
     /**
      * 清理扩展功能
      */
-    void clear();
+    fun clear()
 
     /**
      * 设置条目的排序
      * @param itemId
      * @param order
      */
-    void setMenuOrder(int itemId, int order);
+    fun setMenuOrder(itemId: Int, order: Int)
 
     /**
      * 添加新的扩展功能
@@ -19,7 +19,7 @@ public interface IChatExtendMenu {
      * @param drawableRes
      * @param itemId
      */
-    void registerMenuItem(String name, int drawableRes, int itemId);
+    fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int)
 
     /**
      * 添加新的扩展功能
@@ -28,7 +28,7 @@ public interface IChatExtendMenu {
      * @param itemId
      * @param order
      */
-    void registerMenuItem(String name, int drawableRes, int itemId, int order);
+    fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int, order: Int)
 
     /**
      * 添加新的扩展功能
@@ -36,7 +36,7 @@ public interface IChatExtendMenu {
      * @param drawableRes
      * @param itemId
      */
-    void registerMenuItem(int nameRes, int drawableRes, int itemId);
+    fun registerMenuItem(nameRes: Int, drawableRes: Int, itemId: Int)
 
     /**
      * 添加新的扩展功能
@@ -45,11 +45,11 @@ public interface IChatExtendMenu {
      * @param itemId
      * @param order
      */
-    void registerMenuItem(int nameRes, int drawableRes, int itemId, int order);
+    fun registerMenuItem(nameRes: Int, drawableRes: Int, itemId: Int, order: Int)
 
     /**
      * 设置条目监听
      * @param listener
      */
-    void setEaseChatExtendMenuItemClickListener(EaseChatExtendMenuItemClickListener listener);
+    fun setEaseChatExtendMenuItemClickListener(listener: EaseChatExtendMenuItemClickListener?)
 }

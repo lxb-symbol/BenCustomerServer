@@ -12,11 +12,11 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
-    private val _messages = MutableLiveData<List<String>>()
+    private val _messages = MutableLiveData<List<BaseMessageModel>>()
 
     fun getDataMessages() = _messages
 
-    fun chatMessages(): MutableLiveData<List<String>> {
+    fun chatMessages(): MutableLiveData<List<BaseMessageModel>> {
         viewModelScope.launch {
             when (val result = repository.getMessageList()) {
                 is NetResult.Success -> {

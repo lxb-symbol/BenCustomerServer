@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/color_fafafa"
     android:orientation="vertical"
     android:paddingTop="2dip">
 
@@ -128,9 +129,9 @@
         <CheckBox
             android:id="@+id/btn_more"
             android:layout_width="@dimen/ease_chat_primary_menu_more_icon_size"
-            android:layout_height="@dimen/ease_chat_primary_menu_more_icon_size"
-            android:layout_marginRight="@dimen/dp_16"
+            android:layout_height="26dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/dp_16"
             android:background="@drawable/ease_type_select_btn"
             android:button="@null"
             android:visibility="visible" />

@@ -1,24 +1,23 @@
-package com.ben.bencustomerserver.views.chatextend;
+package com.ben.bencustomerserver.views.chatextend
 
 /**
  * 参考博文：https://blog.csdn.net/Y_sunny_U/article/details/89500464
  */
-public interface PageDecorationLastJudge {
+interface PageDecorationLastJudge {
     /**
      * Is the last row in one page
      *
      * @param position
      * @return
      */
-    boolean isLastRow(int position);
- 
+    fun isLastRow(position: Int): Boolean
+
     /**
      * Is the last Colum in one row;
      *
      * @param position
      * @return
      */
-    boolean isLastColumn(int position);
- 
-    boolean isPageLast(int position);
+    fun isLastColumn(position: Int): Boolean
+    fun isPageLast(position: Int): Boolean
 }

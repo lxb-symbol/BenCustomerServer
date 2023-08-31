@@ -1,62 +1,48 @@
-package com.ben.bencustomerserver.adapter;
+package com.ben.bencustomerserver.adapter
 
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.listener.OnItemClickListener
+import com.ben.bencustomerserver.views.EaseChatExtendMenu.ChatMenuItemModel
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class EaseChatExtendMenuAdapter :
+    EaseBaseChatExtendMenuAdapter<EaseChatExtendMenuAdapter.ViewHolder?, ChatMenuItemModel?>() {
+    private var itemListener: OnItemClickListener? = null
+    override val itemLayoutId: Int
+        get() = R.layout.ease_chat_menu_item
 
-import com.ben.bencustomerserver.R;
-import com.ben.bencustomerserver.listener.OnItemClickListener;
-import com.ben.bencustomerserver.views.EaseChatExtendMenu;
-
-
-public class EaseChatExtendMenuAdapter extends EaseBaseChatExtendMenuAdapter<EaseChatExtendMenuAdapter.ViewHolder, EaseChatExtendMenu.ChatMenuItemModel> {
-    private OnItemClickListener itemListener;
-
-    @Override
-    protected int getItemLayoutId() {
-        return R.layout.ease_chat_menu_item;
+    override fun easeCreateViewHolder(view: View?): ViewHolder {
+        return ViewHolder(view!!)
     }
 
-    @Override
-    protected ViewHolder easeCreateViewHolder(View view) {
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        EaseChatExtendMenu.ChatMenuItemModel item = mData.get(position);
-        holder.imageView.setBackgroundResource(item.image);
-        holder.textView.setText(item.name);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if(item.clickListener != null){
-                    item.clickListener.onChatExtendMenuItemClick(item.id, v);
-                }
-                if(itemListener != null) {
-                    itemListener.onItemClick(v, position);
-                }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = mData!![position]!!
+        holder.imageView.setBackgroundResource(item.image)
+        holder.textView.text = item.name
+        holder.itemView.setOnClickListener { v ->
+            if (item.clickListener != null) {
+                item.clickListener.onChatExtendMenuItemClick(item.id, v)
             }
-        });
+            if (itemListener != null) {
+                itemListener!!.onItemClick(v, position)
+            }
+        }
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.itemListener = listener;
+    fun setOnItemClickListener(listener: OnItemClickListener?) {
+        itemListener = listener
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private TextView textView;
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView
+        val textView: TextView
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.image);
-            textView = (TextView) itemView.findViewById(R.id.text);
+        init {
+            imageView = itemView.findViewById<View>(R.id.image) as ImageView
+            textView = itemView.findViewById<View>(R.id.text) as TextView
         }
     }
 }
-

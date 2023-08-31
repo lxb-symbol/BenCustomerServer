@@ -1,174 +1,160 @@
-package com.ben.bencustomerserver.views;
+package com.ben.bencustomerserver.views
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
+import android.content.Context
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.LinearLayout
+import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.listener.EaseEmojiconMenuListener
+import com.ben.bencustomerserver.listener.IChatEmojiconMenu
+import com.ben.bencustomerserver.model.EaseDefaultEmojiconDatas.data
+import com.ben.bencustomerserver.views.emojicon.EaseEmojiconIndicatorView
+import com.ben.bencustomerserver.views.emojicon.EaseEmojiconPagerView
+import com.ben.bencustomerserver.views.emojicon.EaseEmojiconPagerView.EaseEmojiconPagerViewListener
+import com.ben.bencustomerserver.views.emojicon.EaseEmojiconScrollTabBar
+import com.ben.bencustomerserver.views.emojicon.EaseEmojiconScrollTabBar.EaseScrollTabBarItemClickListener
 
-import androidx.annotation.Nullable;
+class EaseEmojiconMenu @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr), IChatEmojiconMenu {
+    private var emojiconColumns = 0
+    private var bigEmojiconColumns = 0
+    private val tabBar: EaseEmojiconScrollTabBar
+    private val indicatorView: EaseEmojiconIndicatorView
+    private val pagerView: EaseEmojiconPagerView
+    private val emojiconGroupList: MutableList<EaseEmojiconGroupEntity> = ArrayList()
+    private var listener: EaseEmojiconMenuListener? = null
 
-
-import com.ben.bencustomerserver.R;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-public class EaseEmojiconMenu extends LinearLayout implements IChatEmojiconMenu {
-    private int emojiconColumns;
-    private int bigEmojiconColumns;
-    private EaseEmojiconScrollTabBar tabBar;
-    private EaseEmojiconIndicatorView indicatorView;
-    private EaseEmojiconPagerView pagerView;
-
-    private List<EaseEmojiconGroupEntity> emojiconGroupList = new ArrayList<>();
-    private EaseEmojiconMenuListener listener;
-    private static final int defaultColumns = 7;
-    private static final int defaultBigColumns = 4;
-
-    public EaseEmojiconMenu(Context context) {
-        this(context, null);
+    init {
+        LayoutInflater.from(context).inflate(R.layout.ease_widget_emojicon, this)
+        pagerView = findViewById<View>(R.id.pager_view) as EaseEmojiconPagerView
+        indicatorView = findViewById<View>(R.id.indicator_view) as EaseEmojiconIndicatorView
+        tabBar = findViewById<View>(R.id.tab_bar) as EaseEmojiconScrollTabBar
+        initAttrs(context, attrs)
     }
 
-    public EaseEmojiconMenu(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
+    private fun initAttrs(context: Context, attrs: AttributeSet?) {
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.EaseEmojiconMenu)
+        emojiconColumns = ta.getInt(R.styleable.EaseEmojiconMenu_emojiconColumns, defaultColumns)
+        bigEmojiconColumns =
+            ta.getInt(R.styleable.EaseEmojiconMenu_bigEmojiconRows, defaultBigColumns)
+        ta.recycle()
     }
 
-    public EaseEmojiconMenu(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        LayoutInflater.from(context).inflate(R.layout.ease_widget_emojicon, this);
-        pagerView = (EaseEmojiconPagerView) findViewById(R.id.pager_view);
-        indicatorView = (EaseEmojiconIndicatorView) findViewById(R.id.indicator_view);
-        tabBar = (EaseEmojiconScrollTabBar) findViewById(R.id.tab_bar);
-
-        initAttrs(context, attrs);
-    }
-
-    private void initAttrs(Context context, AttributeSet attrs) {
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.EaseEmojiconMenu);
-        emojiconColumns = ta.getInt(R.styleable.EaseEmojiconMenu_emojiconColumns, defaultColumns);
-        bigEmojiconColumns = ta.getInt(R.styleable.EaseEmojiconMenu_bigEmojiconRows, defaultBigColumns);
-        ta.recycle();
-    }
-
-    public void init() {
-        init(null);
-    }
-
-    public void init(List<EaseEmojiconGroupEntity> groupEntities){
-        if(groupEntities == null || groupEntities.size() == 0){
-            groupEntities = new ArrayList<>();
-            groupEntities.add(new EaseEmojiconGroupEntity(R.drawable.ee_1,  Arrays.asList(EaseDefaultEmojiconDatas.getData())));
+    @JvmOverloads
+    fun init(groupEntities: MutableList<EaseEmojiconGroupEntity>? = null) {
+        var groupEntities = groupEntities
+        if (groupEntities == null || groupEntities.size == 0) {
+            groupEntities = ArrayList()
+            groupEntities.add(EaseEmojiconGroupEntity(R.drawable.ee_1, data.asList()))
         }
-        for(EaseEmojiconGroupEntity groupEntity : groupEntities){
-            emojiconGroupList.add(groupEntity);
-            tabBar.addTab(groupEntity.getIcon());
+        for (groupEntity in groupEntities) {
+            emojiconGroupList.add(groupEntity)
+            tabBar.addTab(groupEntity.icon)
         }
-
-        pagerView.setPagerViewListener(new EmojiconPagerViewListener());
-        pagerView.init(emojiconGroupList, emojiconColumns,bigEmojiconColumns);
-
-        tabBar.setTabBarItemClickListener(new EaseEmojiconScrollTabBar.EaseScrollTabBarItemClickListener() {
-
-            @Override
-            public void onItemClick(int position) {
-                pagerView.setGroupPostion(position);
+        pagerView.setPagerViewListener(EmojiconPagerViewListener())
+        pagerView.init(emojiconGroupList, emojiconColumns, bigEmojiconColumns)
+        tabBar.setTabBarItemClickListener(object : EaseScrollTabBarItemClickListener {
+            override fun onItemClick(position: Int) {
+                pagerView.setGroupPostion(position)
             }
-        });
+        })
     }
 
     /**
      * add emojicon group
      * @param groupEntity
      */
-    public void addEmojiconGroup(EaseEmojiconGroupEntity groupEntity){
-        emojiconGroupList.add(groupEntity);
-        pagerView.addEmojiconGroup(groupEntity, true);
-        tabBar.addTab(groupEntity.getIcon());
+    override fun addEmojiconGroup(groupEntity: EaseEmojiconGroupEntity?) {
+        groupEntity?.let {
+            emojiconGroupList.add(it)
+        }
+        pagerView.addEmojiconGroup(groupEntity!!, true)
+        tabBar.addTab(groupEntity.icon)
     }
 
     /**
      * add emojicon group list
      * @param groupEntitieList
      */
-    public void addEmojiconGroup(List<EaseEmojiconGroupEntity> groupEntitieList){
-        for(int i= 0; i < groupEntitieList.size(); i++){
-            EaseEmojiconGroupEntity groupEntity = groupEntitieList.get(i);
-            emojiconGroupList.add(groupEntity);
-            pagerView.addEmojiconGroup(groupEntity, i == groupEntitieList.size()-1 ? true : false);
-            tabBar.addTab(groupEntity.getIcon());
+    override fun addEmojiconGroup(groupEntitieList: List<EaseEmojiconGroupEntity?>?) {
+        for (i in groupEntitieList!!.indices) {
+            val groupEntity = groupEntitieList[i]
+            groupEntity?.let {
+                emojiconGroupList.add(it)
+            }
+            pagerView.addEmojiconGroup(
+                groupEntity!!,
+                i == groupEntitieList.size - 1
+            )
+            tabBar.addTab(groupEntity.icon)
         }
-
     }
 
     /**
      * remove emojicon group
      * @param position
      */
-    public void removeEmojiconGroup(int position){
-        emojiconGroupList.remove(position);
-        pagerView.removeEmojiconGroup(position);
-        tabBar.removeTab(position);
+    override fun removeEmojiconGroup(position: Int) {
+        emojiconGroupList.removeAt(position)
+        pagerView.removeEmojiconGroup(position)
+        tabBar.removeTab(position)
     }
 
-    public void setTabBarVisibility(boolean isVisible){
-        if(!isVisible){
-            tabBar.setVisibility(View.GONE);
-        }else{
-            tabBar.setVisibility(View.VISIBLE);
+    override fun setTabBarVisibility(isVisible: Boolean) {
+        if (!isVisible) {
+            tabBar.visibility = GONE
+        } else {
+            tabBar.visibility = VISIBLE
         }
     }
 
-    @Override
-    public void setEmojiconMenuListener(EaseEmojiconMenuListener listener) {
-        this.listener = listener;
+    override fun setEmojiconMenuListener(listener: EaseEmojiconMenuListener?) {
+        this.listener = listener
     }
 
-    private class EmojiconPagerViewListener implements EaseEmojiconPagerView.EaseEmojiconPagerViewListener {
-
-        @Override
-        public void onPagerViewInited(int groupMaxPageSize, int firstGroupPageSize) {
-            indicatorView.init(groupMaxPageSize);
-            indicatorView.updateIndicator(firstGroupPageSize);
-            tabBar.selectedTo(0);
+    private inner class EmojiconPagerViewListener : EaseEmojiconPagerViewListener {
+        override fun onPagerViewInited(groupMaxPageSize: Int, firstGroupPageSize: Int) {
+            indicatorView.init(groupMaxPageSize)
+            indicatorView.updateIndicator(firstGroupPageSize)
+            tabBar.selectedTo(0)
         }
 
-        @Override
-        public void onGroupPositionChanged(int groupPosition, int pagerSizeOfGroup) {
-            indicatorView.updateIndicator(pagerSizeOfGroup);
-            tabBar.selectedTo(groupPosition);
+        override fun onGroupPositionChanged(groupPosition: Int, pagerSizeOfGroup: Int) {
+            indicatorView.updateIndicator(pagerSizeOfGroup)
+            tabBar.selectedTo(groupPosition)
         }
 
-        @Override
-        public void onGroupInnerPagePostionChanged(int oldPosition, int newPosition) {
-            indicatorView.selectTo(oldPosition, newPosition);
+        override fun onGroupInnerPagePostionChanged(oldPosition: Int, newPosition: Int) {
+            indicatorView.selectTo(oldPosition, newPosition)
         }
 
-        @Override
-        public void onGroupPagePostionChangedTo(int position) {
-            indicatorView.selectTo(position);
+        override fun onGroupPagePostionChangedTo(position: Int) {
+            indicatorView.selectTo(position)
         }
 
-        @Override
-        public void onGroupMaxPageSizeChanged(int maxCount) {
-            indicatorView.updateIndicator(maxCount);
+        override fun onGroupMaxPageSizeChanged(maxCount: Int) {
+            indicatorView.updateIndicator(maxCount)
         }
 
-        @Override
-        public void onDeleteImageClicked() {
-            if(listener != null){
-                listener.onDeleteImageClicked();
+        override fun onDeleteImageClicked() {
+            if (listener != null) {
+                listener!!.onDeleteImageClicked()
             }
         }
 
-        @Override
-        public void onExpressionClicked(EaseEmojicon emojicon) {
-            if(listener != null){
-                listener.onExpressionClicked(emojicon);
+        override fun onExpressionClicked(emojicon: EaseEmojicon?) {
+            if (listener != null) {
+                listener!!.onExpressionClicked(emojicon)
             }
         }
+    }
+
+    companion object {
+        private const val defaultColumns = 7
+        private const val defaultBigColumns = 4
     }
 }
-

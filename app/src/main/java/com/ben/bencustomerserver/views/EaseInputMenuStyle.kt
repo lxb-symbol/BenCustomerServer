@@ -1,5 +1,5 @@
-package com.ben.bencustomerserver.views;
+package com.ben.bencustomerserver.views
 
-public enum EaseInputMenuStyle {
+enum class EaseInputMenuStyle {
     All, DISABLE_VOICE, DISABLE_EMOJICON, DISABLE_VOICE_EMOJICON, ONLY_TEXT
 }

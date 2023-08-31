@@ -43,13 +43,14 @@ android {
 }
 
 dependencies {
-
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.lifcycle.exteion)
     implementation(libs.viewmodel.lifcycle)
     implementation(libs.rv)
+    implementation(libs.glide)
+    implementation(libs.vrvh)
     implementation(project(mapOf("path" to ":module-base")))
     implementation(project(mapOf("path" to ":lib-net")))
 

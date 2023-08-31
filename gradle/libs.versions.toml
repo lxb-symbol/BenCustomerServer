@@ -27,6 +27,7 @@ vs-kotlin-reflect = "1.9.0"
 vs-lifcycle-extention = "2.2.0"
 vs-lifcycle-viemodel = "2.6.1"
 vs-rv = "1.3.1"
+vs-liveeventbus = "1.8.0"
 
 
 [libraries]
@@ -49,6 +50,8 @@ kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", vers
 lifcycle-exteion = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "vs-lifcycle-extention" }
 viewmodel-lifcycle = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "vs-lifcycle-viemodel" }
 rv = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "vs-rv" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "vs-glide" }
+live-event-bus = { group = "io.github.jeremyliao", name = "live-event-bus-x", version.ref = "vs-liveeventbus" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

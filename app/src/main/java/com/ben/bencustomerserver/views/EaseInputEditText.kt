@@ -1,67 +1,61 @@
-package com.ben.bencustomerserver.views;
+package com.ben.bencustomerserver.views
 
-import android.content.Context;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.content.Context
+import android.graphics.Rect
+import android.util.AttributeSet
+import android.view.KeyEvent
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
+import androidx.appcompat.widget.AppCompatEditText
 
-public class EaseInputEditText extends androidx.appcompat.widget.AppCompatEditText implements View.OnKeyListener, TextView.OnEditorActionListener {
-    private boolean ctrlPress = false;
-    private OnEditTextChangeListener listener;
+/***
+ * 聊天的文本输入框
+ */
+class EaseInputEditText @JvmOverloads constructor(
+    context: Context?,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : AppCompatEditText(
+    context!!, attrs, defStyleAttr
+), View.OnKeyListener, OnEditorActionListener {
+    private var ctrlPress = false
+    private var listener: OnEditTextChangeListener? = null
 
-    public EaseInputEditText(Context context) {
-        this(context, null);
+    init {
+        setOnKeyListener(this)
+        setOnEditorActionListener(this)
     }
 
-    public EaseInputEditText(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public EaseInputEditText(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setOnKeyListener(this);
-        setOnEditorActionListener(this);
-    }
-
-    @Override
-    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+        super.onFocusChanged(focused, direction, previouslyFocusedRect)
         if (listener != null) {
-            listener.onEditTextHasFocus(focused);
+            listener!!.onEditTextHasFocus(focused)
         }
     }
 
-
-    @Override
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
+    override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_UNKNOWN) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                ctrlPress = true;
-            } else if (event.getAction() == KeyEvent.ACTION_UP) {
-                ctrlPress = false;
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                ctrlPress = true
+            } else if (event.action == KeyEvent.ACTION_UP) {
+                ctrlPress = false
             }
         }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEND ||
-                (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
-                        event.getAction() == KeyEvent.ACTION_DOWN && ctrlPress)) {
-            String s = getText().toString();
-            if(listener != null) {
-                setText("");
-                listener.onClickKeyboardSendBtn(s);
+    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent): Boolean {
+        return if (actionId == EditorInfo.IME_ACTION_SEND || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN && ctrlPress) {
+            val s = text.toString()
+            if (listener != null) {
+                setText("")
+                listener!!.onClickKeyboardSendBtn(s)
             }
-            return true;
-        }
-        else{
-            return false;
+            true
+        } else {
+            false
         }
     }
 
@@ -69,22 +63,20 @@ public class EaseInputEditText extends androidx.appcompat.widget.AppCompatEditTe
      * 设置监听
      * @param listener
      */
-    public void setOnEditTextChangeListener(OnEditTextChangeListener listener) {
-        this.listener = listener;
+    fun setOnEditTextChangeListener(listener: OnEditTextChangeListener?) {
+        this.listener = listener
     }
 
-    public interface OnEditTextChangeListener {
-
+    interface OnEditTextChangeListener {
         /**
          * when send button clicked
          * @param content
          */
-        void onClickKeyboardSendBtn(String content);
+        fun onClickKeyboardSendBtn(content: String?)
 
         /**
          * if edit text has focus
          */
-        void onEditTextHasFocus(boolean hasFocus);
+        fun onEditTextHasFocus(hasFocus: Boolean)
     }
 }
-

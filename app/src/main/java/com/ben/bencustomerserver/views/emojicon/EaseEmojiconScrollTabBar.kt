@@ -1,133 +1,112 @@
-package com.ben.bencustomerserver.views.emojicon;
+package com.ben.bencustomerserver.views.emojicon
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.content.Context
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.HorizontalScrollView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import com.ben.bencustomerserver.DensityUtil.dp2px
+import com.ben.bencustomerserver.R
 
-import androidx.core.view.ViewCompat;
+class EaseEmojiconScrollTabBar @JvmOverloads constructor(
+    context: Context?,
+    attrs: AttributeSet? = null
+) : RelativeLayout(context, attrs) {
+    private var context: Context? = null
+    private var scrollView: HorizontalScrollView? = null
+    private var tabContainer: LinearLayout? = null
+    private val tabList: MutableList<ImageView> = ArrayList()
+    private var itemClickListener: EaseScrollTabBarItemClickListener? = null
 
-import com.hyphenate.easeui.R;
-import com.hyphenate.util.DensityUtil;
+    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : this(context, attrs)
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class EaseEmojiconScrollTabBar extends RelativeLayout{
-
-    private Context context;
-    private HorizontalScrollView scrollView;
-    private LinearLayout tabContainer;
-    
-    private List<ImageView> tabList = new ArrayList<ImageView>();
-    private EaseScrollTabBarItemClickListener itemClickListener;
-
-    public EaseEmojiconScrollTabBar(Context context) {
-        this(context, null);
+    init {
+        init(context, attrs)
     }
 
-    public EaseEmojiconScrollTabBar(Context context, AttributeSet attrs, int defStyle) {
-        this(context, attrs);
+    private fun init(context: Context?, attrs: AttributeSet?) {
+        this.context = context
+        LayoutInflater.from(context).inflate(R.layout.ease_widget_emojicon_tab_bar, this)
+        scrollView = findViewById(R.id.scroll_view)
+        tabContainer = findViewById(R.id.tab_container)
     }
 
-    public EaseEmojiconScrollTabBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
-    }
-    
-    private void init(Context context, AttributeSet attrs){
-        this.context = context;
-        LayoutInflater.from(context).inflate(R.layout.ease_widget_emojicon_tab_bar, this);
-        
-        scrollView = (HorizontalScrollView) findViewById(R.id.scroll_view);
-        tabContainer = (LinearLayout) findViewById(R.id.tab_container);
-    }
-    
     /**
      * add tab
+     *
      * @param icon
      */
-    public void addTab(int icon){
-        View tabView = View.inflate(context, R.layout.ease_scroll_tab_item, null);
-        ImageView imageView = (ImageView) tabView.findViewById(R.id.iv_icon);
-        imageView.setImageResource(icon);
-        int tabWidth = 60;
-        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(DensityUtil.dip2px(context, tabWidth), LayoutParams.MATCH_PARENT);
-        imageView.setLayoutParams(imgParams);
-        tabContainer.addView(tabView);
-        tabList.add(imageView);
-        final int position = tabList.size() -1;
-        imageView.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                if(itemClickListener != null){
-                    itemClickListener.onItemClick(position);
-                }
+    fun addTab(icon: Int) {
+        val tabView = inflate(context, R.layout.ease_scroll_tab_item, null)
+        val imageView = tabView.findViewById<ImageView>(R.id.iv_icon)
+        imageView.setImageResource(icon)
+        val tabWidth = 60
+        val imgParams = LinearLayout.LayoutParams(
+            dp2px(context!!, tabWidth.toFloat()).toInt(),
+            LayoutParams.MATCH_PARENT
+        )
+        imageView.layoutParams = imgParams
+        tabContainer!!.addView(tabView)
+        tabList.add(imageView)
+        val position = tabList.size - 1
+        imageView.setOnClickListener { v: View? ->
+            if (itemClickListener != null) {
+                itemClickListener!!.onItemClick(position)
             }
-        });
+        }
     }
-    
+
     /**
      * remove tab
+     *
      * @param position
      */
-    public void removeTab(int position){
-        tabContainer.removeViewAt(position);
-        tabList.remove(position);
+    fun removeTab(position: Int) {
+        tabContainer!!.removeViewAt(position)
+        tabList.removeAt(position)
     }
-    
-    public void selectedTo(int position){
-        scrollTo(position);
-        for (int i = 0; i < tabList.size(); i++) {
+
+    fun selectedTo(position: Int) {
+        scrollTo(position)
+        for (i in tabList.indices) {
             if (position == i) {
-                tabList.get(i).setBackgroundColor(getResources().getColor(R.color.emojicon_tab_selected));
+                tabList[i].setBackgroundColor(resources.getColor(R.color.emojicon_tab_selected))
             } else {
-                tabList.get(i).setBackgroundColor(getResources().getColor(R.color.emojicon_tab_nomal));
+                tabList[i].setBackgroundColor(resources.getColor(R.color.emojicon_tab_nomal))
             }
         }
     }
-    
-    private void scrollTo(final int position){
-        int childCount = tabContainer.getChildCount();
-        if(position < childCount){
-            scrollView.post(new Runnable() {
-                @Override
-                public void run() {
-                    int mScrollX = tabContainer.getScrollX();
-                    int childX = (int) ViewCompat.getX(tabContainer.getChildAt(position));
 
-                    if(childX < mScrollX){
-                        scrollView.scrollTo(childX,0);
-                        return;
-                    }
-
-                    int childWidth = (int)tabContainer.getChildAt(position).getWidth();
-                    int hsvWidth = scrollView.getWidth();
-                    int childRight = childX + childWidth;
-                    int scrollRight = mScrollX + hsvWidth;
-
-                    if(childRight > scrollRight){
-                        scrollView.scrollTo(childRight - scrollRight,0);
-                        return;
-                    }
+    private fun scrollTo(position: Int) {
+        val childCount = tabContainer!!.childCount
+        if (position < childCount) {
+            scrollView!!.post {
+                val mScrollX = tabContainer!!.scrollX
+                // symbol modified this
+                val childX = tabContainer!!.getChildAt(position).x.toInt()
+                if (childX < mScrollX) {
+                    scrollView!!.scrollTo(childX, 0)
+                    return@post
                 }
-            });
+                val childWidth = tabContainer!!.getChildAt(position).width
+                val hsvWidth = scrollView!!.width
+                val childRight = childX + childWidth
+                val scrollRight = mScrollX + hsvWidth
+                if (childRight > scrollRight) {
+                    scrollView!!.scrollTo(childRight - scrollRight, 0)
+                }
+            }
         }
     }
-    
-    
-    public void setTabBarItemClickListener(EaseScrollTabBarItemClickListener itemClickListener){
-        this.itemClickListener = itemClickListener;
-    }
-    
-    
-    public interface EaseScrollTabBarItemClickListener{
-        void onItemClick(int position);
+
+    fun setTabBarItemClickListener(itemClickListener: EaseScrollTabBarItemClickListener?) {
+        this.itemClickListener = itemClickListener
     }
 
+    interface EaseScrollTabBarItemClickListener {
+        fun onItemClick(position: Int)
+    }
 }

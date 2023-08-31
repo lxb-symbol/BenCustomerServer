@@ -1,27 +1,27 @@
-package com.ben.bencustomerserver.views;
+package com.ben.bencustomerserver.listener
 
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.MotionEvent
+import android.view.View
 
-public interface ChatInputMenuListener {
+interface ChatInputMenuListener {
     /**
      * when typing on the edit-text layout.
      */
-    void onTyping(CharSequence s, int start, int before, int count);
+    fun onTyping(s: CharSequence?, start: Int, before: Int, count: Int)
 
     /**
      * when send message button pressed
      *
      * @param content
-     *            message content
+     * message content
      */
-    void onSendMessage(String content);
+    fun onSendMessage(content: String?)
 
     /**
      * when big icon pressed
      * @param emojicon
      */
-    void onExpressionClicked(Object emojicon);
+    fun onExpressionClicked(emojicon: Any?)
 
     /**
      * when speak button is touched
@@ -29,12 +29,12 @@ public interface ChatInputMenuListener {
      * @param event
      * @return
      */
-    boolean onPressToSpeakBtnTouch(View v, MotionEvent event);
+    fun onPressToSpeakBtnTouch(v: View?, event: MotionEvent?): Boolean
 
     /**
      * when click the item of extend menu
      * @param itemId
      * @param view
      */
-    void onChatExtendMenuItemClick(int itemId, View view);
+    fun onChatExtendMenuItemClick(itemId: Int, view: View?)
 }

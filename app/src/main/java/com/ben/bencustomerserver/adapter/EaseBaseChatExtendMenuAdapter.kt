@@ -1,50 +1,39 @@
-package com.ben.bencustomerserver.adapter;
+package com.ben.bencustomerserver.adapter
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.List;
-
-public abstract class EaseBaseChatExtendMenuAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerView.Adapter<VH> {
-    public List<T> mData;
+abstract class EaseBaseChatExtendMenuAdapter<VH : RecyclerView.ViewHolder?, T> :
+    RecyclerView.Adapter<VH>() {
+    @JvmField
+    var mData: List<T>? = null
 
     /**
      * 设置数据
      * @param data
      */
-    public void setData(List<T> data) {
-        mData = data;
-        notifyDataSetChanged();
+    fun setData(data: List<T>?) {
+        mData = data
+        notifyDataSetChanged()
     }
 
-    @Override
-    public int getItemCount() {
-        return mData == null ? 0 : mData.size();
+    override fun getItemCount(): Int {
+        return if (mData == null) 0 else mData!!.size
     }
 
-    @NonNull
-    @Override
-    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(getItemLayoutId(), parent, false);
-        return easeCreateViewHolder(view);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH & Any {
+        val view = LayoutInflater.from(parent.context).inflate(itemLayoutId, parent, false)
+        return easeCreateViewHolder(view)!!
     }
 
-    /**
-     * 获取条目布局
-     * @return
-     */
-    protected abstract int getItemLayoutId();
+    protected abstract val itemLayoutId: Int
 
     /**
      * 获取ViewHolder
      * @param view
      * @return
      */
-    protected abstract VH easeCreateViewHolder(View view);
-
+    protected abstract fun easeCreateViewHolder(view: View?): VH
 }
-

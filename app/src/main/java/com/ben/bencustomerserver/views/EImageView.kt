@@ -1,35 +1,28 @@
-package com.ben.bencustomerserver.views;
+package com.ben.bencustomerserver.views
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.util.AttributeSet;
-import android.widget.ImageView;
-
-import androidx.annotation.Nullable;
+import android.content.Context
+import android.graphics.Canvas
+import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatImageView
 
 /**
  * 为了解决出现“trying to use a recycled bitmap android.graphics.Bitmap@2d46e6b”的异常
  */
-public class EImageView extends androidx.appcompat.widget.AppCompatImageView {
-    public EImageView(Context context) {
-        super(context);
-    }
+class EImageView : AppCompatImageView {
+    constructor(context: Context?) : super(context!!)
+    constructor(context: Context?, attrs: AttributeSet?) : super(
+        context!!, attrs
+    )
 
-    public EImageView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context!!, attrs, defStyleAttr
+    )
 
-    public EImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
+    override fun onDraw(canvas: Canvas) {
         try {
-            super.onDraw(canvas);
-        } catch (Exception e) {
-            e.printStackTrace();
+            super.onDraw(canvas)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
-

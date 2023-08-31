@@ -1,292 +1,281 @@
-package com.ben.bencustomerserver.views;
+package com.ben.bencustomerserver.views
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.content.Context
+import android.util.AttributeSet
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.listener.ChatInputMenuListener
+import com.ben.bencustomerserver.listener.EaseChatExtendMenuItemClickListener
+import com.ben.bencustomerserver.listener.EaseChatPrimaryMenuListener
+import com.ben.bencustomerserver.listener.EaseEmojiconMenuListener
+import com.ben.bencustomerserver.listener.IChatEmojiconMenu
+import com.ben.bencustomerserver.listener.IChatExtendMenu
+import com.ben.bencustomerserver.listener.IChatInputMenu
+import com.ben.bencustomerserver.listener.IChatPrimaryMenu
+import com.ben.bencustomerserver.utils.EaseSmileUtils.getSmiledText
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
+/**
+ * 包含 聊天输入布局，和表情
+ */
+class EaseChatInputMenu @JvmOverloads constructor(
+    context: Context?,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr),
+    IChatInputMenu, EaseChatPrimaryMenuListener,
+    EaseEmojiconMenuListener, EaseChatExtendMenuItemClickListener {
+    private var chatMenuContainer: LinearLayout? = null
+    private var primaryMenuContainer: FrameLayout? = null
+    private var extendMenuContainer: FrameLayout? = null
+    private var primaryMenu: IChatPrimaryMenu? = null
+    private var emojiconMenu: IChatEmojiconMenu? = null
+    private var extendMenu: IChatExtendMenu? = null
+    private var menuListener: ChatInputMenuListener? = null
 
-import com.ben.bencustomerserver.R;
-
-
-public class EaseChatInputMenu extends LinearLayout implements IChatInputMenu, EaseChatPrimaryMenuListener, EaseEmojiconMenuListener, EaseChatExtendMenuItemClickListener {
-    private static final String TAG = EaseChatInputMenu.class.getSimpleName();
-    private LinearLayout chatMenuContainer;
-    private FrameLayout primaryMenuContainer;
-    private FrameLayout extendMenuContainer;
-
-    private IChatPrimaryMenu primaryMenu;
-    private IChatEmojiconMenu emojiconMenu;
-    private IChatExtendMenu extendMenu;
-    private ChatInputMenuListener menuListener;
-
-    public EaseChatInputMenu(Context context) {
-        this(context, null);
+    init {
+        LayoutInflater.from(context).inflate(R.layout.ease_widget_chat_input_menu_container, this)
     }
 
-    public EaseChatInputMenu(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        chatMenuContainer = findViewById(R.id.chat_menu_container)
+        primaryMenuContainer = findViewById(R.id.primary_menu_container)
+        extendMenuContainer = findViewById(R.id.extend_menu_container)
+        init()
     }
 
-    public EaseChatInputMenu(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        LayoutInflater.from(context).inflate(R.layout.ease_widget_chat_input_menu_container, this);
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        chatMenuContainer = findViewById(R.id.chat_menu_container);
-        primaryMenuContainer = findViewById(R.id.primary_menu_container);
-        extendMenuContainer = findViewById(R.id.extend_menu_container);
-
-        init();
-    }
-
-    private void init() {
-        showPrimaryMenu();
-        if(extendMenu == null) {
-            extendMenu = new EaseChatExtendMenu(getContext());
-            ((EaseChatExtendMenu)extendMenu).init();
+    private fun init() {
+        showPrimaryMenu()
+        if (extendMenu == null) {
+            extendMenu = EaseChatExtendMenu(context)
+            (extendMenu as EaseChatExtendMenu).init()
         }
-        if(emojiconMenu == null) {
-            emojiconMenu = new EaseEmojiconMenu(getContext());
-            ((EaseEmojiconMenu)emojiconMenu).init();
-        }
-    }
-
-    @Override
-    public void setCustomPrimaryMenu(IChatPrimaryMenu menu) {
-        this.primaryMenu = menu;
-        showPrimaryMenu();
-    }
-
-    @Override
-    public void setCustomEmojiconMenu(IChatEmojiconMenu menu) {
-        this.emojiconMenu = menu;
-    }
-
-    @Override
-    public void setCustomExtendMenu(IChatExtendMenu menu) {
-        this.extendMenu = menu;
-    }
-
-    @Override
-    public void hideExtendContainer() {
-        primaryMenu.showNormalStatus();
-        extendMenuContainer.setVisibility(GONE);
-    }
-
-    @Override
-    public void showEmojiconMenu(boolean show) {
-        if(show) {
-            showEmojiconMenu();
-        }else {
-           extendMenuContainer.setVisibility(GONE);
+        if (emojiconMenu == null) {
+            emojiconMenu = EaseEmojiconMenu(context)
+            (emojiconMenu as EaseEmojiconMenu).init()
         }
     }
 
-    @Override
-    public void showExtendMenu(boolean show) {
-        if(show) {
-            showExtendMenu();
-        }else {
-            extendMenuContainer.setVisibility(GONE);
-            if(primaryMenu != null) {
-                primaryMenu.hideExtendStatus();
+    override fun setCustomPrimaryMenu(menu: IChatPrimaryMenu) {
+        primaryMenu = menu
+        showPrimaryMenu()
+    }
+
+    override fun setCustomEmojiconMenu(menu: IChatEmojiconMenu) {
+        emojiconMenu = menu
+    }
+
+    override fun setCustomExtendMenu(menu: IChatExtendMenu) {
+        extendMenu = menu
+    }
+
+    override fun hideExtendContainer() {
+        primaryMenu!!.showNormalStatus()
+        extendMenuContainer!!.visibility = GONE
+    }
+
+    override fun showEmojiconMenu(show: Boolean) {
+        if (show) {
+            showEmojiconMenu()
+        } else {
+            extendMenuContainer!!.visibility = GONE
+        }
+    }
+
+    override fun showExtendMenu(show: Boolean) {
+        if (show) {
+            showExtendMenu()
+        } else {
+            extendMenuContainer!!.visibility = GONE
+            if (primaryMenu != null) {
+                primaryMenu!!.hideExtendStatus()
             }
         }
     }
 
-    @Override
-    public void hideSoftKeyboard() {
-        if(primaryMenu != null) {
-            primaryMenu.hideSoftKeyboard();
+    override fun hideSoftKeyboard() {
+        if (primaryMenu != null) {
+            primaryMenu!!.hideSoftKeyboard()
         }
     }
 
-    @Override
-    public void setChatInputMenuListener(ChatInputMenuListener listener) {
-        this.menuListener = listener;
+    override fun setChatInputMenuListener(listener: ChatInputMenuListener) {
+        menuListener = listener
     }
 
-    @Override
-    public IChatPrimaryMenu getPrimaryMenu() {
-        return primaryMenu;
+    override fun getPrimaryMenu(): IChatPrimaryMenu {
+        return primaryMenu!!
     }
 
-    @Override
-    public IChatEmojiconMenu getEmojiconMenu() {
-        return emojiconMenu;
+    override fun getEmojiconMenu(): IChatEmojiconMenu {
+        return emojiconMenu!!
     }
 
-    @Override
-    public IChatExtendMenu getChatExtendMenu() {
-        return extendMenu;
+    override fun getChatExtendMenu(): IChatExtendMenu {
+        return extendMenu!!
     }
 
-    @Override
-    public boolean onBackPressed() {
-        if(extendMenuContainer.getVisibility() == VISIBLE) {
-            extendMenuContainer.setVisibility(GONE);
-            return false;
+    override fun onBackPressed(): Boolean {
+        if (extendMenuContainer!!.visibility == VISIBLE) {
+            extendMenuContainer!!.visibility = GONE
+            return false
         }
-        return true;
+        return true
     }
 
-    private void showPrimaryMenu() {
-        if(primaryMenu == null) {
-            primaryMenu = new EaseChatPrimaryMenu(getContext());
+    private fun showPrimaryMenu() {
+        if (primaryMenu == null) {
+            primaryMenu = EaseChatPrimaryMenu(context)
         }
-        if(primaryMenu instanceof View) {
-            primaryMenuContainer.removeAllViews();
-            primaryMenuContainer.addView((View) primaryMenu);
-            primaryMenu.setEaseChatPrimaryMenuListener(this);
+        if (primaryMenu is View) {
+            primaryMenuContainer!!.removeAllViews()
+            primaryMenuContainer!!.addView(primaryMenu as View?)
+            primaryMenu?.setEaseChatPrimaryMenuListener(this)
         }
-        if(primaryMenu instanceof Fragment && getContext() instanceof AppCompatActivity) {
-            FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.primary_menu_container, (Fragment) primaryMenu).commitAllowingStateLoss();
-            primaryMenu.setEaseChatPrimaryMenuListener(this);
+        if (primaryMenu is Fragment && context is AppCompatActivity) {
+            val manager = (context as AppCompatActivity).supportFragmentManager
+            manager.beginTransaction()
+                .replace(R.id.primary_menu_container, (primaryMenu as Fragment?)!!)
+                .commitAllowingStateLoss()
+            primaryMenu?.setEaseChatPrimaryMenuListener(this)
         }
     }
 
-    private void showExtendMenu() {
-        if(extendMenu == null) {
-            extendMenu = new EaseChatExtendMenu(getContext());
-            ((EaseChatExtendMenu)extendMenu).init();
+    private fun showExtendMenu() {
+        if (extendMenu == null) {
+            extendMenu = EaseChatExtendMenu(context)
+            (extendMenu as EaseChatExtendMenu).init()
         }
-        if(extendMenu instanceof View) {
-            extendMenuContainer.setVisibility(VISIBLE);
-            extendMenuContainer.removeAllViews();
-            extendMenuContainer.addView((View) extendMenu);
-            extendMenu.setEaseChatExtendMenuItemClickListener(this);
+        if (extendMenu is View) {
+            extendMenuContainer!!.visibility = VISIBLE
+            extendMenuContainer!!.removeAllViews()
+            extendMenuContainer!!.addView(extendMenu as View?)
+            extendMenu?.setEaseChatExtendMenuItemClickListener(this)
         }
-        if(extendMenu instanceof Fragment && getContext() instanceof AppCompatActivity) {
-            extendMenuContainer.setVisibility(VISIBLE);
-            FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.extend_menu_container, (Fragment) extendMenu).commitAllowingStateLoss();
-            extendMenu.setEaseChatExtendMenuItemClickListener(this);
-        }
-    }
-
-    private void showEmojiconMenu() {
-        if(emojiconMenu == null) {
-            emojiconMenu = new EaseEmojiconMenu(getContext());
-            ((EaseEmojiconMenu)emojiconMenu).init();
-        }
-        if(emojiconMenu instanceof View) {
-            extendMenuContainer.setVisibility(VISIBLE);
-            extendMenuContainer.removeAllViews();
-            extendMenuContainer.addView((View) emojiconMenu);
-            emojiconMenu.setEmojiconMenuListener(this);
-        }
-        if(emojiconMenu instanceof Fragment && getContext() instanceof AppCompatActivity) {
-            extendMenuContainer.setVisibility(VISIBLE);
-            FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.extend_menu_container, (Fragment) emojiconMenu).commitAllowingStateLoss();
-            emojiconMenu.setEmojiconMenuListener(this);
+        if (extendMenu is Fragment && context is AppCompatActivity) {
+            extendMenuContainer!!.visibility = VISIBLE
+            val manager = (context as AppCompatActivity).supportFragmentManager
+            manager.beginTransaction()
+                .replace(R.id.extend_menu_container, (extendMenu as Fragment?)!!)
+                .commitAllowingStateLoss()
+            extendMenu?.setEaseChatExtendMenuItemClickListener(this)
         }
     }
 
-    @Override
-    public void onSendBtnClicked(String content) {
-        EMLog.i(TAG, "onSendBtnClicked content:"+content);
-        if(menuListener != null) {
-            menuListener.onSendMessage(content);
+    private fun showEmojiconMenu() {
+        if (emojiconMenu == null) {
+            emojiconMenu = EaseEmojiconMenu(context)
+            (emojiconMenu as EaseEmojiconMenu).init()
+        }
+        if (emojiconMenu is View) {
+            extendMenuContainer!!.visibility = VISIBLE
+            extendMenuContainer!!.removeAllViews()
+            extendMenuContainer!!.addView(emojiconMenu as View?)
+            emojiconMenu?.setEmojiconMenuListener(this)
+        }
+        if (emojiconMenu is Fragment && context is AppCompatActivity) {
+            extendMenuContainer!!.visibility = VISIBLE
+            val manager = (context as AppCompatActivity).supportFragmentManager
+            manager.beginTransaction()
+                .replace(R.id.extend_menu_container, (emojiconMenu as Fragment?)!!)
+                .commitAllowingStateLoss()
+            emojiconMenu?.setEmojiconMenuListener(this)
         }
     }
 
-    @Override
-    public void onTyping(CharSequence s, int start, int before, int count) {
-        EMLog.i(TAG, "onTyping: s = "+s);
-        if(menuListener != null) {
-            menuListener.onTyping(s, start, before, count);
+    override fun onSendBtnClicked(content: String) {
+        Log.i(TAG, "onSendBtnClicked content:$content")
+        if (menuListener != null) {
+            menuListener!!.onSendMessage(content)
         }
     }
 
-    @Override
-    public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
-        if(menuListener != null) {
-            return menuListener.onPressToSpeakBtnTouch(v, event);
+    override fun onTyping(s: CharSequence, start: Int, before: Int, count: Int) {
+        Log.i(TAG, "onTyping: s = $s")
+        if (menuListener != null) {
+            menuListener!!.onTyping(s, start, before, count)
         }
-        return false;
     }
 
-    @Override
-    public void onToggleVoiceBtnClicked() {
-        Log.e("TAG", "onToggleVoiceBtnClicked");
-        showExtendMenu(false);
+    override fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean {
+        return if (menuListener != null) {
+            menuListener!!.onPressToSpeakBtnTouch(v, event)
+        } else false
     }
 
-    @Override
-    public void onToggleTextBtnClicked() {
-        EMLog.i(TAG, "onToggleTextBtnClicked");
-        showExtendMenu(false);
+    override fun onToggleVoiceBtnClicked() {
+        Log.e("TAG", "onToggleVoiceBtnClicked")
+        showExtendMenu(false)
     }
 
-    @Override
-    public void onToggleExtendClicked(boolean extend) {
-        EMLog.i(TAG, "onToggleExtendClicked extend:"+extend);
-        showExtendMenu(extend);
+    override fun onToggleTextBtnClicked() {
+        Log.i(TAG, "onToggleTextBtnClicked")
+        showExtendMenu(false)
     }
 
-    @Override
-    public void onToggleEmojiconClicked(boolean extend) {
-        EMLog.i(TAG, "onToggleEmojiconClicked extend:"+extend);
-        showEmojiconMenu(extend);
+    override fun onToggleExtendClicked(extend: Boolean) {
+        Log.i(TAG, "onToggleExtendClicked extend:$extend")
+        showExtendMenu(extend)
     }
 
-    @Override
-    public void onEditTextClicked() {
-        EMLog.i(TAG, "onEditTextClicked");
+    override fun onToggleEmojiconClicked(extend: Boolean) {
+        Log.i(TAG, "onToggleEmojiconClicked extend:$extend")
+        showEmojiconMenu(extend)
     }
 
-    @Override
-    public void onEditTextHasFocus(boolean hasFocus) {
-        EMLog.i(TAG, "onEditTextHasFocus: hasFocus = "+hasFocus);
+    override fun onEditTextClicked() {
+        Log.i(TAG, "onEditTextClicked")
     }
 
-    @Override
-    public void onExpressionClicked(Object emojicon) {
-        EMLog.i(TAG, "onExpressionClicked");
-        if(emojicon instanceof EaseEmojicon) {
-            EaseEmojicon easeEmojicon = (EaseEmojicon) emojicon;
-            if(easeEmojicon.getType() != EaseEmojicon.Type.BIG_EXPRESSION){
-                if(easeEmojicon.getEmojiText() != null){
-                    primaryMenu.onEmojiconInputEvent(EaseSmileUtils.getSmiledText(getContext(),easeEmojicon.getEmojiText()));
+    override fun onEditTextHasFocus(hasFocus: Boolean) {
+        Log.i(TAG, "onEditTextHasFocus: hasFocus = $hasFocus")
+    }
+
+    override fun onExpressionClicked(emojicon: Any) {
+        Log.i(TAG, "onExpressionClicked")
+        if (emojicon is EaseEmojicon) {
+            val easeEmojicon = emojicon
+            if (easeEmojicon.type != EaseEmojicon.Type.BIG_EXPRESSION) {
+                if (easeEmojicon.emojiText != null) {
+                    primaryMenu!!.onEmojiconInputEvent(
+                        getSmiledText(
+                            context,
+                            easeEmojicon.emojiText
+                        )
+                    )
                 }
-            }else{
-                if(menuListener != null){
-                    menuListener.onExpressionClicked(emojicon);
+            } else {
+                if (menuListener != null) {
+                    menuListener!!.onExpressionClicked(emojicon)
                 }
             }
-        }else {
-            if(menuListener != null){
-                menuListener.onExpressionClicked(emojicon);
+        } else {
+            if (menuListener != null) {
+                menuListener!!.onExpressionClicked(emojicon)
             }
         }
     }
 
-    @Override
-    public void onDeleteImageClicked() {
-        EMLog.i(TAG, "onDeleteImageClicked");
-        primaryMenu.onEmojiconDeleteEvent();
+    override fun onDeleteImageClicked() {
+        Log.i(TAG, "onDeleteImageClicked")
+        primaryMenu!!.onEmojiconDeleteEvent()
     }
 
-    @Override
-    public void onChatExtendMenuItemClick(int itemId, View view) {
-        EMLog.i(TAG, "onChatExtendMenuItemClick itemId = "+itemId);
-        if(menuListener != null) {
-            menuListener.onChatExtendMenuItemClick(itemId, view);
+    override fun onChatExtendMenuItemClick(itemId: Int, view: View?) {
+        Log.i(TAG, "onChatExtendMenuItemClick itemId = $itemId")
+        if (menuListener != null) {
+            menuListener!!.onChatExtendMenuItemClick(itemId, view)
         }
+    }
+
+    companion object {
+        private val TAG = EaseChatInputMenu::class.java.simpleName
     }
 }
-

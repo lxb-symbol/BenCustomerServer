@@ -1,54 +1,45 @@
-package com.ben.bencustomerserver.adapter;
+package com.ben.bencustomerserver.adapter
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import androidx.recyclerview.widget.RecyclerView
+import com.ben.bencustomerserver.R
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.ben.bencustomerserver.R;
-
-
-public class EaseChatExtendMenuIndicatorAdapter extends RecyclerView.Adapter<EaseChatExtendMenuIndicatorAdapter.ViewHolder> {
-    private int page_count;
-    private int selectedPosition;
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ease_chat_extend_indicator_item, parent, false);
-        return new ViewHolder(view);
+class EaseChatExtendMenuIndicatorAdapter :
+    RecyclerView.Adapter<EaseChatExtendMenuIndicatorAdapter.ViewHolder>() {
+    private var pageCount = 0
+    private var selectedPosition = 0
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.ease_chat_extend_indicator_item, parent, false)
+        return ViewHolder(view)
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.indicator.setChecked(selectedPosition == position);
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.indicator.isChecked = selectedPosition == position
     }
 
-    @Override
-    public int getItemCount() {
-        return (page_count == 1) ? 0 : page_count;
+    override fun getItemCount(): Int {
+        return if (pageCount == 1) 0 else pageCount
     }
 
-    public void setPageCount(int pageCount) {
-        this.page_count = pageCount;
-        notifyDataSetChanged();
+    fun setPageCount(pageCount: Int) {
+        this.pageCount = pageCount
+        notifyDataSetChanged()
     }
 
-    public void setSelectedPosition(int position) {
-        this.selectedPosition = position;
-        notifyDataSetChanged();
+    fun setSelectedPosition(position: Int) {
+        selectedPosition = position
+        notifyDataSetChanged()
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private CheckBox indicator;
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+         val indicator: CheckBox
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            indicator = (CheckBox) itemView;
+        init {
+            indicator = itemView as CheckBox
         }
     }
 }
-
