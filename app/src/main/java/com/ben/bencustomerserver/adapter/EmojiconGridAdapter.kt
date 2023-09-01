@@ -30,12 +30,12 @@ class EmojiconGridAdapter(
             }
         }
         val imageView = convertView!!.findViewById<View>(R.id.iv_expression) as ImageView
-        val textView = convertView.findViewById<View>(R.id.tv_name) as TextView
+        val textView = convertView!!.findViewById<View>(R.id.tv_name) as TextView
         val emojicon = getItem(position)
-        if (textView != null && emojicon!!.name != null) {
+        if (emojicon!!.name != null) {
             textView.text = emojicon.name
         }
-        if (EaseSmileUtils.DELETE_KEY == emojicon!!.emojiText) {
+        if (EaseSmileUtils.DELETE_KEY == emojicon.emojiText) {
             imageView.setImageResource(R.drawable.ease_delete_expression)
         } else {
             if (emojicon.icon != 0) {

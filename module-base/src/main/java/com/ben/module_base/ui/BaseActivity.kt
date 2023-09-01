@@ -2,6 +2,7 @@ package com.ben.module_base.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -16,7 +17,8 @@ abstract class BaseActivity<T : ViewModel, M : ViewDataBinding> : AppCompatActiv
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportActionBar?.hide()
         mViewBinding = DataBindingUtil.setContentView(this, getLayoutResId())
         mViewModel = initViewModel()
         initView()

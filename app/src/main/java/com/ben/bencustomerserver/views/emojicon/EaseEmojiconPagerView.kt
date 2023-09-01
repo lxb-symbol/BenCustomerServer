@@ -109,11 +109,6 @@ class EaseEmojiconPagerView @JvmOverloads constructor(
             } else {
                 emojiconList?.subList(i * itemSize, totalSize)?.let { list.addAll(it) }
             }
-            //            if(emojiType != Type.BIG_EXPRESSION){
-//                EaseEmojicon deleteIcon = new EaseEmojicon();
-//                deleteIcon.setEmojiText(EaseSmileUtils.DELETE_KEY);
-//                list.add(deleteIcon);
-//            }
             val gridAdapter = EmojiconGridAdapter(context, 1, list, emojiType!!)
             gv.adapter = gridAdapter
             gv.onItemClickListener =

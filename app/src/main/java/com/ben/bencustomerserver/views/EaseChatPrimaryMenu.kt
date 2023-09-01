@@ -21,6 +21,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.listener.EaseChatPrimaryMenuListener
 import com.ben.bencustomerserver.listener.IChatPrimaryMenu
@@ -41,7 +42,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
     private var buttonSetModeVoice: ImageView? = null
     private var buttonSetModeKeyboard: ImageView? = null
     private var buttonPressToSpeak: FrameLayout? = null
-    private var edittext_layout: FrameLayout? = null
+    private var edittextLayout: FrameLayout? = null
     override var editText: EaseInputEditText? = null
 
 
@@ -49,7 +50,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
     private var faceNormal: ImageView? = null
     private var faceChecked: ImageView? = null
     private var buttonMore: CheckBox? = null
-    private var buttonSend: Button? = null
+    private var buttonSend: TextView? = null
     private var listener: EaseChatPrimaryMenuListener? = null
     private var menuType = EaseInputMenuStyle.All//菜单展示形式
     private var inputManager: InputMethodManager
@@ -67,7 +68,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
         buttonSetModeVoice = findViewById(R.id.btn_set_mode_voice)
         buttonSetModeKeyboard = findViewById(R.id.btn_set_mode_keyboard)
         buttonPressToSpeak = findViewById(R.id.btn_press_to_speak)
-        edittext_layout = findViewById(R.id.edittext_layout)
+        edittextLayout = findViewById(R.id.edittext_layout)
         editText = findViewById(R.id.et_sendmessage)
         faceLayout = findViewById(R.id.rl_face)
         faceNormal = findViewById(R.id.iv_face_normal)
@@ -119,7 +120,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
         hideSoftKeyboard()
         buttonSetModeVoice!!.visibility = VISIBLE
         buttonSetModeKeyboard!!.visibility = GONE
-        edittext_layout!!.visibility = VISIBLE
+        edittextLayout!!.visibility = VISIBLE
         buttonPressToSpeak!!.visibility = GONE
         hideExtendStatus()
         checkSendButton()
@@ -129,7 +130,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
     override fun showTextStatus() {
         buttonSetModeVoice!!.visibility = VISIBLE
         buttonSetModeKeyboard!!.visibility = GONE
-        edittext_layout!!.visibility = VISIBLE
+        edittextLayout!!.visibility = VISIBLE
         buttonPressToSpeak!!.visibility = GONE
         hideExtendStatus()
         showSoftKeyboard(editText)
@@ -144,7 +145,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
         hideSoftKeyboard()
         buttonSetModeVoice!!.visibility = GONE
         buttonSetModeKeyboard!!.visibility = VISIBLE
-        edittext_layout!!.visibility = GONE
+        edittextLayout!!.visibility = GONE
         buttonPressToSpeak!!.visibility = VISIBLE
         hideExtendStatus()
         checkMenuType()
@@ -156,7 +157,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
     override fun showEmojiconStatus() {
         buttonSetModeVoice!!.visibility = VISIBLE
         buttonSetModeKeyboard!!.visibility = GONE
-        edittext_layout!!.visibility = VISIBLE
+        edittextLayout!!.visibility = VISIBLE
         buttonPressToSpeak!!.visibility = GONE
         buttonMore!!.isChecked = false
         if (faceNormal!!.visibility == VISIBLE) {
@@ -177,7 +178,7 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
             hideSoftKeyboard()
             buttonSetModeVoice!!.visibility = VISIBLE
             buttonSetModeKeyboard!!.visibility = GONE
-            edittext_layout!!.visibility = VISIBLE
+            edittextLayout!!.visibility = VISIBLE
             buttonPressToSpeak!!.visibility = GONE
             showNormalFaceImage()
         } else {
@@ -262,23 +263,30 @@ class EaseChatPrimaryMenu @JvmOverloads constructor(
     }
 
     private fun checkMenuType() {
-        if (menuType == EaseInputMenuStyle.DISABLE_VOICE) {
-            buttonSetModeVoice!!.visibility = GONE
-            buttonSetModeKeyboard!!.visibility = GONE
-            buttonPressToSpeak!!.visibility = GONE
-        } else if (menuType == EaseInputMenuStyle.DISABLE_EMOJICON) {
-            faceLayout!!.visibility = GONE
-        } else if (menuType == EaseInputMenuStyle.DISABLE_VOICE_EMOJICON) {
-            buttonSetModeVoice!!.visibility = GONE
-            buttonSetModeKeyboard!!.visibility = GONE
-            buttonPressToSpeak!!.visibility = GONE
-            faceLayout!!.visibility = GONE
-        } else if (menuType == EaseInputMenuStyle.ONLY_TEXT) {
-            buttonSetModeVoice!!.visibility = GONE
-            buttonSetModeKeyboard!!.visibility = GONE
-            buttonPressToSpeak!!.visibility = GONE
-            faceLayout!!.visibility = GONE
-            buttonMore!!.visibility = GONE
+        when (menuType) {
+            EaseInputMenuStyle.DISABLE_VOICE -> {
+                buttonSetModeVoice!!.visibility = GONE
+                buttonSetModeKeyboard!!.visibility = GONE
+                buttonPressToSpeak!!.visibility = GONE
+            }
+            EaseInputMenuStyle.DISABLE_EMOJICON -> {
+                faceLayout!!.visibility = GONE
+            }
+            EaseInputMenuStyle.DISABLE_VOICE_EMOJICON -> {
+                buttonSetModeVoice!!.visibility = GONE
+                buttonSetModeKeyboard!!.visibility = GONE
+                buttonPressToSpeak!!.visibility = GONE
+                faceLayout!!.visibility = GONE
+            }
+            EaseInputMenuStyle.ONLY_TEXT -> {
+                buttonSetModeVoice!!.visibility = GONE
+                buttonSetModeKeyboard!!.visibility = GONE
+                buttonPressToSpeak!!.visibility = GONE
+                faceLayout!!.visibility = GONE
+                buttonMore!!.visibility = GONE
+            }
+
+            else -> {}
         }
     }
 

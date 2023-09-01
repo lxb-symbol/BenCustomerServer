@@ -15,26 +15,24 @@
     <LinearLayout
         android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
+        android:layout_height="@dimen/dp_52"
+        android:gravity="center_vertical"
         android:minHeight="52dp"
         android:orientation="horizontal"
         android:paddingTop="4dp"
         android:paddingBottom="4dp">
 
         <ImageView
-            android:layout_marginStart="@dimen/dp_8"
             android:id="@+id/btn_set_mode_voice"
             style="@style/ease_chat_input_button_size"
-            android:layout_marginBottom="5dp"
+            android:layout_marginStart="@dimen/dp_8"
             android:src="@drawable/ease_chatting_setmode_voice_btn"
             android:visibility="visible" />
 
         <ImageView
             android:id="@+id/btn_set_mode_keyboard"
             style="@style/ease_chat_input_button_size"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="8dp"
             android:src="@drawable/ease_chatting_setmode_keyboard_btn"
             android:visibility="gone" />
 
@@ -43,16 +41,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
-            android:layout_marginTop="6dp"
             android:layout_marginRight="6dp"
-            android:layout_marginBottom="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dp_42"
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/ease_chat_press_speak_btn"
                 android:gravity="center"
@@ -71,7 +67,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
-            android:layout_marginBottom="6dp"
             android:layout_weight="1"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -87,12 +82,10 @@
                 android:hint="发送消息"
                 android:imeOptions="actionSend"
                 android:maxLines="4"
-                android:minHeight="32dp"
+                android:minHeight="42dp"
                 android:paddingLeft="10dp"
-                android:paddingTop="3dp"
                 android:paddingRight="10dp"
-                android:paddingBottom="3dp"
-                android:textColor="@color/white"
+                android:textColor="@color/color_333333"
                 android:textColorHint="@color/circle_gray_929497"
                 android:textSize="14sp" />
 
@@ -100,25 +93,25 @@
 
         <RelativeLayout
             android:id="@+id/rl_face"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="6dp"
-            android:layout_marginRight="6dp">
+            android:layout_marginRight="6dp"
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/iv_face_normal"
-                android:layout_width="@dimen/ease_chat_primary_menu_icon_size"
-                android:layout_height="@dimen/ease_chat_primary_menu_icon_size"
-                android:scaleType="fitCenter"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
                 android:src="@drawable/ease_chatting_biaoqing_btn_normal"
                 android:visibility="visible" />
 
             <ImageView
                 android:id="@+id/iv_face_checked"
-                android:layout_width="@dimen/ease_chat_primary_menu_icon_size"
-                android:layout_height="@dimen/ease_chat_primary_menu_icon_size"
-                android:layout_centerVertical="true"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_centerInParent="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ease_chatting_setmode_keyboard_btn"
                 android:visibility="invisible" />
@@ -127,8 +120,8 @@
 
         <CheckBox
             android:id="@+id/btn_more"
-            android:layout_width="@dimen/ease_chat_primary_menu_more_icon_size"
-            android:layout_height="26dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="@dimen/dp_8"
             android:background="@drawable/ease_type_select_btn"
@@ -140,16 +133,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical">
 
-            <Button
+            <TextView
                 android:id="@+id/btn_send"
-                android:layout_width="@dimen/ease_chat_primary_menu_send_icon_height_size"
-                android:layout_height="@dimen/ease_chat_primary_menu_send_icon_height_size"
-                android:layout_marginEnd="@dimen/dp_16"
-                android:layout_marginRight="@dimen/dp_16"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/icon_send"
+                android:layout_width="@dimen/dp_42"
+                android:layout_height="30dp"
+                android:layout_marginEnd="@dimen/dp_8"
+                android:background="@drawable/shape_rect_white_radius_10"
+                android:gravity="center"
+                android:text="发送"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:visibility="gone" />
 
         </FrameLayout>
