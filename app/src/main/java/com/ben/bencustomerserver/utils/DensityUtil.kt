@@ -1,4 +1,4 @@
-package com.ben.bencustomerserver
+package com.ben.bencustomerserver.utils
 
 import android.content.Context
 import android.util.TypedValue

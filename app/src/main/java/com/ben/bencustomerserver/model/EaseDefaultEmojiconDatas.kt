@@ -108,10 +108,10 @@ object EaseDefaultEmojiconDatas {
 
     val data = createData()
     private fun createData(): Array<EaseEmojicon> {
-        val datas = arrayOf<EaseEmojicon>()
+        val datas = mutableListOf<EaseEmojicon>()
         for (i in icons.indices) {
-            datas[i] = EaseEmojicon(icons[i], emojis[i], EaseEmojicon.Type.NORMAL)
+            datas.add(i,EaseEmojicon(icons[i], emojis[i], EaseEmojicon.Type.NORMAL))
         }
-        return datas
+        return datas.toTypedArray()
     }
 }

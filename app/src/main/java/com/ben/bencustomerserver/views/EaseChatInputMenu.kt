@@ -24,21 +24,39 @@ import com.ben.bencustomerserver.utils.EaseSmileUtils.getSmiledText
 /**
  * 包含 聊天输入布局，和表情
  */
-class EaseChatInputMenu  constructor(
-    context: Context?,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    override var primaryMenu: IChatPrimaryMenu?,
-    override var emojiconMenu: IChatEmojiconMenu?,
-    override var chatExtendMenu: IChatExtendMenu?,
-) : LinearLayout(context, attrs, defStyleAttr),
+class EaseChatInputMenu : LinearLayout,
     IChatInputMenu, EaseChatPrimaryMenuListener,
     EaseEmojiconMenuListener, EaseChatExtendMenuItemClickListener {
+
+    constructor(context: Context?) : this(context!!, null)
+
+    constructor(context: Context?, attributeSet: AttributeSet?) : this(context!!, attributeSet, 0)
+
+    constructor(context: Context?, attributeSet: AttributeSet?, def: Int) : super(
+        context,
+        attributeSet,
+        def
+    )
 
     private var chatMenuContainer: LinearLayout? = null
     private var primaryMenuContainer: FrameLayout? = null
     private var chatExtendMenuContainer: FrameLayout? = null
     private var menuListener: ChatInputMenuListener? = null
+
+    /**
+     * 聊天输入框
+     */
+    private var primaryMenu: IChatPrimaryMenu? = null
+
+    /**
+     * 聊天扩展：发送位置，图片，视频等按钮
+     */
+    private var chatExtendMenu: IChatExtendMenu? = null
+
+    /**
+     * 表情布局
+     */
+    private var emojiconMenu: IChatEmojiconMenu? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.ease_widget_chat_input_menu_container, this)
@@ -54,7 +72,7 @@ class EaseChatInputMenu  constructor(
 
     private fun init() {
         showPrimaryMenu()
-        if ( chatExtendMenu== null) {
+        if (chatExtendMenu == null) {
             chatExtendMenu = EaseChatExtendMenu(context)
             (chatExtendMenu as EaseChatExtendMenu).init()
         }
@@ -108,8 +126,13 @@ class EaseChatInputMenu  constructor(
     }
 
     override fun setChatInputMenuListener(listener: ChatInputMenuListener?) {
-        
+        menuListener = listener
     }
+
+    override fun getChatPrimaryMenu(): IChatPrimaryMenu? = primaryMenu
+
+    override fun getEmojiconMenu(): IChatEmojiconMenu? = emojiconMenu
+    override fun getChatExtendMenu(): IChatExtendMenu? = chatExtendMenu
 
 
     override fun onBackPressed(): Boolean {

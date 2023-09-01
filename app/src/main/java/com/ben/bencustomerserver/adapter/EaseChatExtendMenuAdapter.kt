@@ -23,9 +23,7 @@ class EaseChatExtendMenuAdapter :
         holder.imageView.setBackgroundResource(item.image)
         holder.textView.text = item.name
         holder.itemView.setOnClickListener { v ->
-            if (item.clickListener != null) {
-                item.clickListener.onChatExtendMenuItemClick(item.id, v)
-            }
+            item.clickListener?.onChatExtendMenuItemClick(item.id, v)
             if (itemListener != null) {
                 itemListener!!.onItemClick(v, position)
             }

@@ -27,15 +27,15 @@ class EaseEmojiconGroupEntity {
     var type: EaseEmojicon.Type? = null
 
     constructor()
-    constructor(icon: Int, emojiconList: List<EaseEmojicon>?) {
-        this.icon = icon
-        this.emojiconList = emojiconList
-        type = EaseEmojicon.Type.NORMAL
-    }
-
-    constructor(icon: Int, emojiconList: List<EaseEmojicon>?, type: EaseEmojicon.Type?) {
+    constructor(
+        icon: Int,
+        emojiconList: List<EaseEmojicon>? = emptyList(),
+        type: EaseEmojicon.Type? = EaseEmojicon.Type.NORMAL
+    ) {
         this.icon = icon
         this.emojiconList = emojiconList
         this.type = type
     }
+
+
 }

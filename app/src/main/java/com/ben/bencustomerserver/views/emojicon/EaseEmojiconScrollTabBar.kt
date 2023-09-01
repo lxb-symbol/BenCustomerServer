@@ -8,7 +8,7 @@ import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import com.ben.bencustomerserver.DensityUtil.dp2px
+import com.ben.bencustomerserver.utils.DensityUtil.dp2px
 import com.ben.bencustomerserver.R
 
 class EaseEmojiconScrollTabBar @JvmOverloads constructor(

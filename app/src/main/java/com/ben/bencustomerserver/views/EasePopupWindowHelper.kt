@@ -18,7 +18,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ben.bencustomerserver.DensityUtil
+import com.ben.bencustomerserver.utils.DensityUtil
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.adapter.EaseBaseRecyclerViewAdapter
 import com.ben.bencustomerserver.listener.OnItemClickListener

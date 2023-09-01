@@ -52,19 +52,19 @@ interface IChatInputMenu {
      * 获取菜单
      * @return
      */
-    var primaryMenu: IChatPrimaryMenu?
+    fun getChatPrimaryMenu(): IChatPrimaryMenu?
 
     /**
      * 获取表情菜单
      * @return
      */
-    var emojiconMenu: IChatEmojiconMenu?
+    fun getEmojiconMenu(): IChatEmojiconMenu?
 
     /**
      * 获取扩展菜单
      * @return
      */
-    var  chatExtendMenu: IChatExtendMenu?
+    fun getChatExtendMenu(): IChatExtendMenu?
 
     /**
      * 点击返回

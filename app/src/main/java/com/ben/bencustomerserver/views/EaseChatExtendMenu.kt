@@ -12,7 +12,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import com.ben.bencustomerserver.DensityUtil.dp2px
+import com.ben.bencustomerserver.utils.DensityUtil.dp2px
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.adapter.EaseChatExtendMenuAdapter
 import com.ben.bencustomerserver.adapter.EaseChatExtendMenuIndicatorAdapter
@@ -30,13 +30,19 @@ import java.util.Objects
  *
  * 发送 地址，文件，图片，等功能的扩展
  */
-class EaseChatExtendMenu @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyle: Int = 0
-) : FrameLayout(context, attrs, defStyle), onPageChangeListener,
+class EaseChatExtendMenu
+    : FrameLayout, onPageChangeListener,
     IChatExtendMenu,
     OnItemClickListener {
+    constructor(context: Context?) : this(context!!, null)
+
+    constructor(context: Context?, attrs: AttributeSet?) : this(context!!, attrs, 0)
+
+    constructor(context: Context?, attrs: AttributeSet?, def: Int) : super(context!!, attrs, def) {
+        myInit(context, attrs)
+    }
+
+
     private val itemModels: MutableList<ChatMenuItemModel> = ArrayList()
     private val itemMap: MutableMap<Int?, ChatMenuItemModel?> = HashMap()
     private val itemStrings = intArrayOf(
@@ -57,7 +63,6 @@ class EaseChatExtendMenu @JvmOverloads constructor(
         R.id.extend_item_video,
         R.id.extend_item_file
     )
-    protected var context: Context? = null
     private var rvExtendMenu: RecyclerView? = null
     private var rvIndicator: RecyclerView? = null
     private var adapter: EaseChatExtendMenuAdapter? = null
@@ -68,13 +73,12 @@ class EaseChatExtendMenu @JvmOverloads constructor(
     private var indicatorAdapter: EaseChatExtendMenuIndicatorAdapter? = null
     private var itemListener: EaseChatExtendMenuItemClickListener? = null
 
-    init {
-        init(context, attrs)
+    fun myInit(context: Context?, attrs: AttributeSet?) {
+        init(context!!, attrs)
         initLayout()
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        this.context = context
         val ta = context.obtainStyledAttributes(attrs, R.styleable.EaseChatExtendMenu)
         numColumns = ta.getInt(R.styleable.EaseChatExtendMenu_numColumns, 4)
         numRows = ta.getInt(R.styleable.EaseChatExtendMenu_numRows, 1)
@@ -161,9 +165,6 @@ class EaseChatExtendMenu @JvmOverloads constructor(
     }
 
 
-
-
-
     /**
      * register menu item
      *
@@ -173,10 +174,10 @@ class EaseChatExtendMenu @JvmOverloads constructor(
      * @param listener    on click event of item
      */
     fun registerMenuItem(
-        name: String? ="",
-        drawableRes: Int=0,
-        itemId: Int=0,
-        listener: EaseChatExtendMenuItemClickListener?=null
+        name: String? = "",
+        drawableRes: Int = 0,
+        itemId: Int = 0,
+        listener: EaseChatExtendMenuItemClickListener? = null
     ) {
         if (!itemMap.containsKey(itemId)) {
             val item = ChatMenuItemModel()
@@ -290,16 +291,9 @@ class EaseChatExtendMenu @JvmOverloads constructor(
         }
     }
 
-    override fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int,orderInt: Int) {
+    override fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int, orderInt: Int) {
         registerMenuItem(name, drawableRes, itemId, null)
     }
-
-
-
-
-
-
-
 
 
     override fun setEaseChatExtendMenuItemClickListener(listener: EaseChatExtendMenuItemClickListener?) {
