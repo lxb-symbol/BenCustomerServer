@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.rv)
     implementation(libs.glide)
     implementation(libs.vrvh)
+    implementation(libs.xxpermission)
+    implementation(libs.mmkv)
     implementation(project(mapOf("path" to ":module-base")))
     implementation(project(mapOf("path" to ":lib-net")))
 

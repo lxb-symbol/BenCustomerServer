@@ -31,4 +31,5 @@
     <string name="the_recording_time_is_too_short">录制语音太短了</string>
     <string name="send_failure_please">发送失败，请检测服务器是否连接</string>
     <string name="Send_voice_need_sdcard_support">发送语音需要sdcard支持</string>
+    <string name="can_not_find_app_open_file">不支持该文件</string>
 </resources>

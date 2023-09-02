@@ -59,8 +59,8 @@ object EaseCommonUtils {
 //        toChatUsername: String?,
 //        expressioName: String,
 //        identityCode: String?
-//    ): EMMessage {
-//        val message: EMMessage = EMMessage.createTxtSendMessage("[$expressioName]", toChatUsername)
+//    ): BaseMessageModel {
+//        val message: BaseMessageModel = BaseMessageModel.createTxtSendMessage("[$expressioName]", toChatUsername)
 //        if (identityCode != null) {
 //            message.setAttribute(EaseConstant.MESSAGE_ATTR_EXPRESSION_ID, identityCode)
 //        }
@@ -76,10 +76,10 @@ object EaseCommonUtils {
      * @param context
      * @return
      */
-//    fun getMessageDigest(message: EMMessage, context: Context): String {
+//    fun getMessageDigest(message: BaseMessageModel, context: Context): String {
 //        var digest = ""
 //        when (message.getType()) {
-//            LOCATION -> if (message.direct() === EMMessage.Direct.RECEIVE) {
+//            LOCATION -> if (message.direct() === BaseMessageModel.Direct.RECEIVE) {
 //                digest = getString(context, R.string.location_recv)
 //                val userProvider: EaseUserProfileProvider = EaseIM.getInstance().getUserProvider()
 //                var from: String = message.getFrom()
@@ -242,7 +242,7 @@ object EaseCommonUtils {
      * @param message
      * @return
      */
-//    fun isSilentMessage(message: EMMessage): Boolean {
+//    fun isSilentMessage(message: BaseMessageModel): Boolean {
 //        return message.getBooleanAttribute(EM_IGNORE_NOTIFICATION, false)
 //    }
 

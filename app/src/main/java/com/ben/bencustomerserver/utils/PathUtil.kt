@@ -1,10 +1,8 @@
+package com.ben.bencustomerserver.utils
 
-package com.ben.bencustomerserver.utils;
-
-import android.content.Context;
-import android.os.Environment;
-
-import java.io.File;
+import android.content.Context
+import android.os.Environment
+import java.io.File
 
 /**
  * this is class define all pathes
@@ -12,157 +10,141 @@ import java.io.File;
  * but in hyphenate sdk, we need to access basic user data, including id, nick, sipnumber
  * so we can send notification, make voip call
  */
-public class PathUtil {
-    public static String pathPrefix;
-    public final static String historyPathName = "/chat/";
-    public final static String imagePathName = "/image/";
-    public final static String voicePathName = "/voice/";
-    public final static String filePathName = "/file/";
-    public final static String videoPathName = "/video/";
-    public final static String netdiskDownloadPathName = "/netdisk/"; 
-    public final static String meetingPathName = "/meeting/";
-    //protected final static String netdiskHost = EaseMob.EASEMOB_STORAGE_URL + "/share/";
-    
-    private static File storageDir = null;
-    
-    private static PathUtil instance = null;
-    
-    private File voicePath = null;
-    private File imagePath = null;
-    private File historyPath = null;
-    private File videoPath = null;
-	private File filePath;
-    
-    private PathUtil() {
-    }
-    
-    public static PathUtil getInstance() {
-        if (instance == null) {
-            instance = new PathUtil();
-        }
-        return instance;
-    }
-    
+class PathUtil private constructor() {
+    var voicePath: File? = null
+        private set
+    var imagePath: File? = null
+        private set
+    var historyPath: File? = null
+        private set
+    var videoPath: File? = null
+        private set
+    var filePath: File? = null
+        private set
+
     //initialize directions used by user data
-    public void initDirs(String appKey, String userName, Context applicationContext) {
-        String appPackageName = applicationContext.getPackageName(); 
-        pathPrefix = "/Android/data/" + appPackageName + "/";
-        voicePath = generateVoicePath(appKey, userName, applicationContext); 
-        if (!voicePath.exists()) {
-            voicePath.mkdirs();
+    fun initDirs(appKey: String?, userName: String, applicationContext: Context) {
+        val appPackageName = applicationContext.packageName
+        pathPrefix = "/Android/data/$appPackageName/"
+        voicePath = generateVoicePath(appKey, userName, applicationContext)
+        if (!voicePath!!.exists()) {
+            voicePath!!.mkdirs()
         }
-        imagePath = generateImagePath(appKey, userName, applicationContext);
+        imagePath = generateImagePath(appKey, userName, applicationContext)
         //System.err.println("image path:" + imagePath.getAbsolutePath());
-        if (!imagePath.exists()) {
-            imagePath.mkdirs();
+        if (!imagePath!!.exists()) {
+            imagePath!!.mkdirs()
         }
-        
-        historyPath = generateHistoryPath(appKey, userName, applicationContext);
-        if (!historyPath.exists()) {
-            historyPath.mkdirs();
+        historyPath = generateHistoryPath(appKey, userName, applicationContext)
+        if (!historyPath!!.exists()) {
+            historyPath!!.mkdirs()
         }
-        
-        videoPath = generateVideoPath(appKey, userName, applicationContext); 
-        if(!videoPath.exists()) {
-            videoPath.mkdirs();
+        videoPath = generateVideoPath(appKey, userName, applicationContext)
+        if (!videoPath!!.exists()) {
+            videoPath!!.mkdirs()
         }
-        filePath = generateFiePath(appKey, userName, applicationContext);
-        if(!filePath.exists())
-        	filePath.mkdirs();
+        filePath = generateFiePath(appKey, userName, applicationContext)
+        if (!filePath!!.exists()) filePath!!.mkdirs()
     }
-    
-    public File getImagePath() {
-        return imagePath;
-    }
-    
-    public File getVoicePath() {
-        return voicePath;
-    }
-    public File getFilePath() {
-    	return filePath;
-    }
-    
-    public File getVideoPath() {
-        return videoPath;
-    }
-    
-    public File getHistoryPath() {
-        return historyPath;
-    }
-    
-    
-    private static File getStorageDir(Context applicationContext) {
-        if (storageDir == null) {
-            //try to use sd card if possible
-            File sdPath = Environment.getExternalStorageDirectory();
-            if (sdPath.exists()) {
-                return sdPath;
+
+    companion object {
+        var pathPrefix: String? = null
+        const val historyPathName = "/chat/"
+        const val imagePathName = "/image/"
+        const val voicePathName = "/voice/"
+        const val filePathName = "/file/"
+        const val videoPathName = "/video/"
+        const val netdiskDownloadPathName = "/netdisk/"
+        const val meetingPathName = "/meeting/"
+
+        //protected final static String netdiskHost = EaseMob.EASEMOB_STORAGE_URL + "/share/";
+        private var storageDir: File? = null
+        @JvmStatic
+        var instance: PathUtil? = null
+            get() {
+                if (field == null) {
+                    field = PathUtil()
+                }
+                return field
             }
-            //use application internal storage instead
-            storageDir = applicationContext.getFilesDir();
+            private set
+
+        private fun getStorageDir(applicationContext: Context): File? {
+            if (storageDir == null) {
+                //try to use sd card if possible
+                val sdPath = Environment.getExternalStorageDirectory()
+                if (sdPath.exists()) {
+                    return sdPath
+                }
+                //use application internal storage instead
+                storageDir = applicationContext.filesDir
+            }
+            return storageDir
         }
-        return storageDir;
-    }
-    
-    private static File generateImagePath(String appKey, String userName, Context applicationContext) {
-    	String path = null;
-    	if(appKey == null)
-    		path = pathPrefix + userName + imagePathName;
-    	else
-    		path = pathPrefix + appKey + "/" + userName + imagePathName;
-        return new File(getStorageDir(applicationContext), path);
-    }
-    
-    private static File generateVoicePath(String appKey, String userName, Context applicationContext) {
-    	String path = null;
-    	if(appKey == null)
-    		path = pathPrefix + userName + voicePathName;
-    	else
-    		path = pathPrefix + appKey + "/" + userName + voicePathName;
-    		
-        return new File(getStorageDir(applicationContext), path);
-    }
-    
-    private static File generateFiePath(String appKey, String userName, Context applicationContext){
-    	String path = null;
-    	if(appKey == null)
-    		path = pathPrefix + userName + filePathName;
-    	else
-    		path = pathPrefix + appKey + "/" + userName + filePathName;
-    		
-        return new File(getStorageDir(applicationContext), path);
-    }
-    
-    private static File generateVideoPath(String appKey, String userName, Context applicationContext){
-    	String path = null;
-    	if(appKey == null)
-    		path = pathPrefix + userName + videoPathName;
-    	else
-    		path = pathPrefix + appKey + "/"+ userName + videoPathName;
-    		
-        return new File(getStorageDir(applicationContext), path);
-    }
-    
-    
-    private static File generateHistoryPath(String appKey, String userName, Context applicationContext) {
-    	String path = null;
-    	if(appKey == null)
-    		path = pathPrefix + userName + historyPathName;
-    	else
-    		path = pathPrefix + appKey + "/" + userName + historyPathName;
-    		
-        return new File(getStorageDir(applicationContext), path);
-    }
-    
-    /*
+
+        private fun generateImagePath(
+            appKey: String?,
+            userName: String,
+            applicationContext: Context
+        ): File {
+            var path: String? = null
+            path =
+                if (appKey == null) pathPrefix + userName + imagePathName else pathPrefix + appKey + "/" + userName + imagePathName
+            return File(getStorageDir(applicationContext), path)
+        }
+
+        private fun generateVoicePath(
+            appKey: String?,
+            userName: String,
+            applicationContext: Context
+        ): File {
+            var path: String? = null
+            path =
+                if (appKey == null) pathPrefix + userName + voicePathName else pathPrefix + appKey + "/" + userName + voicePathName
+            return File(getStorageDir(applicationContext), path)
+        }
+
+        private fun generateFiePath(
+            appKey: String?,
+            userName: String,
+            applicationContext: Context
+        ): File {
+            var path: String? = null
+            path =
+                if (appKey == null) pathPrefix + userName + filePathName else pathPrefix + appKey + "/" + userName + filePathName
+            return File(getStorageDir(applicationContext), path)
+        }
+
+        private fun generateVideoPath(
+            appKey: String?,
+            userName: String,
+            applicationContext: Context
+        ): File {
+            var path: String? = null
+            path =
+                if (appKey == null) pathPrefix + userName + videoPathName else pathPrefix + appKey + "/" + userName + videoPathName
+            return File(getStorageDir(applicationContext), path)
+        }
+
+        private fun generateHistoryPath(
+            appKey: String?,
+            userName: String,
+            applicationContext: Context
+        ): File {
+            var path: String? = null
+            path =
+                if (appKey == null) pathPrefix + userName + historyPathName else pathPrefix + appKey + "/" + userName + historyPathName
+            return File(getStorageDir(applicationContext), path)
+        }
+
+        /*
     public static File getPushMessagePath(String appKey, String userId, Context applicationContext) {
         File filepath = new File(getHistoryPath(appKey, userId, applicationContext), userId + File.separator + "PushMsg.db"); 
         return filepath;
     }*/
-    
-    //Create a temp file relative to the file specified. Make sure the temp file is deleted afterward
-    public static File getTempPath(File file) {
-        return new File(file.getAbsoluteFile()+ ".tmp");
+        //Create a temp file relative to the file specified. Make sure the temp file is deleted afterward
+        fun getTempPath(file: File): File {
+            return File(file.absoluteFile.toString() + ".tmp")
+        }
     }
-    
 }
