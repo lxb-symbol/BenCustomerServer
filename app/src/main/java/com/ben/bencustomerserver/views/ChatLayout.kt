@@ -33,7 +33,10 @@ class ChatLayout @JvmOverloads constructor(
             this,
             true
         )
+
     }
+
+
 
     override fun onTyping(s: CharSequence, start: Int, before: Int, count: Int) {
         TODO("Not yet implemented")

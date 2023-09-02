@@ -47,7 +47,7 @@ class EaseEmojiconMenu @JvmOverloads constructor(
     @JvmOverloads
     fun init(groupEntities: MutableList<EaseEmojiconGroupEntity>? = null) {
         var groupEntities = groupEntities
-        if (groupEntities == null || groupEntities.size == 0) {
+        if (groupEntities.isNullOrEmpty()) {
             groupEntities = ArrayList()
             groupEntities.add(EaseEmojiconGroupEntity(R.drawable.ee_1, data.asList()))
         }

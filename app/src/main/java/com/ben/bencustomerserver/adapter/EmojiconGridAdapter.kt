@@ -31,7 +31,7 @@ class EmojiconGridAdapter(
         }
         val imageView = convertView!!.findViewById<View>(R.id.iv_expression) as ImageView
         val emojicon = getItem(position)
-        if (emojiconType==EaseEmojicon.Type.NORMAL){
+        if (emojiconType==EaseEmojicon.Type.BIG_EXPRESSION){
             val textView = convertView!!.findViewById<View>(R.id.tv_name) as TextView
             if (emojicon!!.name != null) {
                 textView.text = emojicon.name

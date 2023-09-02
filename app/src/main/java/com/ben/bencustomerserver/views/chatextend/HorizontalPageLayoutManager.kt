@@ -1,6 +1,7 @@
 package com.ben.bencustomerserver.views.chatextend
 
 import android.graphics.Rect
+import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -91,6 +92,7 @@ class HorizontalPageLayoutManager(rows: Int, columns: Int) : RecyclerView.Layout
             }
             totalHeight = View.MeasureSpec.getSize(heightSpec)
         }
+        Log.e("symbol :", " HorizontalPagerLayoutManager titalHeight:  $totalHeight")
         super.onMeasure(recycler, state, widthSpec, heightSpec)
     }
 
@@ -252,7 +254,7 @@ class HorizontalPageLayoutManager(rows: Int, columns: Int) : RecyclerView.Layout
     }
 
     override fun isLastRow(index: Int): Boolean {
-        if (index >= 0 && index < itemCount) {
+        if (index in 0..<itemCount) {
             var indexOfPage = index % onePageSize
             indexOfPage++
             if (indexOfPage > (rows - 1) * columns && indexOfPage <= onePageSize) {
@@ -264,7 +266,7 @@ class HorizontalPageLayoutManager(rows: Int, columns: Int) : RecyclerView.Layout
 
     override fun isLastColumn(position: Int): Boolean {
         var position = position
-        if (position >= 0 && position < itemCount) {
+        if (position in 0..<itemCount) {
             position++
             if (position % columns == 0) {
                 return true

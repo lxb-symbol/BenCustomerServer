@@ -44,7 +44,7 @@
             android:layout_marginRight="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                 android:paddingRight="10dp"
                 android:textColor="@color/color_333333"
                 android:textColorHint="@color/circle_gray_929497"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
         </FrameLayout>
 
