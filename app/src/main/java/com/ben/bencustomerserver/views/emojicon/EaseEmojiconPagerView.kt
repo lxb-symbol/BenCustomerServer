@@ -84,7 +84,7 @@ class EaseEmojiconPagerView @JvmOverloads constructor(
      * @param groupEntity
      * @return
      */
-    fun getGroupGridViews(groupEntity: EaseEmojiconGroupEntity): List<View> {
+    private fun getGroupGridViews(groupEntity: EaseEmojiconGroupEntity): List<View> {
         val emojiconList = groupEntity.emojiconList
         var itemSize = emojiconColumns * emojiconRows
         val totalSize = if (emojiconList.isNullOrEmpty()) 0 else emojiconList.size

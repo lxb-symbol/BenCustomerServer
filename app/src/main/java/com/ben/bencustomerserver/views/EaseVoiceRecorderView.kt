@@ -28,8 +28,6 @@ import com.ben.bencustomerserver.views.chatrow.EaseChatRowVoicePlayer
  *
  */
 class EaseVoiceRecorderView : RelativeLayout {
-    protected var context: Context? = null
-    protected var inflater: LayoutInflater? = null
     protected lateinit var micImages: Array<Drawable>
     protected var voiceRecorder: EaseVoiceRecorder? = null
     protected var wakeLock: WakeLock? = null
@@ -65,7 +63,6 @@ class EaseVoiceRecorderView : RelativeLayout {
 
     @SuppressLint("InvalidWakeLockTag")
     private fun init(context: Context) {
-        this.context = context
         LayoutInflater.from(context).inflate(R.layout.ease_widget_voice_recorder, this)
         ivIcon = findViewById(R.id.iv_icon)
         micImage = findViewById<View>(R.id.mic_image) as ImageView
@@ -239,11 +236,11 @@ class EaseVoiceRecorderView : RelativeLayout {
         return voiceRecorder!!.stopRecoding()
     }
 
-    val voiceFilePath: String
+    var voiceFilePath: String = ""
         get() = voiceRecorder!!.voiceFilePath
-    val voiceFileName: String
+    var voiceFileName: String = ""
         get() = voiceRecorder!!.voiceFileName
-    val isRecording: Boolean
+    var isRecording: Boolean = false
         get() = voiceRecorder!!.isRecording
 
     companion object {

@@ -2,9 +2,13 @@ package com.ben.bencustomerserver.views
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
+import androidx.databinding.DataBindingUtil
+import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.databinding.CsChatLayoutBinding
 import com.ben.bencustomerserver.listener.ChatInputMenuListener
 import com.ben.bencustomerserver.listener.IHandleMessageView
 import com.ben.bencustomerserver.listener.IPopupWindow
@@ -18,12 +22,17 @@ class ChatLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : RelativeLayout(context, attrs, defStyleAttr) , IHandleMessageView,
-
-    IPopupWindow, ChatInputMenuListener{
+) : RelativeLayout(context, attrs, defStyleAttr), IHandleMessageView,
+    IPopupWindow, ChatInputMenuListener {
+    private lateinit var mViewBinding: CsChatLayoutBinding
 
     init {
-
+        mViewBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(context),
+            R.layout.cs_chat_layout,
+            this,
+            true
+        )
     }
 
     override fun onTyping(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -142,7 +151,7 @@ class ChatLayout @JvmOverloads constructor(
         TODO("Not yet implemented")
     }
 
-    override val menuHelper: EasePopupWindowHelper?
+    override val menuHelper: EasePopupWindowHelper
         get() = TODO("Not yet implemented")
 
 }

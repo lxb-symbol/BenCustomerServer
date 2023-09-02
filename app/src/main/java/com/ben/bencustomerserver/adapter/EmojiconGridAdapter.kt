@@ -30,16 +30,19 @@ class EmojiconGridAdapter(
             }
         }
         val imageView = convertView!!.findViewById<View>(R.id.iv_expression) as ImageView
-        val textView = convertView!!.findViewById<View>(R.id.tv_name) as TextView
         val emojicon = getItem(position)
-        if (emojicon!!.name != null) {
-            textView.text = emojicon.name
+        if (emojiconType==EaseEmojicon.Type.NORMAL){
+            val textView = convertView!!.findViewById<View>(R.id.tv_name) as TextView
+            if (emojicon!!.name != null) {
+                textView.text = emojicon.name
+            }
         }
-        if (EaseSmileUtils.DELETE_KEY == emojicon.emojiText) {
+
+        if (EaseSmileUtils.DELETE_KEY == emojicon?.emojiText) {
             imageView.setImageResource(R.drawable.ease_delete_expression)
         } else {
-            if (emojicon.icon != 0) {
-                imageView.setImageResource(emojicon.icon)
+            if (emojicon?.icon != 0) {
+                imageView.setImageResource(emojicon?.icon!!)
             } else if (emojicon.iconPath != null) {
                 Glide.with(context).load(emojicon.iconPath)
                     .apply(RequestOptions.placeholderOf(R.drawable.ease_default_expression))
