@@ -132,7 +132,7 @@ object EaseCommonUtils {
 //
 //            FILE -> digest = getString(context, R.string.file)
 //            else -> {
-//                EMLog.e(TAG, "error, unknow type")
+//                Log.e(TAG, "error, unknow type")
 //                return ""
 //            }
 //        }
