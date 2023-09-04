@@ -20,3 +20,4 @@ rootProject.name = "BenCustomerServer"
 include(":app")
 include(":module-base")
 include(":lib-net")
+include(":lib-picture-selector")

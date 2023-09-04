@@ -90,24 +90,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     override fun onChatExtendMenuItemClick(view: View?, itemId: Int) {
         onChatExtendMenuItemClickListener?.onChatExtendMenuItemClick(view, itemId)
-        if (itemId == R.id.extend_item_picture) {
-            XXPermissions.with(requireContext())
-                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
-                .request(object : OnPermissionCallback {
-                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
-                        selectPicFromLocal()
-                    }
 
-                    override fun onDenied(
-                        permissions: MutableList<String>,
-                        doNotAskAgain: Boolean
-                    ) {
-                        super.onDenied(permissions, doNotAskAgain)
-                    }
-
-                })
-            return
-        }
 
         if (itemId == R.id.extend_item_take_picture) {
             XXPermissions.with(requireContext())
@@ -133,14 +116,97 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
                 })
             return
         }
-        if (itemId == R.id.extend_item_video) {
-            selectVideoFromLocal()
+
+        if (itemId == R.id.extend_item_picture) {
+            XXPermissions.with(requireContext())
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
+                        selectPicFromLocal()
+                    }
+
+                    override fun onDenied(
+                        permissions: MutableList<String>,
+                        doNotAskAgain: Boolean
+                    ) {
+                        super.onDenied(permissions, doNotAskAgain)
+                    }
+
+                })
             return
         }
 
-//        TODO(" 待完善其他按钮 ")
+        if (itemId == R.id.extend_item_location) {
+            TODO(" 待完善其他按钮 ")
+
+            return
+        }
+
+        if (itemId == R.id.extend_item_video) {
+
+            XXPermissions.with(requireContext())
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
+                        selectVideoFromLocal()
+                    }
+
+                    override fun onDenied(
+                        permissions: MutableList<String>,
+                        doNotAskAgain: Boolean
+                    ) {
+                        super.onDenied(permissions, doNotAskAgain)
+                    }
+
+                })
+            return
+        }
+
+        if (itemId == R.id.extend_item_file) {
+            XXPermissions.with(requireContext())
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
+                        selectFileFromLocal()
+                    }
+
+                    override fun onDenied(
+                        permissions: MutableList<String>,
+                        doNotAskAgain: Boolean
+                    ) {
+                        super.onDenied(permissions, doNotAskAgain)
+                    }
+
+                })
+            return
+        }
+
 
     }
+
+    /**
+     * select local file
+     */
+    protected open fun selectFileFromLocal() {
+        val intent = Intent()
+        if (VersionUtils.isTargetQ(requireContext())) {
+            intent.action = Intent.ACTION_OPEN_DOCUMENT
+        } else {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                intent.action = Intent.ACTION_GET_CONTENT
+            } else {
+                intent.action = Intent.ACTION_OPEN_DOCUMENT
+            }
+        }
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*/*"
+        startActivityForResult(
+            intent,
+            REQUEST_CODE_SELECT_FILE
+        )
+    }
+
 
     protected open fun selectVideoFromLocal() {
         val intent = Intent()
