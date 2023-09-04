@@ -50,6 +50,12 @@ class ChatLayout @JvmOverloads constructor(
 
     private var clippborad: ClipboardManager
 
+    private var listener: OnChatLayoutListener? = null
+
+    private var isNotFirstSend: Boolean = false
+
+    private var voiceRecordListener: OnChatRecordTouchListener? = null
+
     init {
         mViewBinding = DataBindingUtil.inflate(
             LayoutInflater.from(context),
@@ -62,7 +68,6 @@ class ChatLayout @JvmOverloads constructor(
         mViewBinding.layoutMenu.menuListener = this
         clippborad = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     }
-
 
 
     private fun initTypingHandler() {
@@ -96,6 +101,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendVoiceMessage(filePath: String?, length: Int) {
+        Log.e("TAG","filePath: $filePath")
         TODO("Not yet implemented")
     }
 
@@ -125,7 +131,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendFileMessage(fileUri: Uri?) {
-        Log.e("symbol -->" ,"发送文件消息待完善")
+        Log.e("symbol -->", "发送文件消息待完善")
     }
 
     override fun addMessageAttributes(message: BaseMessageModel?) {
@@ -157,11 +163,11 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun setOnChatLayoutListener(listener: OnChatLayoutListener?) {
-        TODO("Not yet implemented")
+        this.listener = listener
     }
 
     override fun setOnChatRecordTouchListener(voiceTouchListener: OnChatRecordTouchListener?) {
-        TODO("Not yet implemented")
+        this.voiceRecordListener = voiceRecordListener
     }
 
     override fun setOnRecallMessageResultListener(listener: OnRecallMessageResultListener?) {
@@ -202,15 +208,26 @@ class ChatLayout @JvmOverloads constructor(
     }
 
 
-
-
-
     override fun onTyping(s: CharSequence, start: Int, before: Int, count: Int) {
-        TODO("Not yet implemented")
+        listener?.onTextChanged(s, start, before, count)
+        if (turnOnTyping) {
+            typingHandler?.let {
+                if (!isNotFirstSend) {
+                    isNotFirstSend = true
+                    it.sendEmptyMessage(MSG_TYPING_HEARTBEAT)
+                }
+                it.removeMessages(MSG_TYPING_END)
+                it.sendEmptyMessageDelayed(
+                    MSG_TYPING_END,
+                    TYPING_SHOW_TIME.toLong()
+                )
+            }
+
+        }
     }
 
     override fun onSendMessage(content: String) {
-        TODO("Not yet implemented")
+        Log.e("chatLayout onSendMessage  ","$content")
     }
 
     override fun onExpressionClicked(emojicon: Any?) {
@@ -218,7 +235,19 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean {
-        TODO("Not yet implemented")
+        val onRecordTouch: Boolean = voiceRecordListener?.onRecordTouch(v, event) ?: false
+        if (!onRecordTouch) {
+            return false
+        }
+        return voiceRecordView.onPressToSpeakBtnTouch(
+            v,
+            event,
+            object : EaseVoiceRecorderView.EaseVoiceRecorderCallback {
+                override fun onVoiceRecordComplete(voiceFilePath: String?, voiceTimeLength: Int) {
+                    sendVoiceMessage(voiceFilePath, voiceTimeLength)
+                }
+
+            })
     }
 
     override fun onChatExtendMenuItemClick(itemId: Int, view: View?) {

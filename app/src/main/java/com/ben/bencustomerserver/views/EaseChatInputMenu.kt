@@ -218,9 +218,8 @@ class EaseChatInputMenu : LinearLayout,
     }
 
     override fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean {
-        return if (menuListener != null) {
-            menuListener!!.onPressToSpeakBtnTouch(v, event)
-        } else false
+        if (menuListener == null) return false
+        return menuListener?.onPressToSpeakBtnTouch(v, event) ?: false
     }
 
     override fun onToggleVoiceBtnClicked() {

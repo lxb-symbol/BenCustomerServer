@@ -8,11 +8,13 @@ import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.databinding.FragmentChatBinding
 import com.ben.bencustomerserver.listener.OnChatExtendMenuItemClickListener
 import com.ben.bencustomerserver.listener.OnChatLayoutListener
+import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
 import com.ben.bencustomerserver.model.ChatViewModel
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.EaseCommonUtils
@@ -32,7 +34,8 @@ import java.io.IOException
 /**
  * 聊天
  */
-open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatLayoutListener {
+open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatLayoutListener,
+    OnChatRecordTouchListener {
 
     var onChatExtendMenuItemClickListener: OnChatExtendMenuItemClickListener? = null
     var cameraFile: File? = null
@@ -53,6 +56,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     override fun initView() {
         mViewBinding.cl.chatLayoutListener = this
+        mViewBinding.cl.setOnChatRecordTouchListener(this)
 
 //        myLayoutManager = LinearLayoutManager(requireContext())
 //        messageAdapter = BenMessageAdapter((mViewModel.getDataMessages().value ?: emptyList()))
@@ -374,5 +378,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
             REQUEST_CODE_CAMERA
         )
     }
+
+    override fun onRecordTouch(v: View?, event: MotionEvent?): Boolean =true
 
 }
