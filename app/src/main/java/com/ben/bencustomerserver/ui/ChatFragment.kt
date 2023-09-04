@@ -2,7 +2,9 @@ package com.ben.bencustomerserver.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
@@ -17,18 +19,20 @@ import com.ben.bencustomerserver.utils.EaseCommonUtils
 import com.ben.bencustomerserver.utils.EaseCompat
 import com.ben.bencustomerserver.utils.EaseFileUtils
 import com.ben.bencustomerserver.utils.PathUtil
+import com.ben.bencustomerserver.utils.VersionUtils
 import com.ben.module_base.ui.BaseFragment
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.symbol.lib_net.net.RetrofitClient
 import java.io.File
+import java.io.IOException
 
 
 /**
  * 聊天
  */
-class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatLayoutListener {
+open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatLayoutListener {
 
     var onChatExtendMenuItemClickListener: OnChatExtendMenuItemClickListener? = null
     var cameraFile: File? = null
@@ -105,7 +109,57 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
             return
         }
 
+        if (itemId == R.id.extend_item_take_picture) {
+            XXPermissions.with(requireContext())
+                .permission(
+                    Permission.CAMERA,
+                    Permission.WRITE_EXTERNAL_STORAGE,
+                    Permission.WRITE_EXTERNAL_STORAGE
+                )
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
+                        if (allGranted) {
+                            selectPicFromCamera()
+                        }
+                    }
 
+                    override fun onDenied(
+                        permissions: MutableList<String>,
+                        doNotAskAgain: Boolean
+                    ) {
+                        super.onDenied(permissions, doNotAskAgain)
+                    }
+
+                })
+            return
+        }
+        if (itemId == R.id.extend_item_video) {
+            selectVideoFromLocal()
+            return
+        }
+
+//        TODO(" 待完善其他按钮 ")
+
+    }
+
+    protected open fun selectVideoFromLocal() {
+        val intent = Intent()
+        if (VersionUtils.isTargetQ(requireContext())) {
+            intent.action = Intent.ACTION_OPEN_DOCUMENT
+        } else {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                intent.action = Intent.ACTION_GET_CONTENT
+            } else {
+                intent.action = Intent.ACTION_OPEN_DOCUMENT
+            }
+        }
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "video/*"
+        startActivityForResult(
+            intent,
+            REQUEST_CODE_SELECT_VIDEO
+        )
     }
 
 
@@ -156,6 +210,10 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
                 REQUEST_CODE_SELECT_VIDEO -> {
                     onActivityResultForLocalVideos(data)
                 }
+
+                else -> {
+                    Log.e("symbol onActivityResult", " nothing to do ")
+                }
             }
         }
     }
@@ -180,7 +238,20 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
     }
 
     private fun onActivityResultForLocalVideos(data: Intent?) {
-        TODO("Not yet implemented")
+        val uri = data?.data
+        val mediaPlayer = MediaPlayer()
+        try {
+            mediaPlayer.setDataSource(requireContext(), uri!!)
+            mediaPlayer.prepare()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val duration = mediaPlayer.duration
+        Log.d(
+            "ChatFragment",
+            "path = " + uri!!.path + ",duration=" + duration
+        )
+        mViewBinding.cl.sendVideoMessage(uri, duration)
     }
 
     private fun onActivityResultForLocalPhotos(data: Intent?) {
