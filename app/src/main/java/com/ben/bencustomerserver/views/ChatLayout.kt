@@ -1,8 +1,11 @@
 package com.ben.bencustomerserver.views
 
+import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -31,7 +34,41 @@ class ChatLayout @JvmOverloads constructor(
 ) : RelativeLayout(context, attrs, defStyleAttr), IHandleMessageView,
     IPopupWindow, ChatInputMenuListener, IChatLayout {
     private lateinit var mViewBinding: CsChatLayoutBinding
-    lateinit var chatInputMenu: EaseChatInputMenu
+    var chatInputMenu: EaseChatInputMenu
+
+    /**
+     * "正在输入"功能的开关，打开后本设备发送消息将持续发送cmd类型消息通知对方"正在输入"
+     */
+    private var turnOnTyping = false
+
+    /**
+     * 用于处理用户是否正在输入的handler
+     */
+    private var typingHandler: Handler? = null
+
+    override var menuHelper: EasePopupWindowHelper? = null
+
+    private var clippborad: ClipboardManager
+
+    init {
+        mViewBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(context),
+            R.layout.cs_chat_layout,
+            this,
+            true
+        )
+        chatInputMenu = mViewBinding.layoutMenu
+        menuHelper = EasePopupWindowHelper()
+        mViewBinding.layoutMenu.menuListener = this
+        clippborad = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    }
+
+
+
+    private fun initTypingHandler() {
+        TODO("待完善")
+    }
+
     override fun chatInputMenu(): EaseChatInputMenu = chatInputMenu
 
     override fun inputContent(): String? {
@@ -88,7 +125,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendFileMessage(fileUri: Uri?) {
-        TODO("Not yet implemented")
+        Log.e("symbol -->" ,"发送文件消息待完善")
     }
 
     override fun addMessageAttributes(message: BaseMessageModel?) {
@@ -165,18 +202,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
 
-    init {
-        mViewBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(context),
-            R.layout.cs_chat_layout,
-            this,
-            true
-        )
-        chatInputMenu = mViewBinding.layoutMenu
-        voiceRecordView = mViewBinding.voiceRecorder
 
-
-    }
 
 
     override fun onTyping(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -295,7 +321,10 @@ class ChatLayout @JvmOverloads constructor(
         TODO("Not yet implemented")
     }
 
-    override val menuHelper: EasePopupWindowHelper
-        get() = TODO("Not yet implemented")
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        typingHandler?.removeCallbacksAndMessages(null)
+    }
+
 
 }

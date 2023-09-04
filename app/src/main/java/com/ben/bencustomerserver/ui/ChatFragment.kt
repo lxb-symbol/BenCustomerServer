@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.ben.bencustomerserver.R
@@ -14,6 +15,7 @@ import com.ben.bencustomerserver.model.ChatViewModel
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.EaseCommonUtils
 import com.ben.bencustomerserver.utils.EaseCompat
+import com.ben.bencustomerserver.utils.EaseFileUtils
 import com.ben.bencustomerserver.utils.PathUtil
 import com.ben.module_base.ui.BaseFragment
 import com.hjq.permissions.OnPermissionCallback
@@ -29,7 +31,8 @@ import java.io.File
 class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatLayoutListener {
 
     var onChatExtendMenuItemClickListener: OnChatExtendMenuItemClickListener? = null
-    var cameraFile:File?=null
+    var cameraFile: File? = null
+
     companion object {
         const val REQUEST_CODE_MAP = 1
         const val REQUEST_CODE_CAMERA = 2
@@ -85,7 +88,7 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
         onChatExtendMenuItemClickListener?.onChatExtendMenuItemClick(view, itemId)
         if (itemId == R.id.extend_item_picture) {
             XXPermissions.with(requireContext())
-                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
                         selectPicFromLocal()
@@ -133,18 +136,23 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
                 REQUEST_CODE_CAMERA -> { // capture new image
                     onActivityResultForCamera(data)
                 }
+
                 REQUEST_CODE_LOCAL -> { // send local image
                     onActivityResultForLocalPhotos(data)
                 }
+
                 REQUEST_CODE_MAP -> { // location
                     onActivityResultForMapLocation(data)
                 }
+
                 REQUEST_CODE_DING_MSG -> { // To send the ding-type msg.
                     onActivityResultForDingMsg(data)
                 }
+
                 REQUEST_CODE_SELECT_FILE -> {
                     onActivityResultForLocalFiles(data)
                 }
+
                 REQUEST_CODE_SELECT_VIDEO -> {
                     onActivityResultForLocalVideos(data)
                 }
@@ -161,7 +169,14 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
     }
 
     private fun onActivityResultForLocalFiles(data: Intent?) {
-        TODO("Not yet implemented")
+        val uri = data?.data
+        val filePath = EaseFileUtils.getFilePath(context, uri)
+        if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
+            mViewBinding.cl.sendFileMessage(Uri.parse(filePath))
+        } else {
+            EaseFileUtils.saveUriPermission(context, uri, data)
+            mViewBinding.cl.sendFileMessage(uri)
+        }
     }
 
     private fun onActivityResultForLocalVideos(data: Intent?) {
@@ -169,13 +184,27 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
     }
 
     private fun onActivityResultForLocalPhotos(data: Intent?) {
-        TODO("Not yet implemented")
+        val selectedImage = data?.data
+        selectedImage?.let {
+            val filePath: String = EaseFileUtils.getFilePath(context, it)
+            if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
+                mViewBinding.cl.sendImageMessage(Uri.parse(filePath))
+
+            } else {
+                EaseFileUtils.saveUriPermission(context, it, data)
+                mViewBinding.cl.sendImageMessage(it)
+
+            }
+        }
+
     }
 
+
     private fun onActivityResultForCamera(data: Intent?) {
-        if (cameraFile != null && cameraFile!!.exists()) {
-            mViewBinding.cl.sendImageMessage(Uri.parse(cameraFile!!.absolutePath))
+        cameraFile?.let {
+            mViewBinding.cl.sendImageMessage(Uri.parse(it.absolutePath))
         }
+
 
     }
 
@@ -196,7 +225,7 @@ class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatL
             return
         }
         cameraFile = File(
-            PathUtil.instance?.imagePath, ( System.currentTimeMillis()).toString() + ".jpg"
+            PathUtil.instance?.imagePath, (System.currentTimeMillis()).toString() + ".jpg"
         )
         cameraFile?.parentFile?.mkdirs()
         startActivityForResult(

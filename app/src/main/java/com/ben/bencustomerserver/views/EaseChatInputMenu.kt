@@ -41,7 +41,7 @@ class EaseChatInputMenu : LinearLayout,
     private var chatMenuContainer: LinearLayout? = null
     private var primaryMenuContainer: FrameLayout? = null
     private var chatExtendMenuContainer: FrameLayout? = null
-    private var menuListener: ChatInputMenuListener? = null
+    var menuListener: ChatInputMenuListener? = null
 
     /**
      * 聊天输入框
