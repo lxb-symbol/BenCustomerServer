@@ -28,13 +28,13 @@ import com.ben.bencustomerserver.views.chatrow.EaseChatRowVoicePlayer
  *
  */
 class EaseVoiceRecorderView : RelativeLayout {
-    protected lateinit var micImages: Array<Drawable>
-    protected var voiceRecorder: EaseVoiceRecorder? = null
-    protected var wakeLock: WakeLock? = null
-    protected var ivIcon: ImageView? = null
-    protected var micImage: ImageView? = null
-    protected var recordingHint: TextView? = null
-    protected var micImageHandler: Handler = object : Handler() {
+     lateinit var micImages: Array<Drawable>
+     var voiceRecorder: EaseVoiceRecorder? = null
+     var wakeLock: WakeLock? = null
+     var ivIcon: ImageView? = null
+     var micImage: ImageView? = null
+     var recordingHint: TextView? = null
+     var micImageHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             // change image
             val index = msg.what
@@ -107,7 +107,7 @@ class EaseVoiceRecorderView : RelativeLayout {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (event.y < dip2px(getContext(), 10f)) {
+                if (event.y < dip2px(context, 10f)) {
                     setTextContent(v, false)
                     showReleaseToCancelHint()
                 } else {
@@ -163,7 +163,7 @@ class EaseVoiceRecorderView : RelativeLayout {
             val child = view.getChildAt(0)
             if (child is TextView) {
                 child.text =
-                    getContext().getString(if (pressed) R.string.button_pushtotalk_pressed else R.string.button_pushtotalk)
+                    context.getString(if (pressed) R.string.button_pushtotalk_pressed else R.string.button_pushtotalk)
             }
         }
     }
@@ -187,7 +187,7 @@ class EaseVoiceRecorderView : RelativeLayout {
             return
         }
         try {
-            wakeLock!!.acquire()
+            wakeLock!!.acquire(10*60*1000L /*10 minutes*/)
             this.visibility = VISIBLE
             recordingHint!!.text = context!!.getString(R.string.move_up_to_cancel)
             recordingHint!!.setBackgroundColor(Color.TRANSPARENT)

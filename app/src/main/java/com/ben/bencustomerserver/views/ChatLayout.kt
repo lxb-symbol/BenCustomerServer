@@ -35,6 +35,9 @@ class ChatLayout @JvmOverloads constructor(
     IPopupWindow, ChatInputMenuListener, IChatLayout {
     private lateinit var mViewBinding: CsChatLayoutBinding
     var chatInputMenu: EaseChatInputMenu
+    lateinit var voiceRecordView: EaseVoiceRecorderView
+    var chatLayoutListener: OnChatLayoutListener? = null
+
 
     /**
      * "正在输入"功能的开关，打开后本设备发送消息将持续发送cmd类型消息通知对方"正在输入"
@@ -54,7 +57,7 @@ class ChatLayout @JvmOverloads constructor(
 
     private var isNotFirstSend: Boolean = false
 
-    private var voiceRecordListener: OnChatRecordTouchListener? = null
+    private var recordListener: OnChatRecordTouchListener? = null
 
     init {
         mViewBinding = DataBindingUtil.inflate(
@@ -67,6 +70,7 @@ class ChatLayout @JvmOverloads constructor(
         menuHelper = EasePopupWindowHelper()
         mViewBinding.layoutMenu.menuListener = this
         clippborad = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        voiceRecordView = mViewBinding.voiceRecorder
     }
 
 
@@ -167,7 +171,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun setOnChatRecordTouchListener(voiceTouchListener: OnChatRecordTouchListener?) {
-        this.voiceRecordListener = voiceRecordListener
+        this.recordListener = voiceTouchListener
     }
 
     override fun setOnRecallMessageResultListener(listener: OnRecallMessageResultListener?) {
@@ -178,8 +182,6 @@ class ChatLayout @JvmOverloads constructor(
         TODO("Not yet implemented")
     }
 
-    lateinit var voiceRecordView: EaseVoiceRecorderView
-    var chatLayoutListener: OnChatLayoutListener? = null
 
     companion object {
         /**
@@ -235,7 +237,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean {
-        val onRecordTouch: Boolean = voiceRecordListener?.onRecordTouch(v, event) ?: false
+        val onRecordTouch: Boolean = recordListener?.onRecordTouch(v, event) ?: false
         if (!onRecordTouch) {
             return false
         }

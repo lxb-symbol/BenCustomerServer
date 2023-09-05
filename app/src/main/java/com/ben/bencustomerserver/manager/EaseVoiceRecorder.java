@@ -13,6 +13,7 @@ import com.ben.bencustomerserver.utils.PathUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
 
 /***
  * 录音器
@@ -55,13 +56,10 @@ public class EaseVoiceRecorder {
             recorder.setAudioEncodingBitRate(64); // seems if change this to
                                                     // 128, still got same file
                                                     // size.
-            // one easy way is to use temp file
-            // file = File.createTempFile(PREFIX + userId, EXTENSION,
-            // User.getVoicePath());
             // TODO symbol 拿到 UID
             String uid ="";
             voiceFileName = getVoiceFileName(uid);
-            voiceFilePath = PathUtil.getInstance().getVoicePath() + "/" + voiceFileName;
+            voiceFilePath = Objects.requireNonNull(PathUtil.getInstance()).getVoicePath() + "/" + voiceFileName;
             file = new File(voiceFilePath);
             recorder.setOutputFile(file.getAbsolutePath());
             recorder.prepare();
