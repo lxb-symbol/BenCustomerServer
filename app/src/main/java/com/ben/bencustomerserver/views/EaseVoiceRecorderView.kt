@@ -159,7 +159,7 @@ class EaseVoiceRecorderView : RelativeLayout {
     }
 
     private fun setTextContent(view: View, pressed: Boolean) {
-        if (view is ViewGroup && view.childCount > 0) {
+        if ((view is ViewGroup) && (view.childCount > 0)) {
             val child = view.getChildAt(0)
             if (child is TextView) {
                 child.text =
@@ -206,19 +206,18 @@ class EaseVoiceRecorderView : RelativeLayout {
 
     fun showReleaseToCancelHint() {
         recordingHint!!.text = context!!.getString(R.string.release_to_cancel)
-        //recordingHint.setBackgroundResource(R.drawable.ease_recording_text_hint_bg);
         ivIcon!!.setImageResource(R.drawable.ease_record_cancel)
         micImage!!.visibility = GONE
     }
 
-    fun showMoveUpToCancelHint() {
+    private fun showMoveUpToCancelHint() {
         recordingHint!!.text = context!!.getString(R.string.move_up_to_cancel)
         recordingHint!!.setBackgroundColor(Color.TRANSPARENT)
         ivIcon!!.setImageResource(R.drawable.ease_record_icon)
         micImage!!.visibility = VISIBLE
     }
 
-    fun discardRecording() {
+    private fun discardRecording() {
         if (wakeLock!!.isHeld) wakeLock!!.release()
         try {
             // stop recording

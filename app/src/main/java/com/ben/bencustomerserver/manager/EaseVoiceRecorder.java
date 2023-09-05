@@ -57,7 +57,7 @@ public class EaseVoiceRecorder {
                                                     // 128, still got same file
                                                     // size.
             // TODO symbol 拿到 UID
-            String uid ="";
+            String uid ="symbol";
             voiceFileName = getVoiceFileName(uid);
             voiceFilePath = Objects.requireNonNull(PathUtil.getInstance()).getVoicePath() + "/" + voiceFileName;
             file = new File(voiceFilePath);
@@ -66,6 +66,7 @@ public class EaseVoiceRecorder {
             isRecording = true;
             recorder.start();
         } catch (IOException e) {
+            e.printStackTrace();
             Log.e("voice", "prepare() failed");
         }
         new Thread(() -> {

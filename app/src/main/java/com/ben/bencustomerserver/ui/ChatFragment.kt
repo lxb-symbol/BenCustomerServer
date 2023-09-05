@@ -1,5 +1,6 @@
 package com.ben.bencustomerserver.ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.media.MediaPlayer
@@ -10,6 +11,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.databinding.FragmentChatBinding
 import com.ben.bencustomerserver.listener.OnChatExtendMenuItemClickListener
@@ -379,6 +381,20 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         )
     }
 
-    override fun onRecordTouch(v: View?, event: MotionEvent?): Boolean =true
+    override fun onRecordTouch(v: View?, event: MotionEvent?): Boolean {
+
+        if (!XXPermissions.isGranted(requireContext(), Manifest.permission.RECORD_AUDIO)) {
+            XXPermissions.with(requireContext())
+                .permission(Manifest.permission.RECORD_AUDIO)
+                .request { _, allGranted ->
+                    if (!allGranted) {
+
+                    }
+                }
+            return false
+        }
+
+        return true
+    }
 
 }
