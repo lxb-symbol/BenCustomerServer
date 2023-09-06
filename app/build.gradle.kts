@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.mmkv)
     implementation(project(mapOf("path" to ":module-base")))
     implementation(project(mapOf("path" to ":lib-net")))
-
+    implementation(project(mapOf("path" to ":lib-picture-selector")))
 
     testImplementation(libs.junit)
 

@@ -46,7 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.glide)
     api(libs.lifcycle.exteion)
-    implementation(libs.bundles.picselectors)
+    api(libs.bundles.picselectors)
 
 }
 

@@ -23,10 +23,13 @@ import com.ben.bencustomerserver.utils.EaseCompat
 import com.ben.bencustomerserver.utils.EaseFileUtils
 import com.ben.bencustomerserver.utils.PathUtil
 import com.ben.bencustomerserver.utils.VersionUtils
+import com.ben.lib_picture_selector.PictureSelectUtil
+import com.ben.lib_picture_selector.ResultListener
 import com.ben.module_base.ui.BaseFragment
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.luck.picture.lib.entity.LocalMedia
 import com.symbol.lib_net.net.RetrofitClient
 import java.io.File
 import java.io.IOException
@@ -96,7 +99,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     override fun onChatExtendMenuItemClick(view: View?, itemId: Int) {
         onChatExtendMenuItemClickListener?.onChatExtendMenuItemClick(view, itemId)
 
-
         if (itemId == R.id.extend_item_take_picture) {
             XXPermissions.with(requireContext())
                 .permission(
@@ -142,7 +144,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         }
 
         if (itemId == R.id.extend_item_location) {
-            TODO(" 待完善其他按钮 ")
 
             return
         }
@@ -214,23 +215,46 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
 
     protected open fun selectVideoFromLocal() {
-        val intent = Intent()
-        if (VersionUtils.isTargetQ(requireContext())) {
-            intent.action = Intent.ACTION_OPEN_DOCUMENT
-        } else {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                intent.action = Intent.ACTION_GET_CONTENT
-            } else {
-                intent.action = Intent.ACTION_OPEN_DOCUMENT
+
+        PictureSelectUtil.get().selectVideos(requireContext(), object : ResultListener {
+            override fun onResult(medias: MutableList<LocalMedia>?) {
+                medias?.let {
+                    val uri = Uri.parse(it[0].path)
+                    val mediaPlayer = MediaPlayer()
+                    try {
+                        mediaPlayer.setDataSource(requireContext(), uri!!)
+                        mediaPlayer.prepare()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    val duration = mediaPlayer.duration
+                    Log.d("ChatFragment", "path = " + uri!!.path + ",duration=" + duration)
+                    mViewBinding.cl.sendVideoMessage(uri, duration)
+                }
             }
-        }
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "video/*"
-        startActivityForResult(
-            intent,
-            REQUEST_CODE_SELECT_VIDEO
-        )
+
+            override fun onCancel() {
+            }
+
+        })
+
+//        val intent = Intent()
+//        if (VersionUtils.isTargetQ(requireContext())) {
+//            intent.action = Intent.ACTION_OPEN_DOCUMENT
+//        } else {
+//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+//                intent.action = Intent.ACTION_GET_CONTENT
+//            } else {
+//                intent.action = Intent.ACTION_OPEN_DOCUMENT
+//            }
+//        }
+//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+//        intent.addCategory(Intent.CATEGORY_OPENABLE)
+//        intent.type = "video/*"
+//        startActivityForResult(
+//            intent,
+//            REQUEST_CODE_SELECT_VIDEO
+//        )
     }
 
 
@@ -255,38 +279,38 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            mViewBinding.cl.chatInputMenu.hideExtendContainer()
-            when (requestCode) {
-                REQUEST_CODE_CAMERA -> { // capture new image
-                    onActivityResultForCamera(data)
-                }
-
-                REQUEST_CODE_LOCAL -> { // send local image
-                    onActivityResultForLocalPhotos(data)
-                }
-
-                REQUEST_CODE_MAP -> { // location
-                    onActivityResultForMapLocation(data)
-                }
-
-                REQUEST_CODE_DING_MSG -> { // To send the ding-type msg.
-                    onActivityResultForDingMsg(data)
-                }
-
-                REQUEST_CODE_SELECT_FILE -> {
-                    onActivityResultForLocalFiles(data)
-                }
-
-                REQUEST_CODE_SELECT_VIDEO -> {
-                    onActivityResultForLocalVideos(data)
-                }
-
-                else -> {
-                    Log.e("symbol onActivityResult", " nothing to do ")
-                }
-            }
-        }
+//        if (resultCode == Activity.RESULT_OK) {
+//            mViewBinding.cl.chatInputMenu.hideExtendContainer()
+//            when (requestCode) {
+//                REQUEST_CODE_CAMERA -> { // capture new image
+//                    onActivityResultForCamera(data)
+//                }
+//
+//                REQUEST_CODE_LOCAL -> { // send local image
+//                    onActivityResultForLocalPhotos(data)
+//                }
+//
+//                REQUEST_CODE_MAP -> { // location
+//                    onActivityResultForMapLocation(data)
+//                }
+//
+//                REQUEST_CODE_DING_MSG -> { // To send the ding-type msg.
+//                    onActivityResultForDingMsg(data)
+//                }
+//
+//                REQUEST_CODE_SELECT_FILE -> {
+//                    onActivityResultForLocalFiles(data)
+//                }
+//
+//                REQUEST_CODE_SELECT_VIDEO -> {
+//                    onActivityResultForLocalVideos(data)
+//                }
+//
+//                else -> {
+//                    Log.e("symbol onActivityResult", " nothing to do ")
+//                }
+//            }
+//        }
     }
 
     private fun onActivityResultForMapLocation(data: Intent?) {
@@ -350,34 +374,36 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     }
 
-    /**
-     * 检查sd卡是否挂载
-     *
-     * @return
-     */
-    protected fun checkSdCardExist(): Boolean {
-        return EaseCommonUtils.isSdcardExist
-    }
 
     /**
      * select picture from camera
      */
     protected fun selectPicFromCamera() {
-        if (!checkSdCardExist()) {
-            return
-        }
-        cameraFile = File(
-            PathUtil.instance?.imagePath, (System.currentTimeMillis()).toString() + ".jpg"
-        )
-        cameraFile?.parentFile?.mkdirs()
-        startActivityForResult(
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
-                MediaStore.EXTRA_OUTPUT, EaseCompat.getUriForFile(
-                    context, cameraFile!!
-                )
-            ),
-            REQUEST_CODE_CAMERA
-        )
+
+        PictureSelectUtil.get().takePicture(requireContext(), object : ResultListener {
+            override fun onResult(medias: MutableList<LocalMedia>?) {
+                medias?.let {
+                    mViewBinding.cl.sendImageMessage(Uri.parse(it[0].path))
+                }
+            }
+
+            override fun onCancel() {
+
+            }
+        })
+
+//        cameraFile = File(
+//            PathUtil.instance?.imagePath, (System.currentTimeMillis()).toString() + ".jpg"
+//        )
+//        cameraFile?.parentFile?.mkdirs()
+//        startActivityForResult(
+//            Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
+//                MediaStore.EXTRA_OUTPUT, EaseCompat.getUriForFile(
+//                    context, cameraFile!!
+//                )
+//            ),
+//            REQUEST_CODE_CAMERA
+//        )
     }
 
     override fun onRecordTouch(v: View?, event: MotionEvent?): Boolean {

@@ -16,12 +16,12 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
 
     private lateinit var chatFragment: ChatFragment
 
-
     override fun initData() {
         mViewModel.getTokenAndWsResul().observe(this) {
             Log.e("symbol:", "${it.token}   <---> ${it.socket_url}")
         }
-        mViewModel.getTokenAndWs()
+        var code: String = "测试"
+        mViewModel.getTokenAndWs(code)
     }
 
     override fun initView() {
@@ -31,7 +31,6 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         supportFragmentManager.beginTransaction()
             .replace(mViewBinding.fcv.id, chatFragment)
             .commit()
-
     }
 
     override fun getLayoutResId() = R.layout.cs_activity_chat
