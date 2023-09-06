@@ -39,5 +39,21 @@ open class BaseRepository {
         }
     }
 
+    suspend fun <T:Any> handleResponse(
+        response: T,
+        successBlock: (suspend CoroutineScope.() -> Unit)?=null,
+        errorBlock: (suspend CoroutineScope.() -> Unit)?=null
+    ):NetResult<T>{
+        return coroutineScope {
+            if (response is Unit){
+                errorBlock?.let { it() }
+                NetResult.Error(ResultException("-1","解析出错"))
+            }else{
+                successBlock?.let { it() }
+                NetResult.Success(response)
+            }
+        }
+    }
+
 
 }

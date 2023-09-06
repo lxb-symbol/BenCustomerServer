@@ -104,8 +104,6 @@ val icons = intArrayOf(
 )
 
 object EaseDefaultEmojiconDatas {
-
-
     val data = createData()
     private fun createData(): Array<EaseEmojicon> {
         val datas = mutableListOf<EaseEmojicon>()

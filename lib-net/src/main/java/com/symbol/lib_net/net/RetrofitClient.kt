@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
  class RetrofitClient private constructor() {
 
     private var retrofit: Retrofit
+    private val BASE_URL="https://kf.saizhuge.com"
 
     companion object {
         val instance: RetrofitClient by lazy { RetrofitClient() }
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit
         retrofit = Retrofit.Builder()
             .client(initClient())
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://www.baidu.com")
+            .baseUrl(BASE_URL)
             .build()
     }
 

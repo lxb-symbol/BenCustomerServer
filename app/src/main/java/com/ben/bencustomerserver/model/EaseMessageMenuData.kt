@@ -82,7 +82,7 @@ object EaseMessageMenuData {
         R.drawable.ease_chat_item_menu_delete,
         R.drawable.ease_menu_recall
     )
-     const val EMOTICON_MORE_IDENTITY_CODE = "emoji_more"
+     private const val EMOTICON_MORE_IDENTITY_CODE = "emoji_more"
     val reactionMore = createMoreEmoticon()
     private fun createMoreEmoticon(): EaseEmojicon {
         val data = EaseEmojicon()

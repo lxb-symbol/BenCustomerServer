@@ -11,13 +11,12 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.databinding.FragmentChatBinding
 import com.ben.bencustomerserver.listener.OnChatExtendMenuItemClickListener
 import com.ben.bencustomerserver.listener.OnChatLayoutListener
 import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
-import com.ben.bencustomerserver.model.ChatViewModel
+import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.EaseCommonUtils
 import com.ben.bencustomerserver.utils.EaseCompat
@@ -61,7 +60,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         mViewBinding.cl.setOnChatRecordTouchListener(this)
 
 //        myLayoutManager = LinearLayoutManager(requireContext())
-//        messageAdapter = BenMessageAdapter((mViewModel.getDataMessages().value ?: emptyList()))
+//        messageAdapter = BenMessageAdapter((mViewModel.getDataMessagesResult().value ?: emptyList()))
 //        with(mViewBinding.rv) {
 //            layoutManager = myLayoutManager
 //            adapter = messageAdapter
@@ -76,7 +75,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     override fun initData() {
         //        获取聊天消息
         mViewModel.chatMessages()
-        mViewModel.getDataMessages().observe(this) {
+        mViewModel.getDataMessagesResult().observe(this) {
             Log.e("symbol result", "${it.size}")
 //            messageAdapter.addAll(it)
         }
