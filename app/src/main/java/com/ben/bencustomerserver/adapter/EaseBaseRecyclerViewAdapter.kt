@@ -29,11 +29,11 @@ abstract class EaseBaseRecyclerViewAdapter<T> :
     open var mOnItemClickListener: OnItemClickListener? = null
     open var mOnItemLongClickListener: OnItemLongClickListener? = null
     open var mItemSubViewListener: OnItemSubViewClickListener? = null
-    var mContext: Context? = null
-    var mData: MutableList<T>? = null
-    private var hideEmptyView = false
-    private var emptyView: View? = null
-    private var emptyViewId = 0
+    open var mContext: Context? = null
+    open var mData: MutableList<T>? = null
+    open var hideEmptyView = false
+    open var emptyView: View? = null
+    open var emptyViewId = 0
     open var mUserPresenceListener: OnUserPresenceListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         Log.i("adapter", "onCreateViewHolder()")
@@ -318,7 +318,7 @@ abstract class EaseBaseRecyclerViewAdapter<T> :
         mOnItemLongClickListener = longClickListener
     }
 
-    abstract class ViewHolder<T >(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    abstract class ViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
         /**
          * Get adapter
          * @return
@@ -362,7 +362,7 @@ abstract class EaseBaseRecyclerViewAdapter<T> :
          * @param data
          * @param position
          */
-        fun setDataList(data: List<T>?, position: Int) {}
+        open fun setDataList(data: List<T>?, position: Int) {}
 
         /**
          * Set adapter

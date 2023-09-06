@@ -11,7 +11,9 @@ import java.io.Serializable
 data class BaseMessageModel(
     val id: Long,
     val messageType: Int,
-    val cmd:String
+    val cmd:String,
+    val direct:Direct,
+    val msgId:String
 ) : Serializable
 
 

@@ -62,6 +62,7 @@ picselector = { module = "io.github.lucksiege:pictureselector", version.ref = "v
 piccompress = { module = "io.github.lucksiege:compress", version.ref = "vs-picselector" }
 piccorp = { module = "io.github.lucksiege:ucrop", version.ref = "vs-picselector" }
 piccamerax = { module = "io.github.lucksiege:camerax", version.ref = "vs-picselector" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version = "1.1.0" }
 
 
 [plugins]

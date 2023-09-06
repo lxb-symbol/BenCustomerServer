@@ -56,6 +56,7 @@ dependencies {
     implementation(project(mapOf("path" to ":module-base")))
     implementation(project(mapOf("path" to ":lib-net")))
     implementation(project(mapOf("path" to ":lib-picture-selector")))
+    implementation(libs.androidx.swiperefreshlayout)
 
     testImplementation(libs.junit)
 

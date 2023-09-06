@@ -45,11 +45,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     var cameraFile: File? = null
 
     companion object {
-        const val REQUEST_CODE_MAP = 1
-        const val REQUEST_CODE_CAMERA = 2
-        const val REQUEST_CODE_LOCAL = 3
-        const val REQUEST_CODE_DING_MSG = 4
-        const val REQUEST_CODE_SELECT_VIDEO = 11
         const val REQUEST_CODE_SELECT_FILE = 12
     }
 
@@ -99,76 +94,28 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     override fun onChatExtendMenuItemClick(view: View?, itemId: Int) {
         onChatExtendMenuItemClickListener?.onChatExtendMenuItemClick(view, itemId)
 
-        if (itemId == R.id.extend_item_take_picture) {
-            XXPermissions.with(requireContext())
-                .permission(
-                    Permission.CAMERA,
-                    Permission.WRITE_EXTERNAL_STORAGE,
-                    Permission.WRITE_EXTERNAL_STORAGE
-                )
-                .request(object : OnPermissionCallback {
-                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
-                        if (allGranted) {
-                            selectPicFromCamera()
-                        }
-                    }
-
-                    override fun onDenied(
-                        permissions: MutableList<String>,
-                        doNotAskAgain: Boolean
-                    ) {
-                        super.onDenied(permissions, doNotAskAgain)
-                    }
-
-                })
+        if (view?.id == R.id.extend_item_take_picture) {
+            selectPicFromCamera()
             return
         }
 
-        if (itemId == R.id.extend_item_picture) {
-            XXPermissions.with(requireContext())
-                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
-                .request(object : OnPermissionCallback {
-                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
-                        selectPicFromLocal()
-                    }
-
-                    override fun onDenied(
-                        permissions: MutableList<String>,
-                        doNotAskAgain: Boolean
-                    ) {
-                        super.onDenied(permissions, doNotAskAgain)
-                    }
-
-                })
+        if (view?.id == R.id.extend_item_picture) {
+            selectPicFromLocal()
             return
         }
 
-        if (itemId == R.id.extend_item_location) {
+        if (view?.id == R.id.extend_item_location) {
 
             return
         }
 
-        if (itemId == R.id.extend_item_video) {
+        if (view?.id == R.id.extend_item_video) {
 
-            XXPermissions.with(requireContext())
-                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
-                .request(object : OnPermissionCallback {
-                    override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
-                        selectVideoFromLocal()
-                    }
-
-                    override fun onDenied(
-                        permissions: MutableList<String>,
-                        doNotAskAgain: Boolean
-                    ) {
-                        super.onDenied(permissions, doNotAskAgain)
-                    }
-
-                })
+            selectVideoFromLocal()
             return
         }
 
-        if (itemId == R.id.extend_item_file) {
+        if (view?.id == R.id.extend_item_file) {
             XXPermissions.with(requireContext())
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
@@ -261,11 +208,19 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     /**
      * select local image
      */
-    fun selectPicFromLocal() {
-        EaseCompat.openImage(
-            this,
-            REQUEST_CODE_LOCAL
-        )
+    private fun selectPicFromLocal() {
+        PictureSelectUtil.get().selectImages(requireContext(), object : ResultListener {
+            override fun onResult(medias: MutableList<LocalMedia>?) {
+                medias?.let {
+                    mViewBinding.cl.sendImageMessage(Uri.parse(it[0].path))
+                }
+            }
+
+            override fun onCancel() {
+
+            }
+
+        })
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -276,42 +231,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         TODO("Not yet implemented")
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-//        if (resultCode == Activity.RESULT_OK) {
-//            mViewBinding.cl.chatInputMenu.hideExtendContainer()
-//            when (requestCode) {
-//                REQUEST_CODE_CAMERA -> { // capture new image
-//                    onActivityResultForCamera(data)
-//                }
-//
-//                REQUEST_CODE_LOCAL -> { // send local image
-//                    onActivityResultForLocalPhotos(data)
-//                }
-//
-//                REQUEST_CODE_MAP -> { // location
-//                    onActivityResultForMapLocation(data)
-//                }
-//
-//                REQUEST_CODE_DING_MSG -> { // To send the ding-type msg.
-//                    onActivityResultForDingMsg(data)
-//                }
-//
-//                REQUEST_CODE_SELECT_FILE -> {
-//                    onActivityResultForLocalFiles(data)
-//                }
-//
-//                REQUEST_CODE_SELECT_VIDEO -> {
-//                    onActivityResultForLocalVideos(data)
-//                }
-//
-//                else -> {
-//                    Log.e("symbol onActivityResult", " nothing to do ")
-//                }
-//            }
-//        }
-    }
 
     private fun onActivityResultForMapLocation(data: Intent?) {
 

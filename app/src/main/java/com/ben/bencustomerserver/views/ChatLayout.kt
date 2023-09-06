@@ -34,8 +34,8 @@ class ChatLayout @JvmOverloads constructor(
 ) : RelativeLayout(context, attrs, defStyleAttr), IHandleMessageView,
     IPopupWindow, ChatInputMenuListener, IChatLayout {
     private lateinit var mViewBinding: CsChatLayoutBinding
-    var chatInputMenu: EaseChatInputMenu
-    lateinit var voiceRecordView: EaseVoiceRecorderView
+    private var chatInputMenu: EaseChatInputMenu
+    private lateinit var voiceRecordView: EaseVoiceRecorderView
     var chatLayoutListener: OnChatLayoutListener? = null
 
 
@@ -105,7 +105,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendVoiceMessage(filePath: String?, length: Int) {
-        Log.e("TAG","filePath: $filePath")
+        Log.e("TAG", "filePath: $filePath")
         TODO("Not yet implemented")
     }
 
@@ -127,7 +127,6 @@ class ChatLayout @JvmOverloads constructor(
         locationAddress: String?,
         buildingName: String?
     ) {
-        TODO("Not yet implemented")
     }
 
     override fun sendVideoMessage(videoUri: Uri?, videoLength: Int) {
@@ -229,7 +228,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun onSendMessage(content: String) {
-        Log.e("chatLayout onSendMessage  ","$content")
+        Log.e("chatLayout onSendMessage  ", "$content")
     }
 
     override fun onExpressionClicked(emojicon: Any?) {
