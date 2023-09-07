@@ -3,7 +3,7 @@ package com.ben.bencustomerserver.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class EaseBaseDelegateAdapter<T> : EaseBaseRecyclerViewAdapter<T> {
+abstract class EaseBaseDelegateAdapter<T : Any> : EaseBaseRecyclerViewAdapter<T> {
     private var delegatesManager: EaseAdapterDelegatesManager
 
     constructor() {
@@ -25,7 +25,7 @@ abstract class EaseBaseDelegateAdapter<T> : EaseBaseRecyclerViewAdapter<T> {
         return addDelegate(delegate)
     }
 
-    fun getDelegateViewType(delegate: EaseAdapterDelegate<*, *>?): Int {
+    fun getDelegateViewType(delegate: EaseAdapterDelegate<Any, EaseBaseRecyclerViewAdapter.ViewHolder<*>>): Int {
         return delegatesManager.getDelegateViewType(delegate)
     }
 
@@ -60,11 +60,11 @@ abstract class EaseBaseDelegateAdapter<T> : EaseBaseRecyclerViewAdapter<T> {
         return viewType
     }
 
-    override fun getViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder<*> {
-        return delegatesManager.onCreateViewHolder(parent, viewType)
+    override fun getViewHolder(parent: ViewGroup?, viewType: Int):EaseBaseRecyclerViewAdapter.ViewHolder<T> {
+        return delegatesManager.onCreateViewHolder(parent, viewType) as ViewHolder<T>
     }
 
-    override fun onBindViewHolder(holder: ViewHolder<*>, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
         if (isEmptyViewType(position)) {
             return
@@ -77,7 +77,7 @@ abstract class EaseBaseDelegateAdapter<T> : EaseBaseRecyclerViewAdapter<T> {
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder<T?>, position: Int, payloads: List<Any>) {
+    override fun onBindViewHolder(holder: ViewHolder<T>, position: Int, payloads: List<Any>) {
         super.onBindViewHolder(holder, position, payloads)
         if (isEmptyViewType(position)) {
             return
@@ -107,6 +107,8 @@ abstract class EaseBaseDelegateAdapter<T> : EaseBaseRecyclerViewAdapter<T> {
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         delegatesManager.onDetachedFromRecyclerView(recyclerView)
     }
+
+    abstract fun getEmptyLayoutId(): Int
 
     companion object {
         private const val TAG = "adapter"

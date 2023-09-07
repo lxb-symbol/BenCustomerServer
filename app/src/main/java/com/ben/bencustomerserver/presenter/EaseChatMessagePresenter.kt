@@ -1,13 +1,13 @@
 package com.ben.bencustomerserver.presenter
 
+import com.ben.bencustomerserver.listener.IChatMessageListView
 import com.ben.bencustomerserver.listener.ILoadDataView
 
 abstract class EaseChatMessagePresenter : EaseBasePresenter() {
     //TODO 先屏蔽掉
-//    var mView: IChatMessageListView? = null
-//    var conversation: EMConversation? = null
+    open var mView: IChatMessageListView? = null
     override fun attachView(view: ILoadDataView?) {
-//        mView = view as IChatMessageListView?
+        mView = view as IChatMessageListView?
     }
 
     override fun detachView() {
@@ -28,7 +28,7 @@ abstract class EaseChatMessagePresenter : EaseBasePresenter() {
 //        this.conversation = conversation
 //    }
 
-    abstract fun joinChatRoom(username: String?)
+//    abstract fun joinChatRoom(username: String?)
 
     /**
      * 加载本地数据

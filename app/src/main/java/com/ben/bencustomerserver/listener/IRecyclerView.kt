@@ -1,55 +1,50 @@
-package com.ben.bencustomerserver.listener;
+package com.ben.bencustomerserver.listener
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView
 
-public interface IRecyclerView {
-
+interface IRecyclerView {
     /**
      * 添加头部adapter
      *
      * @param adapter
      */
-    void addHeaderAdapter(RecyclerView.Adapter adapter);
+    fun addHeaderAdapter(adapter: RecyclerView.Adapter<*>?)
 
     /**
      * 添加尾部adapter
      *
      * @param adapter
      */
-    void addFooterAdapter(RecyclerView.Adapter adapter);
+    fun addFooterAdapter(adapter: RecyclerView.Adapter<*>?)
 
     /**
      * 移除adapter
      *
      * @param adapter
      */
-    void removeAdapter(RecyclerView.Adapter adapter);
+    fun removeAdapter(adapter: RecyclerView.Adapter<*>?)
 
     /**
      * 添加装饰类
      *
      * @param decor
      */
-    void addRVItemDecoration(@NonNull RecyclerView.ItemDecoration decor);
+    fun addRVItemDecoration(decor: RecyclerView.ItemDecoration)
 
     /**
      * 移除装饰类
      *
      * @param decor
      */
-    void removeRVItemDecoration(@NonNull RecyclerView.ItemDecoration decor);
+    fun removeRVItemDecoration(decor: RecyclerView.ItemDecoration)
 
     /**
      * 设置条目点击事件
      */
-    default void setOnItemClickListener(OnItemClickListener listener) {
-    }
+    fun setOnItemClickListener(listener: OnItemClickListener?) {}
 
     /**
      * 设置条目长按事件
      */
-    default void setOnItemLongClickListener(OnItemLongClickListener listener) {
-    }
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener?) {}
 }
-

@@ -1,238 +1,245 @@
-package com.ben.bencustomerserver.views.chatrow;
+package com.ben.bencustomerserver.views.chatrow
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.ben.bencustomerserver.R;
-import com.ben.bencustomerserver.listener.MessageListItemClickListener;
-import com.ben.bencustomerserver.model.BaseMessageModel;
-import com.ben.bencustomerserver.model.Direct;
-
-import java.util.Date;
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.adapter.EaseBaseAdapter
+import com.ben.bencustomerserver.listener.EMCallBack
+import com.ben.bencustomerserver.listener.MessageListItemClickListener
+import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.Direct
+import com.ben.bencustomerserver.model.MessageStatus
+import com.ben.bencustomerserver.utils.EaseDateUtils
+import java.util.Date
 
 /**
  * base chat row view
  */
-public abstract class EaseChatRow extends LinearLayout {
-    protected static final String TAG = EaseChatRow.class.getSimpleName();
+abstract class EaseChatRow : LinearLayout {
+    protected var inflater: LayoutInflater
+    protected var context: Context
 
-    protected LayoutInflater inflater;
-    protected Context context;
     /**
      * ListView's adapter or RecyclerView's adapter
      */
-    protected Object adapter;
-    protected BaseMessageModel message;
+    protected var adapter: Any? = null
+    protected var message: BaseMessageModel? = null
+
     /**
      * message's position in list
      */
-    protected int position;
+    protected var position = 0
 
     /**
      * timestamp
      */
-    protected TextView timeStampView;
+    protected var timeStampView: TextView? = null
+
     /**
      * avatar
      */
-    protected ImageView userAvatarView;
+    protected var userAvatarView: ImageView? = null
+
     /**
      * bubble
      */
-    protected View bubbleLayout;
+    protected var bubbleLayout: View? = null
+
     /**
      * nickname
      */
-    protected TextView usernickView;
+    protected var usernickView: TextView? = null
+
     /**
      * percent
      */
-    protected TextView percentageView;
+    protected var percentageView: TextView? = null
+
     /**
      * progress
      */
-    protected ProgressBar progressBar;
+    protected var progressBar: ProgressBar? = null
+
     /**
      * status
      */
-    protected ImageView statusView;
+    protected var statusView: ImageView? = null
+
     /**
      * if asked
      */
-    protected TextView ackedView;
+    protected var ackedView: TextView? = null
+
     /**
      * if delivered
      */
-    protected TextView deliveredView;
+    protected var deliveredView: TextView? = null
+    /**
+     * 是否是发送者
+     *
+     * @return
+     */
     /**
      * if is sender
      */
-    protected boolean isSender;
+    var isSender: Boolean
+        protected set
+
     /**
-     * normal along with {@link #isSender}
+     * normal along with [.isSender]
      */
-    protected boolean showSenderType;
+    protected var showSenderType = false
+
     /**
      * chat message callback
      */
-    protected EaseChatCallback chatCallback;
+    protected var chatCallback: EaseChatCallback? = null
+
     /**
      * switch to main thread
      */
-    private Handler mainThreadHandler;
+    private var mainThreadHandler: Handler? = null
+    protected var itemClickListener: MessageListItemClickListener? = null
+    private var itemActionCallback: EaseChatRowActionCallback? = null
 
-    protected MessageListItemClickListener itemClickListener;
-    private EaseChatRowActionCallback itemActionCallback;
-    private EaseReactionView reactionView;
-
-    public EaseChatRow(Context context, boolean isSender) {
-        super(context);
-        this.context = context;
-        this.isSender = isSender;
-        this.inflater = LayoutInflater.from(context);
-
-        initView();
+    constructor(context: Context, isSender: Boolean) : super(context) {
+        this.context = context
+        this.isSender = isSender
+        inflater = LayoutInflater.from(context)
+        initView()
     }
 
-    public EaseChatRow(Context context, BaseMessageModel message, int position, Object adapter) {
-        super(context);
-        this.context = context;
-        this.message = message;
-        this.isSender = message.getDirect() == Direct.SEND ;
-        this.position = position;
-        this.adapter = adapter;
-        this.inflater = LayoutInflater.from(context);
-
-        initView();
+    constructor(context: Context, message: BaseMessageModel?, position: Int, adapter: Any?) : super(
+        context
+    ) {
+        this.context = context
+        this.message = message
+        isSender = message?.direct === Direct.SEND
+        this.position = position
+        this.adapter = adapter
+        inflater = LayoutInflater.from(context)
+        initView()
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        itemActionCallback.onDetachedFromWindow();
-        super.onDetachedFromWindow();
+    override fun onDetachedFromWindow() {
+        itemActionCallback!!.onDetachedFromWindow()
+        super.onDetachedFromWindow()
     }
 
-    private void initView() {
-        showSenderType = isSender;
-
-        onInflateView();
+    private fun initView() {
+        showSenderType = isSender
+        onInflateView()
         //添加reacionView
-        addReactionView();
+//        addReactionView()
         //添加threadView
-        addThreadView();
-
-        timeStampView = (TextView) findViewById(R.id.timestamp);
-        userAvatarView = (ImageView) findViewById(R.id.iv_userhead);
-        bubbleLayout = findViewById(R.id.bubble);
-        usernickView = (TextView) findViewById(R.id.tv_userid);
-
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        statusView = (ImageView) findViewById(R.id.msg_status);
-        ackedView = (TextView) findViewById(R.id.tv_ack);
-        deliveredView = (TextView) findViewById(R.id.tv_delivered);
-
-        reactionView = findViewById(R.id.reaction_view);
+//        addThreadView()
+        timeStampView = findViewById<View>(R.id.timestamp) as TextView
+        userAvatarView = findViewById<View>(R.id.iv_userhead) as ImageView
+        bubbleLayout = findViewById<View>(R.id.bubble)
+        usernickView = findViewById<View>(R.id.tv_userid) as TextView
+        progressBar = findViewById<View>(R.id.progress_bar) as ProgressBar
+        statusView = findViewById<View>(R.id.msg_status) as ImageView
+        ackedView = findViewById<View>(R.id.tv_ack) as TextView
+        deliveredView = findViewById<View>(R.id.tv_delivered) as TextView
+//        reactionView = findViewById(R.id.reaction_view)
 
 //        setLayoutStyle();
-
-        mainThreadHandler = new Handler(Looper.getMainLooper());
-        onFindViewById();
+        mainThreadHandler = Handler(Looper.getMainLooper())
+        onFindViewById()
     }
 
-    private void addThreadView() {
-        View view = LayoutInflater.from(context).inflate(R.layout.circle_message_thread, this, false);
-        addView(view);
-    }
-
-    private void addReactionView() {
-        setOrientation(VERTICAL);
-        View view = LayoutInflater.from(context).inflate(R.layout.circle_message_reaction, this, false);
-        addView(view);
-    }
-
-    public void resetViewState() {
-        if (null != progressBar) {
-            progressBar.setVisibility(GONE);
-        }
-        if (null != statusView) {
-            statusView.setVisibility(GONE);
-        }
-        if (null != ackedView) {
-            ackedView.setVisibility(GONE);
-        }
-        if (null != deliveredView) {
-            deliveredView.setVisibility(GONE);
-        }
-    }
-
-//    protected void setLayoutStyle() {
-//        EaseChatItemStyleHelper helper = getItemStyleHelper();
-//        if (helper != null) {
-//            EaseChatSetStyle itemStyle = helper.getStyle(context);
-//            if (bubbleLayout != null) {
-//                try {
-//                    if (isSender()) {
-//                        Drawable senderBgDrawable = itemStyle.getSenderBgDrawable();
-//                        if (senderBgDrawable != null) {
-//                            bubbleLayout.setBackground(senderBgDrawable.getConstantState().newDrawable());
-//                        }
-//                    } else {
-//                        Drawable receiverBgDrawable = itemStyle.getReceiverBgDrawable();
-//                        if (receiverBgDrawable != null) {
-//                            bubbleLayout.setBackground(receiverBgDrawable.getConstantState().newDrawable());
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (timeStampView != null) {
-//                if (itemStyle.getTimeBgDrawable() != null) {
-//                    timeStampView.setBackground(itemStyle.getTimeBgDrawable().getConstantState().newDrawable());
-//                }
-//                if (itemStyle.getTimeTextSize() != 0) {
-//                    timeStampView.setTextSize(TypedValue.COMPLEX_UNIT_PX, itemStyle.getTimeTextSize());
-//                }
-//                if (itemStyle.getTimeTextColor() != 0) {
-//                    timeStampView.setTextColor(itemStyle.getTimeTextColor());
-//                }
-//            }
-//            TextView content = findViewById(R.id.tv_chatcontent);
-//            if (content != null) {
-//                if (itemStyle.getTextSize() != 0) {
-//                    content.setTextSize(TypedValue.COMPLEX_UNIT_PX, itemStyle.getTextSize());
-//                }
-//                if (itemStyle.getTextColor() != 0) {
-//                    content.setTextColor(itemStyle.getTextColor());
-//                }
-//            }
-//        }
+//    private fun addThreadView() {
+//        val view: View =
+//            LayoutInflater.from(context).inflate(R.layout.circle_message_thread, this, false)
+//        addView(view)
 //    }
 
+//    private fun addReactionView() {
+//        orientation = VERTICAL
+//        val view: View =
+//            LayoutInflater.from(context).inflate(R.layout.circle_message_reaction, this, false)
+//        addView(view)
+//    }
+
+    fun resetViewState() {
+        if (null != progressBar) {
+            progressBar!!.visibility = GONE
+        }
+        if (null != statusView) {
+            statusView!!.visibility = GONE
+        }
+        if (null != ackedView) {
+            ackedView!!.visibility = GONE
+        }
+        if (null != deliveredView) {
+            deliveredView!!.visibility = GONE
+        }
+    }
+    //    protected void setLayoutStyle() {
+    //        EaseChatItemStyleHelper helper = getItemStyleHelper();
+    //        if (helper != null) {
+    //            EaseChatSetStyle itemStyle = helper.getStyle(context);
+    //            if (bubbleLayout != null) {
+    //                try {
+    //                    if (isSender()) {
+    //                        Drawable senderBgDrawable = itemStyle.getSenderBgDrawable();
+    //                        if (senderBgDrawable != null) {
+    //                            bubbleLayout.setBackground(senderBgDrawable.getConstantState().newDrawable());
+    //                        }
+    //                    } else {
+    //                        Drawable receiverBgDrawable = itemStyle.getReceiverBgDrawable();
+    //                        if (receiverBgDrawable != null) {
+    //                            bubbleLayout.setBackground(receiverBgDrawable.getConstantState().newDrawable());
+    //                        }
+    //                    }
+    //                } catch (Exception e) {
+    //                    e.printStackTrace();
+    //                }
+    //            }
+    //            if (timeStampView != null) {
+    //                if (itemStyle.getTimeBgDrawable() != null) {
+    //                    timeStampView.setBackground(itemStyle.getTimeBgDrawable().getConstantState().newDrawable());
+    //                }
+    //                if (itemStyle.getTimeTextSize() != 0) {
+    //                    timeStampView.setTextSize(TypedValue.COMPLEX_UNIT_PX, itemStyle.getTimeTextSize());
+    //                }
+    //                if (itemStyle.getTimeTextColor() != 0) {
+    //                    timeStampView.setTextColor(itemStyle.getTimeTextColor());
+    //                }
+    //            }
+    //            TextView content = findViewById(R.id.tv_chatcontent);
+    //            if (content != null) {
+    //                if (itemStyle.getTextSize() != 0) {
+    //                    content.setTextSize(TypedValue.COMPLEX_UNIT_PX, itemStyle.getTextSize());
+    //                }
+    //                if (itemStyle.getTextColor() != 0) {
+    //                    content.setTextColor(itemStyle.getTextColor());
+    //                }
+    //            }
+    //        }
+    //    }
     /**
      * update view
      *
      * @param msg
      */
-    public void updateView(final BaseMessageModel msg) {
+    fun updateView(msg: BaseMessageModel) {
         if (chatCallback == null) {
-            chatCallback = new EaseChatCallback();
+            chatCallback = EaseChatCallback()
         }
-        msg.setMessageStatusCallback(chatCallback);
-        onViewUpdate(msg);
+        msg.messageStatusCallback = chatCallback as EaseChatCallback
+        onViewUpdate(msg)
     }
 
     /**
@@ -242,104 +249,98 @@ public abstract class EaseChatRow extends LinearLayout {
      * @param message
      * @param position
      */
-    public void setUpView(BaseMessageModel message, int position,
-                          MessageListItemClickListener itemClickListener,
-                          EaseChatRowActionCallback itemActionCallback) {
-        this.message = message;
-        this.position = position;
-        this.itemClickListener = itemClickListener;
-        this.itemActionCallback = itemActionCallback;
-
-        setUpBaseView();
-        onSetUpView();
-        onSetUpReactionView();
-        onSetupThreadView();
+    fun setUpView(
+        message: BaseMessageModel?, position: Int,
+        itemClickListener: MessageListItemClickListener?,
+        itemActionCallback: EaseChatRowActionCallback?
+    ) {
+        this.message = message
+        this.position = position
+        this.itemClickListener = itemClickListener
+        this.itemActionCallback = itemActionCallback
+        setUpBaseView()
+        onSetUpView()
+        onSetUpReactionView()
+        onSetupThreadView()
         //setLayoutStyle();
-        setClickListener();
+        setClickListener()
     }
 
-    private void onSetupThreadView() {
-        if(threadRegion != null) {
-            if(shouldShowThreadRegion()) {
-                threadRegion.setVisibility(VISIBLE);
-                threadRegion.setThreadInfo(message.getChatThread());
-            }else {
-                threadRegion.setVisibility(GONE);
-            }
-        }
-
+    private fun onSetupThreadView() {
+//        if (threadRegion != null) {
+//            if (shouldShowThreadRegion()) {
+//                threadRegion.setVisibility(VISIBLE)
+//                threadRegion.setThreadInfo(message.getChatThread())
+//            } else {
+//                threadRegion.setVisibility(GONE)
+//            }
+//        }
     }
+
     /**
      * If need to show thread region
      * @return
      */
-    public boolean shouldShowThreadRegion() {
-        return message != null && message.getChatThread() != null;
+    fun shouldShowThreadRegion(): Boolean {
+        return false
     }
 
-    protected void onSetUpReactionView() {
-        if (null == message || null == reactionView) {
-            Log.e(TAG, "view is null, don't setup reaction view");
-            return;
-        }
-
-
-        reactionView.updateMessageInfo(message);
-        reactionView.setOnReactionItemListener(new EaseReactionView.OnReactionItemListener() {
-            @Override
-            public void removeReaction(EaseReactionEmojiconEntity reactionEntity) {
-                if (itemClickListener != null) {
-                    itemClickListener.onRemoveReaction(message, reactionEntity);
-                }
-            }
-
-            @Override
-            public void addReaction(EaseReactionEmojiconEntity reactionEntity) {
-                if (itemClickListener != null) {
-                    itemClickListener.onAddReaction(message, reactionEntity);
-                }
-            }
-        });
-        reactionView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (itemClickListener != null) {
-                    itemClickListener.onBubbleLongClick(view, message);
-                }
-            }
-        });
+    protected fun onSetUpReactionView() {
+//
+//        reactionView.updateMessageInfo(message)
+//        reactionView.setOnReactionItemListener(object : OnReactionItemListener() {
+//            fun removeReaction(reactionEntity: EaseReactionEmojiconEntity?) {
+//                if (itemClickListener != null) {
+//                    itemClickListener.onRemoveReaction(message, reactionEntity)
+//                }
+//            }
+//
+//            fun addReaction(reactionEntity: EaseReactionEmojiconEntity?) {
+//                if (itemClickListener != null) {
+//                    itemClickListener.onAddReaction(message, reactionEntity)
+//                }
+//            }
+//        })
+//        reactionView.setOnItemClickListener(object : OnItemClickListener() {
+//            fun onItemClick(view: View?, position: Int) {
+//                if (itemClickListener != null) {
+//                    itemClickListener!!.onBubbleLongClick(view, message)
+//                }
+//            }
+//        })
     }
 
     /**
      * set timestamp, avatar, nickname and so on
      */
-    private void setUpBaseView() {
-        TextView timestamp = (TextView) findViewById(R.id.timestamp);
-        if (timestamp != null) {
-            setTimestamp(timestamp);
-        }
-        setItemStyle();
+    private fun setUpBaseView() {
+        val timestamp = findViewById<View>(R.id.timestamp) as TextView
+        timestamp.let { setTimestamp(it) }
+        setItemStyle()
         if (userAvatarView != null) {
-            setAvatarAndNick();
+            setAvatarAndNick()
         }
-        if (EMClient.getInstance().getOptions().getRequireDeliveryAck()) {
-            if (deliveredView != null && isSender()) {
-                if (message.isDelivered()) {
-                    deliveredView.setVisibility(View.VISIBLE);
+//  TODO 判断是否回应了
+//        EMClient.getInstance().getOptions().getRequireDeliveryAck()
+        if (true) {
+            if (deliveredView != null && isSender) {
+                if (message?.delivered == true) {
+                    deliveredView!!.visibility = VISIBLE
                 } else {
-                    deliveredView.setVisibility(View.INVISIBLE);
+                    deliveredView!!.visibility = INVISIBLE
                 }
             }
         }
-        if (EMClient.getInstance().getOptions().getRequireAck()) {
-            if (ackedView != null && isSender()) {
-                if (message.isAcked()) {
+//        EMClient.getInstance().getOptions().getRequireAck()
+        if (true) {
+            if (ackedView != null && isSender) {
+                if (message?.acked == true) {
                     if (deliveredView != null) {
-                        deliveredView.setVisibility(View.INVISIBLE);
+                        deliveredView!!.visibility = INVISIBLE
                     }
-                    ackedView.setVisibility(View.VISIBLE);
+                    ackedView!!.visibility = VISIBLE
                 } else {
-                    ackedView.setVisibility(View.INVISIBLE);
+                    ackedView!!.visibility = INVISIBLE
                 }
             }
         }
@@ -348,112 +349,109 @@ public abstract class EaseChatRow extends LinearLayout {
     /**
      * set item's style by easeMessageListItemStyle
      */
-    private void setItemStyle() {
-        EaseChatItemStyleHelper helper = getItemStyleHelper();
-        if (helper != null) {
-            EaseChatSetStyle itemStyle = helper.getStyle(context);
-            if (userAvatarView != null) {
-                setAvatarOptions(itemStyle);
-            }
-            if (usernickView != null) {
-                //如果在同一侧展示，则需要显示昵称
-                if (itemStyle.getItemShowType() == 1 || itemStyle.getItemShowType() == 2) {
-                    usernickView.setVisibility(VISIBLE);
-                } else {
-                    //如果不在同一侧的话，则根据判断是否显示昵称
-                    usernickView.setVisibility((itemStyle.isShowNickname() && message.direct() == Direct.RECEIVE) ? VISIBLE : GONE);
-                }
-            }
-            if (bubbleLayout != null) {
-                if (message.getType() == BaseMessageModel.Type.TXT) {
-                    if (itemStyle.getItemMinHeight() != 0) {
-                        bubbleLayout.setMinimumHeight(itemStyle.getItemMinHeight());
-                    }
-                }
-            }
-        }
+    private fun setItemStyle() {
+//        val helper: EaseChatItemStyleHelper = itemStyleHelper
+//        if (helper != null) {
+//            val itemStyle: EaseChatSetStyle = helper.getStyle(context)
+//            if (userAvatarView != null) {
+//                setAvatarOptions(itemStyle)
+//            }
+//            if (usernickView != null) {
+//                //如果在同一侧展示，则需要显示昵称
+//                if (itemStyle.getItemShowType() === 1 || itemStyle.getItemShowType() === 2) {
+//                    usernickView!!.visibility = VISIBLE
+//                } else {
+//                    //如果不在同一侧的话，则根据判断是否显示昵称
+//                    usernickView!!.visibility =
+//                        if (itemStyle.isShowNickname() && message!!.direct() === Direct.RECEIVE) VISIBLE else GONE
+//                }
+//            }
+//            if (bubbleLayout != null) {
+//                if (message.getType() === MessageType.TXT) {
+//                    if (itemStyle.getItemMinHeight() !== 0) {
+//                        bubbleLayout!!.minimumHeight = itemStyle.getItemMinHeight()
+//                    }
+//                }
+//            }
+//        }
     }
 
-    private EaseChatItemStyleHelper getItemStyleHelper() {
-        return EaseChatItemStyleHelper.getInstance();
-    }
+//    private val itemStyleHelper: EaseChatItemStyleHelper
+//        private get() = EaseChatItemStyleHelper.getInstance()
 
     /**
      * set avatar options
      *
      * @param itemStyle
      */
-    protected void setAvatarOptions(EaseChatSetStyle itemStyle) {
-        if (itemStyle.isShowAvatar()) {
-            userAvatarView.setVisibility(View.VISIBLE);
-            if (userAvatarView instanceof EaseImageView) {
-                EaseImageView avatarView = (EaseImageView) userAvatarView;
-                if (itemStyle.getAvatarDefaultSrc() != null) {
-                    avatarView.setImageDrawable(itemStyle.getAvatarDefaultSrc());
-                }
-                avatarView.setShapeType(itemStyle.getShapeType());
-                if (itemStyle.getAvatarSize() != 0) {
-                    ViewGroup.LayoutParams params = avatarView.getLayoutParams();
-                    params.width = (int) itemStyle.getAvatarSize();
-                    params.height = (int) itemStyle.getAvatarSize();
-                }
-                if (itemStyle.getBorderWidth() != 0) {
-                    avatarView.setBorderWidth((int) itemStyle.getBorderWidth());
-                }
-                if (itemStyle.getBorderColor() != 0) {
-                    avatarView.setBorderColor(itemStyle.getBorderColor());
-                }
-                if (itemStyle.getAvatarRadius() != 0) {
-                    avatarView.setRadius((int) itemStyle.getAvatarRadius());
-                }
-            }
-            EaseAvatarOptions avatarOptions = provideAvatarOptions();
-            if (avatarOptions != null && userAvatarView instanceof EaseImageView) {
-                EaseImageView avatarView = ((EaseImageView) userAvatarView);
-                if (avatarOptions.getAvatarShape() != 0)
-                    avatarView.setShapeType(avatarOptions.getAvatarShape());
-                if (avatarOptions.getAvatarBorderWidth() != 0)
-                    avatarView.setBorderWidth(avatarOptions.getAvatarBorderWidth());
-                if (avatarOptions.getAvatarBorderColor() != 0)
-                    avatarView.setBorderColor(avatarOptions.getAvatarBorderColor());
-                if (avatarOptions.getAvatarRadius() != 0)
-                    avatarView.setRadius(avatarOptions.getAvatarRadius());
-            }
-        } else {
-            userAvatarView.setVisibility(View.GONE);
-        }
-    }
+//    protected fun setAvatarOptions(itemStyle: EaseChatSetStyle) {
+//        if (itemStyle.isShowAvatar()) {
+//            userAvatarView!!.visibility = VISIBLE
+//            if (userAvatarView is EaseImageView) {
+//                val avatarView: EaseImageView? = userAvatarView as EaseImageView?
+//                if (itemStyle.getAvatarDefaultSrc() != null) {
+//                    avatarView.setImageDrawable(itemStyle.getAvatarDefaultSrc())
+//                }
+//                avatarView.setShapeType(itemStyle.getShapeType())
+//                if (itemStyle.getAvatarSize() !== 0) {
+//                    val params: ViewGroup.LayoutParams = avatarView.getLayoutParams()
+//                    params.width = itemStyle.getAvatarSize()
+//                    params.height = itemStyle.getAvatarSize()
+//                }
+//                if (itemStyle.getBorderWidth() !== 0) {
+//                    avatarView.setBorderWidth(itemStyle.getBorderWidth() as Int)
+//                }
+//                if (itemStyle.getBorderColor() !== 0) {
+//                    avatarView.setBorderColor(itemStyle.getBorderColor())
+//                }
+//                if (itemStyle.getAvatarRadius() !== 0) {
+//                    avatarView.setRadius(itemStyle.getAvatarRadius() as Int)
+//                }
+//            }
+//            val avatarOptions: EaseAvatarOptions = provideAvatarOptions()
+//            if (avatarOptions != null && userAvatarView is EaseImageView) {
+//                val avatarView: EaseImageView? = userAvatarView as EaseImageView?
+//                if (avatarOptions.getAvatarShape() !== 0) avatarView.setShapeType(avatarOptions.getAvatarShape())
+//                if (avatarOptions.getAvatarBorderWidth() !== 0) avatarView.setBorderWidth(
+//                    avatarOptions.getAvatarBorderWidth()
+//                )
+//                if (avatarOptions.getAvatarBorderColor() !== 0) avatarView.setBorderColor(
+//                    avatarOptions.getAvatarBorderColor()
+//                )
+//                if (avatarOptions.getAvatarRadius() !== 0) avatarView.setRadius(avatarOptions.getAvatarRadius())
+//            }
+//        } else {
+//            userAvatarView!!.visibility = GONE
+//        }
+//    }
 
     /**
      * @return
      */
-    protected EaseAvatarOptions provideAvatarOptions() {
-        return EaseIM.getInstance().getAvatarOptions();
-    }
-
-    /**
-     * 是否是发送者
-     *
-     * @return
-     */
-    public boolean isSender() {
-        return isSender;
-    }
+//    protected fun provideAvatarOptions(): EaseAvatarOptions {
+//        return EaseIM.getInstance().getAvatarOptions()
+//    }
 
     /**
      * set avatar and nickname
      */
-    protected void setAvatarAndNick() {
-        if (isSender()) {
-            EaseUserUtils.setUserAvatar(context, EMClient.getInstance().getCurrentUser(), userAvatarView);
-            //只要不是常规布局形式，就展示昵称
-            if (EaseChatItemStyleHelper.getInstance().getStyle(context).getItemShowType() != EaseChatMessageListLayout.ShowType.NORMAL.ordinal()) {
-                EaseUserUtils.setUserNick(message.getFrom(), usernickView);
-            }
-        } else {
-            EaseUserUtils.setUserAvatar(context, message.getFrom(), userAvatarView);
-            EaseUserUtils.setUserNick(message.getFrom(), usernickView);
-        }
+    protected fun setAvatarAndNick() {
+//        if (isSender) {
+//            EaseUserUtils.setUserAvatar(
+//                context,
+//                EMClient.getInstance().getCurrentUser(),
+//                userAvatarView
+//            )
+//            //只要不是常规布局形式，就展示昵称
+//            if (EaseChatItemStyleHelper.getInstance().getStyle(context)
+//                    .getItemShowType() !== EaseChatMessageListLayout.ShowType.NORMAL.ordinal()
+//            ) {
+//                EaseUserUtils.setUserNick(message.getFrom(), usernickView)
+//            }
+//        } else {
+//            EaseUserUtils.setUserAvatar(context, message.getFrom(), userAvatarView)
+//            EaseUserUtils.setUserNick(message.getFrom(), usernickView)
+//        }
     }
 
     /**
@@ -461,261 +459,220 @@ public abstract class EaseChatRow extends LinearLayout {
      *
      * @param timestamp
      */
-    protected void setTimestamp(TextView timestamp) {
+    protected fun setTimestamp(timestamp: TextView) {
         if (adapter != null) {
-            timestamp.setText(EaseDateUtils.getTimestampString(getContext(), new Date(message.getMsgTime())));
-            timestamp.setVisibility(View.VISIBLE);
-            // show time stamp if interval with last message is > 30 seconds
-            BaseMessageModel prevMessage = null;
-            if (adapter instanceof BaseAdapter) {
-                prevMessage = (BaseMessageModel) ((BaseAdapter) adapter).getItem(position - 1);
+            timestamp.text = message?.msgTime?.let { Date(it) }?.let {
+                EaseDateUtils.getTimestampString(
+                    getContext(),
+                    it
+                )
             }
-            if (adapter instanceof EaseBaseAdapter) {
-                prevMessage = (BaseMessageModel) ((EaseBaseAdapter) adapter).getItem(position - 1);
+            timestamp.visibility = VISIBLE
+            // show time stamp if interval with last message is > 30 seconds
+            var prevMessage: BaseMessageModel? = null
+            if (adapter is BaseAdapter) {
+                prevMessage = (adapter as BaseAdapter).getItem(position - 1) as BaseMessageModel
+            }
+            if (adapter is EaseBaseAdapter<*>) {
+                prevMessage = (adapter as EaseBaseAdapter<*>).getItem(position - 1) as BaseMessageModel
             }
 
-//            if (prevMessage != null && EaseDateUtils.isCloseEnough(message.getMsgTime(), prevMessage.getMsgTime())) {
-//                timestamp.setVisibility(View.GONE);
-//            } else {
-//                timestamp.setText(EaseDateUtils.getTimestampString(getContext(), new Date(message.getMsgTime())));
-//                timestamp.setVisibility(View.VISIBLE);
-//            }
         }
     }
 
-    public void setTimestamp(BaseMessageModel preMessage) {
-//        if (position == 0) {
-//            timeStampView.setText(EaseDateUtils.getTimestampString(getContext(), new Date(message.getMsgTime())));
-//            timeStampView.setVisibility(View.VISIBLE);
-//        } else {
-//            if (preMessage != null && EaseDateUtils.isCloseEnough(message.getMsgTime(), preMessage.getMsgTime())) {
-//                timeStampView.setVisibility(View.GONE);
-//            } else {
-//                timeStampView.setText(EaseDateUtils.getTimestampString(getContext(), new Date(message.getMsgTime())));
-//                timeStampView.setVisibility(View.VISIBLE);
-//            }
-//        }
-        timeStampView.setText(EaseDateUtils.getTimestampString(getContext(), new Date(message.getMsgTime())));
-        timeStampView.setVisibility(View.VISIBLE);
+    fun setTimestamp(preMessage: BaseMessageModel?) {
+        timeStampView?.text = message?.let { Date(it.msgTime) }?.let {
+            EaseDateUtils.getTimestampString(
+                getContext(),
+                it
+            )
+        }
+        timeStampView!!.visibility = VISIBLE
     }
 
     /**
      * set click listener
      */
-    private void setClickListener() {
-        chatCallback = new EaseChatCallback();
+    private fun setClickListener() {
+        chatCallback = EaseChatCallback()
         if (bubbleLayout != null) {
-            bubbleLayout.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (itemClickListener != null && itemClickListener.onBubbleClick(message)) {
-                        return;
-                    }
-                    if (itemActionCallback != null) {
-                        itemActionCallback.onBubbleClick(message);
-                    }
+            bubbleLayout!!.setOnClickListener(OnClickListener {
+                if (itemClickListener != null && itemClickListener!!.onBubbleClick(message)) {
+                    return@OnClickListener
                 }
-            });
-
-            bubbleLayout.setOnLongClickListener(new OnLongClickListener() {
-
-                @Override
-                public boolean onLongClick(View v) {
-                    if (itemClickListener != null) {
-                        return itemClickListener.onBubbleLongClick(v, message);
-                    }
-                    return false;
+                if (itemActionCallback != null) {
+                    itemActionCallback!!.onBubbleClick(message)
                 }
-            });
+            })
+            bubbleLayout!!.setOnLongClickListener { v ->
+                if (itemClickListener != null) {
+                    itemClickListener!!.onBubbleLongClick(v, message)
+                } else false
+            }
         }
-
         if (statusView != null) {
-            statusView.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (itemClickListener != null && itemClickListener.onResendClick(message)) {
-                        return;
-                    }
-                    if (itemActionCallback != null) {
-                        itemActionCallback.onResendClick(message);
-                    }
+            statusView!!.setOnClickListener(OnClickListener {
+                if (itemClickListener != null && itemClickListener!!.onResendClick(message)) {
+                    return@OnClickListener
                 }
-            });
+                if (itemActionCallback != null) {
+                    itemActionCallback!!.onResendClick(message)
+                }
+            })
         }
-
         if (userAvatarView != null) {
-            userAvatarView.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (itemClickListener != null) {
-                        if (message.direct() == Direct.SEND) {
-                            itemClickListener.onUserAvatarClick(EMClient.getInstance().getCurrentUser());
-                        } else {
-                            itemClickListener.onUserAvatarClick(message.getFrom());
-                        }
+            userAvatarView!!.setOnClickListener {
+                if (itemClickListener != null) {
+                    if (message!!.direct === Direct.SEND) {
+                        itemClickListener!!.onUserAvatarClick(
+                            // TODO 返回用户名字
+                            "symbol"
+                        )
+                    } else {
+                        itemClickListener!!.onUserAvatarClick(message?.from)
                     }
                 }
-            });
-            userAvatarView.setOnLongClickListener(new OnLongClickListener() {
-
-                @Override
-                public boolean onLongClick(View v) {
-                    if (itemClickListener != null) {
-                        if (message.direct() == Direct.SEND) {
-                            itemClickListener.onUserAvatarLongClick(EMClient.getInstance().getCurrentUser());
-                        } else {
-                            itemClickListener.onUserAvatarLongClick(message.getFrom());
-                        }
-                        return true;
+            }
+            userAvatarView!!.setOnLongClickListener(OnLongClickListener {
+                if (itemClickListener != null) {
+                    if (message!!.direct === Direct.SEND) {
+                        itemClickListener!!.onUserAvatarLongClick(
+//                            todo
+//                            EMClient.getInstance().getCurrentUser()
+                            "symbol"
+                        )
+                    } else {
+                        itemClickListener!!.onUserAvatarLongClick(message?.from)
                     }
-                    return false;
+                    return@OnLongClickListener true
                 }
-            });
+                false
+            })
         }
-
     }
 
     /**
      * refresh view when message status change
      */
-    protected void onViewUpdate(BaseMessageModel msg) {
-        switch (msg.status()) {
-            case CREATE:
-                onMessageCreate();
+    protected open fun onViewUpdate(msg: BaseMessageModel) {
+        when (msg.status) {
+            MessageStatus.CREATE -> {
+                onMessageCreate()
                 if (itemClickListener != null) {
-                    itemClickListener.onMessageCreate(msg);
+                    itemClickListener!!.onMessageCreate(msg)
                 }
-                break;
-            case SUCCESS:
-                onMessageSuccess();
-                break;
-            case FAIL:
-                onMessageError();
-                break;
-            case INPROGRESS:
-                onMessageInProgress();
-                break;
-            default:
-                Log.i(TAG, "default");
-                break;
+            }
+
+            MessageStatus.SUCCESS -> onMessageSuccess()
+            MessageStatus.FAIL -> onMessageError()
+            MessageStatus.INPROGRESS -> onMessageInProgress()
+            else -> Log.i(TAG, "default")
         }
     }
 
-    private class EaseChatCallback implements EMCallBack {
-
-        @Override
-        public void onSuccess() {
-            mainThreadHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onMessageSuccess();
-                    if (itemClickListener != null) {
-                        itemClickListener.onMessageSuccess(message);
-                    }
+    inner class EaseChatCallback : EMCallBack {
+        override fun onSuccess() {
+            mainThreadHandler!!.post {
+                onMessageSuccess()
+                if (itemClickListener != null) {
+                    itemClickListener!!.onMessageSuccess(message)
                 }
-            });
+            }
         }
 
-        @Override
-        public void onError(int code, String error) {
-            mainThreadHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onMessageError();
-                    if (itemClickListener != null) {
-                        itemClickListener.onMessageError(message, code, error);
-                    }
+        override fun onError(code: Int, error: String?) {
+            mainThreadHandler!!.post {
+                onMessageError()
+                if (itemClickListener != null) {
+                    itemClickListener!!.onMessageError(message, code, error)
                 }
-            });
+            }
         }
 
-        @Override
-        public void onProgress(int progress, String status) {
-            mainThreadHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onMessageInProgress();
-                    if (itemClickListener != null) {
-                        itemClickListener.onMessageInProgress(message, progress);
-                    }
+        override fun onProgress(progress: Int, status: String?) {
+            mainThreadHandler!!.post {
+                onMessageInProgress()
+                if (itemClickListener != null) {
+                    itemClickListener!!.onMessageInProgress(message, progress)
                 }
-            });
+            }
         }
     }
 
     /**
      * message create status
      */
-    protected void onMessageCreate() {
-        Log.i(TAG, "onMessageCreate");
+    protected open fun onMessageCreate() {
+        Log.i(TAG, "onMessageCreate")
     }
 
     /**
      * message success status
      */
-    protected void onMessageSuccess() {
-        Log.i(TAG, "onMessageSuccess");
+    protected open fun onMessageSuccess() {
+        Log.i(TAG, "onMessageSuccess")
     }
 
     /**
      * message fail status
      */
-    protected void onMessageError() {
+    protected open fun onMessageError() {
         if (ackedView != null) {
-            ackedView.setVisibility(INVISIBLE);
+            ackedView!!.visibility = INVISIBLE
         }
         if (deliveredView != null) {
-            deliveredView.setVisibility(INVISIBLE);
+            deliveredView!!.visibility = INVISIBLE
         }
-        Log.e(TAG, "onMessageError");
+        Log.e(TAG, "onMessageError")
     }
 
     /**
      * message in progress status
      */
-    protected void onMessageInProgress() {
-        Log.i(TAG, "onMessageInProgress");
+    protected open fun onMessageInProgress() {
+        Log.i(TAG, "onMessageInProgress")
     }
 
     /**
      * inflate view, child should implement it
      */
-    protected abstract void onInflateView();
+    protected abstract fun onInflateView()
 
     /**
      * find view by id
      */
-    protected abstract void onFindViewById();
+    protected abstract fun onFindViewById()
 
     /**
      * setup view
      */
-    protected abstract void onSetUpView();
+    protected abstract fun onSetUpView()
 
     /**
      * row action call back
      */
-    public interface EaseChatRowActionCallback {
+    interface EaseChatRowActionCallback {
         /**
          * click resend action
          *
          * @param message
          */
-        void onResendClick(BaseMessageModel message);
+        fun onResendClick(message: BaseMessageModel?)
 
         /**
          * click bubble layout
          *
          * @param message
          */
-        void onBubbleClick(BaseMessageModel message);
+        fun onBubbleClick(message: BaseMessageModel?)
 
         /**
          * when view detach from window
          */
-        void onDetachedFromWindow();
+        fun onDetachedFromWindow()
+    }
+
+    companion object {
+        protected val TAG = EaseChatRow::class.java.simpleName
     }
 }

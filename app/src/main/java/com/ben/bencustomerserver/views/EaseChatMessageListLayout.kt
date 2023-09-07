@@ -24,7 +24,10 @@ import com.ben.bencustomerserver.listener.MessageListItemClickListener
 import com.ben.bencustomerserver.listener.OnItemClickListener
 import com.ben.bencustomerserver.manager.EaseThreadManager.Companion.instance
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.EaseReactionEmojiconEntity
+import com.ben.bencustomerserver.model.SearchDirection
 import com.ben.bencustomerserver.presenter.EaseChatMessagePresenter
+import com.ben.bencustomerserver.presenter.EaseChatMessagePresenterImpl
 import com.ben.bencustomerserver.views.EaseChatMessageListLayout
 
 class EaseChatMessageListLayout @JvmOverloads constructor(
@@ -48,12 +51,12 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
      */
     private var msgId: String? = null
     private var pageSize = DEFAULT_PAGE_SIZE
-    private var rvList: RecyclerView? = null
-    private var srlRefresh: SwipeRefreshLayout? = null
-    private var layoutManager: LinearLayoutManager? = null
+    private lateinit var rvList: RecyclerView
+    private lateinit var srlRefresh: SwipeRefreshLayout
+    private lateinit var layoutManager: LinearLayoutManager
 
     /**
-     * 另一侧的环信id
+     * 另一侧的id
      */
     private var username: String? = null
     private var canUseRefresh = true
@@ -96,7 +99,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
             )
             val textColorRes =
                 a.getResourceId(R.styleable.EaseChatMessageListLayout_ease_chat_item_text_color, -1)
-            val textColor: Int
+            var textColor: Int
             textColor = if (textColorRes != -1) {
                 ContextCompat.getColor(context, textColorRes)
             } else {
@@ -132,33 +135,30 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         presenter!!.attachView(this)
         rvList = findViewById(R.id.message_list)
         srlRefresh = findViewById(R.id.srl_refresh)
-        srlRefresh.setEnabled(canUseRefresh)
+        srlRefresh.isEnabled = (canUseRefresh)
         layoutManager = LinearLayoutManager(context)
-        rvList.setLayoutManager(layoutManager)
+        rvList.layoutManager = layoutManager
         baseAdapter = ConcatAdapter()
         messageAdapter = EaseMessageAdapter()
         baseAdapter!!.addAdapter(messageAdapter!!)
-        rvList.setAdapter(baseAdapter)
+        rvList.adapter = baseAdapter
         registerChatType()
         initListener()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
     }
 
     private fun registerChatType() {}
     fun init(loadDataType: LoadDataType?, username: String?) {
         this.username = username
         this.loadDataType = loadDataType
+        this.loadDataType = LoadDataType.ROAM
         // If it is thread conversation, should not use refresh animator
         if (this.loadDataType == LoadDataType.THREAD) {
-            srlRefresh!!.isEnabled = false
+            srlRefresh.isEnabled = false
         }
     }
 
     fun init(username: String?) {
-        init(LoadDataType.LOCAL, username)
+        init(LoadDataType.ROAM, username)
     }
 
     fun loadDefaultData() {
@@ -176,30 +176,12 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
     }
 
     private fun checkConType() {
-        if (isChatRoomCon) {
-            presenter!!.joinChatRoom(username)
-        } else {
-            loadData()
-        }
+        loadData()
     }
 
     private fun loadData() {
-        if (!isSingleChat) {
-            chatSetHelper.setShowNickname(context(), true)
-        }
-        conversation.markAllMessagesAsRead()
         if (loadDataType == LoadDataType.ROAM) {
             presenter!!.loadServerMessages(pageSize)
-        } else if (loadDataType == LoadDataType.HISTORY) {
-            presenter.loadMoreLocalHistoryMessages(
-                msgId,
-                pageSize,
-                EMConversation.EMSearchDirection.DOWN
-            )
-        } else if (loadDataType == LoadDataType.THREAD) {
-            presenter!!.loadServerMessages(pageSize, EMConversation.EMSearchDirection.DOWN)
-        } else {
-            presenter!!.loadLocalMessages(pageSize)
         }
     }
 
@@ -224,32 +206,28 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
     /**
      * 专用于加载更多的更新一些的数据，上拉加载更多时使用
      */
-    fun loadMoreHistoryData() {
+    private fun loadMoreHistoryData() {
         val msgId = listLastMessageId
         if (loadDataType == LoadDataType.HISTORY) {
             loadMoreStatus = LoadMoreStatus.HAS_MORE
-            presenter.loadMoreLocalHistoryMessages(
-                msgId,
-                pageSize,
-                EMConversation.EMSearchDirection.DOWN
-            )
+
         }
     }
 
     private val listFirstMessageId: String?
         /**
-         * 获取列表最下面的一条消息的id
+         * 获取列表最上面的一条消息的id
          *
          * @return
          */
-        private get() {
+        get() {
             var message: BaseMessageModel? = null
             try {
                 message = messageAdapter!!.data!![0]
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            return if (message == null) null else message.getMsgId()
+            return message?.msgId
         }
     private val listLastMessageId: String?
         /**
@@ -257,35 +235,35 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
          *
          * @return
          */
-        private get() {
+        get() {
             var message: BaseMessageModel? = null
             try {
                 message = messageAdapter!!.data!![messageAdapter!!.data!!.size - 1]
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            return if (message == null) null else message.getMsgId()
+            return if (message == null) null else message.msgId
         }
     val isChatRoomCon: Boolean
-        get() =false
+        get() = false
     val isGroupChat: Boolean
         get() = false
     private val isSingleChat: Boolean
         private get() = true
 
     private fun initListener() {
-        srlRefresh!!.setOnRefreshListener { onRefreshData() }
-        rvList!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        srlRefresh.setOnRefreshListener { onRefreshData() }
+        rvList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     //判断状态及是否还有更多数据
-                    if (!rvList!!.canScrollVertically(1)) {
+                    if (!rvList.canScrollVertically(1)) {
                         if (messageTouchListener != null) {
                             messageTouchListener!!.onReachBottom()
                         }
                     }
-                    if (loadMoreStatus == LoadMoreStatus.HAS_MORE && layoutManager!!.findLastVisibleItemPosition() != 0 && layoutManager!!.findLastVisibleItemPosition() == layoutManager!!.itemCount - 1) {
+                    if (loadMoreStatus == LoadMoreStatus.HAS_MORE && layoutManager.findLastVisibleItemPosition() != 0 && layoutManager.findLastVisibleItemPosition() == layoutManager.itemCount - 1) {
                         loadMoreData()
                     }
                 } else {
@@ -298,8 +276,8 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         })
 
         //用于监听RecyclerView高度的变化，从而刷新列表
-        rvList!!.viewTreeObserver.addOnGlobalLayoutListener {
-            val height = rvList!!.height
+        rvList.viewTreeObserver.addOnGlobalLayoutListener {
+            val height = rvList.height
             if (recyclerViewLastHeight == 0) {
                 recyclerViewLastHeight = height
             }
@@ -311,7 +289,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
             }
             recyclerViewLastHeight = height
         }
-        messageAdapter!!.setOnItemClickListener(object : OnItemClickListener() {
+        messageAdapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View?, position: Int) {
                 if (messageTouchListener != null) {
                     messageTouchListener!!.onTouchItemOutside(view, position)
@@ -412,18 +390,18 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
                 message: BaseMessageModel?,
                 reactionEntity: EaseReactionEmojiconEntity?
             ) {
-                if (messageListItemClickListener != null) {
-                    messageListItemClickListener.onAddReaction(message, reactionEntity)
-                }
+//                if (messageListItemClickListener != null) {
+//                    messageListItemClickListener.onAddReaction(message, reactionEntity)
+//                }
             }
 
             fun onRemoveReaction(
                 message: BaseMessageModel?,
                 reactionEntity: EaseReactionEmojiconEntity?
             ) {
-                if (messageListItemClickListener != null) {
-                    messageListItemClickListener.onRemoveReaction(message, reactionEntity)
-                }
+//                if (messageListItemClickListener != null) {
+//                    messageListItemClickListener.onRemoveReaction(message, reactionEntity)
+//                }
             }
         })
     }
@@ -439,8 +417,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
     fun loadMoreThreadMessages() {
         presenter!!.loadMoreServerMessages(
             messageCursor,
-            pageSize,
-            EMConversation.EMSearchDirection.DOWN
+            pageSize
         )
     }
 
@@ -451,7 +428,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         if (presenter!!.isActive) {
             runOnUi {
                 if (srlRefresh != null) {
-                    srlRefresh!!.isRefreshing = false
+                    srlRefresh.isRefreshing = false
                 }
             }
         }
@@ -466,8 +443,8 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
      *
      * @param data
      */
-    fun setData(data: List<BaseMessageModel?>) {
-        messageAdapter!!.setData(data)
+    fun setData(data: List<BaseMessageModel>) {
+        messageAdapter!!.setData(data.toMutableList())
     }
 
     /**
@@ -475,30 +452,15 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
      *
      * @param data
      */
-    fun addData(data: List<BaseMessageModel?>?) {
-        messageAdapter.addData(data)
+    fun addData(data: List<BaseMessageModel>?) {
+
+        messageAdapter?.addData(data?.toMutableList())
     }
 
     override fun context(): Context? {
         return context
     }
 
-    val currentConversation: EMConversation
-        get() = conversation
-
-    fun joinChatRoomSuccess(value: EMChatRoom?) {
-        loadData()
-    }
-
-    fun joinChatRoomFail(error: Int, errorMsg: String?) {
-        if (presenter!!.isActive) {
-            runOnUi {
-                if (errorListener != null) {
-                    errorListener!!.onChatError(error, errorMsg)
-                }
-            }
-        }
-    }
 
     override fun loadMsgFail(error: Int, message: String?) {
         finishRefresh()
@@ -512,41 +474,52 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
     }
 
     override fun loadNoLocalMsg() {}
+    override fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel?>?) {
+    }
+
     fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel?>) {
         finishRefresh()
         presenter!!.refreshCurrentConversation()
-        post { smoothSeekToPosition(data.size() - 1) }
+        post { smoothSeekToPosition(data.size - 1) }
     }
 
     override fun loadNoMoreLocalMsg() {
         finishRefresh()
     }
 
+    override fun loadMoreLocalHistoryMsgSuccess(
+        data: List<BaseMessageModel?>?,
+        direction: SearchDirection?
+    ) {
+
+    }
+
     fun loadMoreLocalHistoryMsgSuccess(
         data: List<BaseMessageModel?>,
-        direction: EMConversation.EMSearchDirection
     ) {
-        if (direction === EMConversation.EMSearchDirection.UP) {
-            finishRefresh()
-            messageAdapter!!.addData(0, data)
-        } else {
-            messageAdapter.addData(data)
-            loadMoreStatus = if (data.size() >= pageSize) {
-                LoadMoreStatus.HAS_MORE
-            } else {
-                LoadMoreStatus.NO_MORE_DATA
-            }
-        }
+
     }
 
     override fun loadNoMoreLocalHistoryMsg() {
         finishRefresh()
     }
 
+    override fun loadServerMsgSuccess(data: List<BaseMessageModel?>?, cursor: String?) {
+
+    }
+
+    override fun loadMoreServerMsgSuccess(data: List<BaseMessageModel?>?, cursor: String?) {
+
+    }
+
+    override fun refreshCurrentConSuccess(data: List<BaseMessageModel?>?, toLatest: Boolean) {
+
+    }
+
     fun loadServerMsgSuccess(data: List<BaseMessageModel?>, cursor: String?) {
         messageCursor = cursor
         if (loadDataType == LoadDataType.THREAD) {
-            loadMoreStatus = if (data.size() >= pageSize || !TextUtils.isEmpty(cursor)) {
+            loadMoreStatus = if (data.size >= pageSize || !TextUtils.isEmpty(cursor)) {
                 LoadMoreStatus.HAS_MORE
             } else {
                 LoadMoreStatus.NO_MORE_DATA
@@ -562,26 +535,28 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         finishRefresh()
         presenter!!.refreshCurrentConversation()
         if (loadDataType == LoadDataType.THREAD) {
-            loadMoreStatus = if (data.size() >= pageSize || !TextUtils.isEmpty(cursor)) {
+            loadMoreStatus = if (data.size >= pageSize || !TextUtils.isEmpty(cursor)) {
                 LoadMoreStatus.HAS_MORE
             } else {
                 LoadMoreStatus.NO_MORE_DATA
             }
-            //post(()-> smoothSeekToPosition(messageAdapter.getData().size() - data.size()));
         } else {
-            post { smoothSeekToPosition(data.size() - 1) }
+            post { smoothSeekToPosition(data.size - 1) }
         }
     }
 
-    fun refreshCurrentConSuccess(data: List<BaseMessageModel?>, toLatest: Boolean) {
-        messageAdapter!!.setData(data)
+    fun refreshCurrentConSuccess(data: List<BaseMessageModel>, toLatest: Boolean) {
+        messageAdapter!!.setData(data.toMutableList())
         if (toLatest) {
-            seekToPosition(data.size() - 1)
+            seekToPosition(data.size - 1)
         }
     }
 
     override fun insertMessageToLast(message: BaseMessageModel?) {
-        messageAdapter.addData(message)
+        message?.let {
+            messageAdapter?.addData(it)
+        }
+
         seekToPosition(messageAdapter!!.data!!.size - 1)
     }
 
@@ -591,7 +566,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
 
     override fun canUseDefaultRefresh(canUseRefresh: Boolean) {
         this.canUseRefresh = canUseRefresh
-        srlRefresh!!.isEnabled = canUseRefresh
+        srlRefresh.isEnabled = canUseRefresh
     }
 
     override fun refreshMessages() {
@@ -613,7 +588,9 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         if (TextUtils.isEmpty(messageId)) {
             return
         }
-        val message: BaseMessageModel = EMClient.getInstance().chatManager().getMessage(messageId)
+        //TODO 待通过 messageId 查询 message
+        val message: BaseMessageModel? = null
+//        val message: BaseMessageModel = .getMessage(messageId)
         if (message != null) {
             val position = messageAdapter!!.data!!.lastIndexOf(message)
             if (position != -1) {
@@ -626,19 +603,19 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         if (message == null || messageAdapter!!.data == null) {
             return
         }
-        conversation.removeMessage(message.getMsgId())
-        EMClient.getInstance().translationManager().removeTranslationResult(message.getMsgId())
+        //TODO 是否需要调用接口删除消息
         runOnUi {
             if (presenter!!.isActive) {
-                val messages: List<BaseMessageModel>? = messageAdapter!!.data
+                val messages: MutableList<BaseMessageModel>? = messageAdapter?.data?.toMutableList()
+
                 val position = messages!!.lastIndexOf(message)
                 if (position != -1) {
                     //需要保证条目从集合中删除
-                    messages.remove(position)
+                    messages.removeAt(position)
                     //通知适配器删除条目
-                    messageAdapter!!.notifyItemRemoved(position)
+                    messageAdapter?.notifyItemRemoved(position)
                     //通知刷新下一条消息
-                    messageAdapter!!.notifyItemChanged(position)
+                    messageAdapter?.notifyItemChanged(position)
                 }
             }
         }
@@ -648,28 +625,28 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         seekToPosition(position)
     }
 
-    override fun lastMsgScrollToBottom(message: BaseMessageModel) {
+    override fun lastMsgScrollToBottom(message: BaseMessageModel?) {
         val messages: List<BaseMessageModel>? = messageAdapter!!.data
         val position = messages!!.lastIndexOf(message)
         if (position != -1) {
             messageAdapter!!.notifyItemChanged(position)
-            val isNoBottom = rvList!!.canScrollVertically(1)
+            val isNoBottom = rvList.canScrollVertically(1)
             if (!isNoBottom) {
-                val oldView = rvList!!.layoutManager!!
+                val oldView = rvList.layoutManager!!
                     .findViewByPosition(messageAdapter!!.itemCount - 1)
                 var oldHeight = 0
                 if (oldView != null) {
                     oldHeight = oldView.measuredHeight
                 }
                 val finalOldHeight = oldHeight
-                rvList!!.postDelayed({
-                    val v = rvList!!.layoutManager!!
+                rvList.postDelayed({
+                    val v = rvList.layoutManager!!
                         .findViewByPosition(messageAdapter!!.itemCount - 1)
                     var height = 0
                     if (v != null) {
                         height = v.measuredHeight
                     }
-                    rvList!!.smoothScrollBy(0, height - finalOldHeight)
+                    rvList.smoothScrollBy(0, height - finalOldHeight)
                 }, 500)
             }
         }
@@ -709,38 +686,15 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
 
     override fun setItemShowType(type: ShowType?) {
         if (!isSingleChat) {
-            chatSetHelper.setItemShowType(context(), type!!.ordinal)
             notifyDataSetChanged()
         }
     }
 
-    //    @Override
-    //    public void setAvatarSize(float avatarSize) {
-    //        chatSetHelper.setAvatarSize(avatarSize);
-    //        notifyDataSetChanged();
-    //    }
     override fun setAvatarDefaultSrc(src: Drawable?) {
-        chatSetHelper.setAvatarDefaultSrc(context(), src)
         notifyDataSetChanged()
     }
 
-    //    @Override
-    //    public void setAvatarRadius(int radius) {
-    //        chatSetHelper.setAvatarRadius(radius);
-    //        notifyDataSetChanged();
-    //    }
-    //    @Override
-    //    public void setAvatarBorderWidth(int borderWidth) {
-    //        chatSetHelper.setBorderWidth(borderWidth);
-    //        notifyDataSetChanged();
-    //    }
-    //    @Override
-    //    public void setAvatarBorderColor(int borderColor) {
-    //        chatSetHelper.setBorderColor(borderColor);
-    //        notifyDataSetChanged();
-    //    }
     override fun setAvatarShapeType(shapeType: Int) {
-        chatSetHelper.setShapeType(context(), shapeType)
         notifyDataSetChanged()
     }
 
@@ -757,11 +711,11 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
     }
 
     override fun addRVItemDecoration(decor: RecyclerView.ItemDecoration) {
-        rvList!!.addItemDecoration(decor)
+        rvList.addItemDecoration(decor)
     }
 
     override fun removeRVItemDecoration(decor: RecyclerView.ItemDecoration) {
-        rvList!!.removeItemDecoration(decor)
+        rvList.removeItemDecoration(decor)
     }
 
     /**
@@ -775,7 +729,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
             false
         } else false
 
-        //TODO
+        //TODO 判断是否有新消息
     }
 
     /**
@@ -785,13 +739,13 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
      */
     private fun seekToPosition(position: Int) {
         var position = position
-        if (presenter!!.isDestroy || rvList == null) {
+        if (presenter!!.isDestroy) {
             return
         }
         if (position < 0) {
             position = 0
         }
-        val manager = rvList!!.layoutManager
+        val manager = rvList.layoutManager
         if (manager is LinearLayoutManager) {
             manager.scrollToPositionWithOffset(position, 0)
         }
@@ -804,29 +758,27 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
      */
     private fun smoothSeekToPosition(position: Int) {
         var position = position
-        if (presenter!!.isDestroy || rvList == null) {
+        if (presenter!!.isDestroy) {
             return
         }
         if (position < 0) {
             position = 0
         }
-        val manager = rvList!!.layoutManager
+        val manager = rvList.layoutManager
         if (manager is LinearLayoutManager) {
             manager.scrollToPositionWithOffset(position, 0)
-            //setMoveAnimation(manager, position);
+            setMoveAnimation(manager, position)
         }
     }
 
     private fun setMoveAnimation(manager: RecyclerView.LayoutManager, position: Int) {
-        val prePosition: Int
-        prePosition = if (position > 0) {
+        val prePosition: Int = if (position > 0) {
             position - 1
         } else {
             position
         }
         val view = manager.findViewByPosition(0)
-        val height: Int
-        height = view?.height ?: 200
+        val height: Int = view?.height ?: 200
         val animator = ValueAnimator.ofInt(-height, 0)
         animator.addUpdateListener { animation: ValueAnimator ->
             val value = animation.animatedValue as Int
@@ -842,7 +794,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
             (context as AppCompatActivity).lifecycle.addObserver(presenter!!)
         }
         this.presenter!!.attachView(this)
-        this.presenter.setupWithConversation(conversation)
+        // 和 conversation 进行关联缺少
     }
 
     override fun setOnMessageTouchListener(listener: OnMessageTouchListener?) {

@@ -1,19 +1,28 @@
 package com.ben.bencustomerserver.model
 
-import android.os.Parcel
-import android.os.Parcelable
+import com.ben.bencustomerserver.listener.EMCallBack
 import java.io.Serializable
 
 
 /**
  * 基础消息体,也算是处理过的消息体
  */
-data class BaseMessageModel(
-    val id: Long,
-    val messageType: Int,
-    val cmd:String,
-    val direct:Direct,
-    val msgId:String
+class BaseMessageModel(
+    var id: Long,
+    var messageType: MessageType,
+    var cmd: String,
+    var direct: Direct,
+    var msgId: String,
+    var status: MessageStatus,
+    var messageStatusCallback: EMCallBack,
+    var delivered: Boolean = false,
+    var acked: Boolean = false,
+    var from: String,
+    var to: String,
+    var msgTime: Long,
+    var progress:Int
+
+
 ) : Serializable
 
 

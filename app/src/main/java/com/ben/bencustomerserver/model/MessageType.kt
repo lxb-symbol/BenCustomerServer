@@ -1,6 +1,13 @@
 package com.ben.bencustomerserver.model
 
-object MessageType {
-    const val TEXT_MESSAGE = 1
+enum class MessageType {
+    TXT,
+    IMAGE,
+    VIDEO,
+    LOCATION,
+    VOICE,
+    FILE,
+    CMD,
+    CUSTOM
 
 }

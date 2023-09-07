@@ -1,20 +1,19 @@
-package com.ben.bencustomerserver.listener;
+package com.ben.bencustomerserver.listener
 
+import com.ben.bencustomerserver.model.BaseMessageModel
 
-import com.ben.bencustomerserver.model.BaseMessageModel;
-
-public interface OnRecallMessageResultListener {
+interface OnRecallMessageResultListener {
     /**
      * Recall successful
      * @param originalMessage The message was unsent
      * @param notification  The notification message
      */
-    void recallSuccess(BaseMessageModel originalMessage, BaseMessageModel notification);
+    fun recallSuccess(originalMessage: BaseMessageModel?, notification: BaseMessageModel?)
 
     /**
      * Recall failed
      * @param code
      * @param errorMsg
      */
-    void recallFail(int code, String errorMsg);
+    fun recallFail(code: Int, errorMsg: String?)
 }

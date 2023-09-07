@@ -31,7 +31,7 @@ abstract class EaseAdapterDelegate<T, VH : RecyclerView.ViewHolder?> : Cloneable
         setTag(tag)
     }
 
-    fun isForViewType(item: T, position: Int): Boolean {
+    open fun isForViewType(item: T, position: Int): Boolean {
         return true
     }
 

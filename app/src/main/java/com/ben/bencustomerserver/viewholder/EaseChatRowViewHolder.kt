@@ -47,8 +47,8 @@ class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemCl
         chatRow!!.setTimestamp(if (position == 0) null else data!![position - 1])
     }
 
-    override fun onResendClick(message: BaseMessageModel) {}
-    override fun onBubbleClick(message: BaseMessageModel) {}
+    override fun onResendClick(message: BaseMessageModel?) {}
+    override fun onBubbleClick(message: BaseMessageModel?) {}
     override fun onDetachedFromWindow() {}
     private fun handleMessage() {
         if (message!!.direct === Direct.SEND) {
@@ -64,7 +64,9 @@ class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemCl
      */
     protected fun handleSendMessage(message: BaseMessageModel?) {
         // Update the view according to the message current status.
-        chatRow!!.updateView(message)
+        if (message != null) {
+            chatRow!!.updateView(message)
+        }
     }
 
     /**
@@ -74,6 +76,6 @@ class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemCl
     protected fun handleReceiveMessage(message: BaseMessageModel?) {}
 
     companion object {
-        private val TAG = EaseChatRowViewHolder::class.java.simpleName
+        val TAG = EaseChatRowViewHolder::class.java.simpleName
     }
 }

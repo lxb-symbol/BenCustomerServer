@@ -31,6 +31,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         supportFragmentManager.beginTransaction()
             .replace(mViewBinding.fcv.id, chatFragment)
             .commit()
+
     }
 
     override fun getLayoutResId() = R.layout.cs_activity_chat

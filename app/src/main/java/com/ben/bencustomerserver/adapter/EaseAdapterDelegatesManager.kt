@@ -69,7 +69,7 @@ class EaseAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
             return list
         }
 
-    fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
+    fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): EaseBaseRecyclerViewAdapter.ViewHolder<*> {
         val delegate = getDelegate(viewType)
             ?: throw NullPointerException("No EaseAdapterDelegate added for ViewType $viewType")
         val tag = getTagByViewType(viewType)
@@ -113,10 +113,7 @@ class EaseAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
         val indexList = indexesOfValue(dataTypeWithTags, typeWithTag)
         for (index in indexList) {
             val delegate = delegates[index]
-            if (delegate != null && delegate.getTags().contains(tag) && delegate.isForViewType(
-                    item, position
-                )
-            ) {
+            if (delegate != null && delegate.getTags().contains(tag) && delegate.isForViewType(item, position)) {
                 return if (hasConsistItemType) delegate.itemViewType else index
             }
         }
@@ -128,7 +125,7 @@ class EaseAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
             return if (hasConsistItemType) fallbackDelegate!!.itemViewType + index else delegates.size() + index
         }
         throw NullPointerException(
-            "No EaseAdapterDelegate added that matches position = " + position + " item = " + targetItem(
+            "No EaseAdapterDelegate added that matches position = $position item = " + targetItem(
                 item
             ) + " in data source."
         )
