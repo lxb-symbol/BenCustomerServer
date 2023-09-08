@@ -11,7 +11,7 @@ abstract class EaseChatMessagePresenter : EaseBasePresenter() {
     }
 
     override fun detachView() {
-//        mView = null
+        mView = null
     }
 
     override fun onDestroy() {

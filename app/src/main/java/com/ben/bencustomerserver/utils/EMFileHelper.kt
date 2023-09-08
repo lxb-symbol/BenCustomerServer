@@ -39,7 +39,7 @@ class EMFileHelper private constructor() {
     }
 
     private val mContext: Context? = null
-    private var mHelper: IFilePresenter
+    open var mHelper: IFilePresenter
 
     init {
         mHelper = FilePresenterImpl()

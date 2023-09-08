@@ -3,7 +3,8 @@ package com.ben.bencustomerserver.views.chatrow
 import android.content.Context
 import android.view.View
 import android.widget.TextView
-import com.hyphenate.chat.EMLocationMessageBody
+import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.model.BaseMessageModel
 
 /**
  * location row
@@ -11,7 +12,7 @@ import com.hyphenate.chat.EMLocationMessageBody
 class EaseChatRowLocation : EaseChatRow {
     private var locationView: TextView? = null
     private var tvLocationName: TextView? = null
-    private var locBody: EMLocationMessageBody? = null
+//    private var locBody: EMLocationMessageBody? = null
 
     constructor(context: Context?, isSender: Boolean) : super(context!!, isSender)
     constructor(
@@ -36,8 +37,8 @@ class EaseChatRowLocation : EaseChatRow {
     }
 
     override fun onSetUpView() {
-        locBody = message.getBody() as EMLocationMessageBody?
-        locationView.setText(locBody.getAddress())
+//        locBody = message.getBody() as EMLocationMessageBody?
+//        locationView.setText(locBody.getAddress())
     }
 
     override fun onMessageCreate() {

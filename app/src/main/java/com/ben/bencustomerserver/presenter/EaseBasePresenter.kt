@@ -16,7 +16,7 @@ abstract class EaseBasePresenter : LifecycleObserver {
     var isDestroy = false
         private set
     protected var isChannel = false
-    protected var isThread = false
+    open var isThread = false
     abstract fun attachView(view: ILoadDataView?)
     abstract fun detachView()
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

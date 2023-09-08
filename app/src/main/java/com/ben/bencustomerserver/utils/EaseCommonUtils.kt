@@ -22,6 +22,8 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.WindowManager
+import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.MessageType
 import java.util.Locale
 
 object EaseCommonUtils {
@@ -54,19 +56,24 @@ object EaseCommonUtils {
         get() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
 
-    // TODO:  待完善
-//    fun createExpressionMessage(
-//        toChatUsername: String?,
-//        expressioName: String,
-//        identityCode: String?
-//    ): BaseMessageModel {
+    fun createExpressionMessage(
+        toChatUsername: String?,
+        expressioName: String,
+        identityCode: String?
+    ): BaseMessageModel {
+        // TODO:  待完善
+        val message = BaseMessageModel(100L,
+            messageType = MessageType.CMD,
+            from = "",
+            to="",
+            )
 //        val message: BaseMessageModel = BaseMessageModel.createTxtSendMessage("[$expressioName]", toChatUsername)
 //        if (identityCode != null) {
 //            message.setAttribute(EaseConstant.MESSAGE_ATTR_EXPRESSION_ID, identityCode)
 //        }
 //        message.setAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, true)
-//        return message
-//    }
+        return message
+    }
 
     /**
      * TODO("待放开")

@@ -235,9 +235,9 @@ class EaseVoiceRecorderView : RelativeLayout {
         return voiceRecorder!!.stopRecoding()
     }
 
-    var voiceFilePath: String = ""
+    var voiceFilePath: String? = ""
         get() = voiceRecorder!!.voiceFilePath
-    var voiceFileName: String = ""
+    var voiceFileName: String? = ""
         get() = voiceRecorder!!.voiceFileName
     var isRecording: Boolean = false
         get() = voiceRecorder!!.isRecording

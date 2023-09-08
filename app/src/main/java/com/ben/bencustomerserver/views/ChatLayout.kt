@@ -4,6 +4,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,8 @@ import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
 import com.ben.bencustomerserver.listener.OnMenuChangeListener
 import com.ben.bencustomerserver.listener.OnRecallMessageResultListener
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.presenter.EaseHandleMessagePresenter
+import com.ben.bencustomerserver.presenter.EaseHandleMessagePresenterImpl
 
 /**
  * 聊天的布局
@@ -32,11 +35,13 @@ class ChatLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr), IHandleMessageView,
-    IPopupWindow, ChatInputMenuListener, IChatLayout {
+    IPopupWindow, ChatInputMenuListener, IChatLayout,
+    EaseChatMessageListLayout.OnMessageTouchListener {
     private lateinit var mViewBinding: CsChatLayoutBinding
     private var chatInputMenu: EaseChatInputMenu
     private lateinit var voiceRecordView: EaseVoiceRecorderView
     var chatLayoutListener: OnChatLayoutListener? = null
+    var presenter: EaseHandleMessagePresenter? = null
 
 
     /**
@@ -59,6 +64,31 @@ class ChatLayout @JvmOverloads constructor(
 
     private var recordListener: OnChatRecordTouchListener? = null
 
+
+    /**
+     * 正在输入的心跳
+     */
+    val MSG_TYPING_HEARTBEAT = 0
+
+    /**
+     *正在编辑结束
+     */
+    val MSG_TYPING_END = 1
+
+    /**
+     * 对方正在编辑结束
+     */
+    val MSG_OTHER_TYPING_END = 2
+
+    val ACTION_TYPING_BEGIN = "TypingBegin"
+
+    val ACTION_TYPING_END = "TypingEnd"
+
+    val TYPING_SHOW_TIME = 1000
+
+    val OTHER_TYPING_SHOW_TIME = 5000
+
+
     init {
         mViewBinding = DataBindingUtil.inflate(
             LayoutInflater.from(context),
@@ -71,12 +101,86 @@ class ChatLayout @JvmOverloads constructor(
         mViewBinding.layoutMenu.menuListener = this
         clippborad = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         voiceRecordView = mViewBinding.voiceRecorder
+        presenter = EaseHandleMessagePresenterImpl()
+        presenter?.attachView(this)
+        mViewBinding.messageList.setOnMessageTouchListener(this)
+        initTypingHandler()
     }
 
 
     private fun initTypingHandler() {
-        TODO("待完善")
+        typingHandler = Handler(Looper.getMainLooper()) {
+            when (it.what) {
+                MSG_TYPING_HEARTBEAT -> {
+                    typingHandler?.let { it1 -> setTypingBeginMsg(it1) }
+                    true
+                }
+
+                MSG_OTHER_TYPING_END -> {
+                    typingHandler?.let { han ->
+                        setTypingEndMsg(han)
+                    }
+                    true
+                }
+
+                MSG_TYPING_END -> {
+                    typingHandler?.let { han2 -> setOtherTypingEnd(han2) }
+                    true
+                }
+
+                else -> {
+                    false
+                }
+            }
+        }
+
+
     }
+
+
+    private fun setOtherTypingEnd(handler: Handler) {
+        if (!turnOnTyping) {
+            return
+        }
+        // Only support single-chat type conversation.
+        handler.removeMessages(MSG_OTHER_TYPING_END)
+        if (listener != null) {
+            listener!!.onOtherTyping(ACTION_TYPING_END)
+        }
+    }
+
+    /**
+     * 处理“正在输入”结束
+     *
+     * @param handler
+     */
+    private fun setTypingEndMsg(handler: Handler) {
+        if (!turnOnTyping) return
+
+        isNotFirstSend = false
+        handler.removeMessages(MSG_TYPING_HEARTBEAT)
+        handler.removeMessages(MSG_TYPING_END)
+        // Send TYPING-END cmd msg
+        presenter?.sendCmdMessage(ACTION_TYPING_END)
+    }
+
+
+    /**
+     * 处理“正在输入”开始
+     *
+     * @param handler
+     */
+    private fun setTypingBeginMsg(handler: Handler) {
+        if (!turnOnTyping) return
+        // Only support single-chat type conversation.
+        // Send TYPING-BEGIN cmd msg
+        presenter?.sendCmdMessage(ACTION_TYPING_BEGIN)
+        handler.sendEmptyMessageDelayed(
+            MSG_TYPING_HEARTBEAT,
+            TYPING_SHOW_TIME.toLong()
+        )
+    }
+
 
     override fun chatInputMenu(): EaseChatInputMenu = chatInputMenu
 
@@ -85,40 +189,42 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun turnOnTypingMonitor(turnOn: Boolean) {
-        TODO("Not yet implemented")
+        turnOnTyping = turnOn
+        if (!turnOn) isNotFirstSend = false
     }
 
     override fun sendTextMessage(content: String?) {
-        TODO("Not yet implemented")
+        presenter?.sendTextMessage(content)
     }
 
     override fun sendTextMessage(content: String?, isNeedGroupAck: Boolean) {
-        TODO("Not yet implemented")
+        presenter?.sendTextMessage(content)
     }
 
     override fun sendAtMessage(content: String?) {
-        TODO("Not yet implemented")
+
     }
 
     override fun sendBigExpressionMessage(name: String?, identityCode: String?) {
-        TODO("Not yet implemented")
+        presenter?.sendBigExpressionMessage(name,identityCode)
     }
 
     override fun sendVoiceMessage(filePath: String?, length: Int) {
         Log.e("TAG", "filePath: $filePath")
-        TODO("Not yet implemented")
+        val uri = Uri.parse(filePath )
+        presenter?.sendVoiceMessage(uri,length)
     }
 
     override fun sendVoiceMessage(filePath: Uri?, length: Int) {
-        TODO("Not yet implemented")
+        presenter?.sendVoiceMessage(filePath,length)
     }
 
     override fun sendImageMessage(imageUri: Uri?) {
-        TODO("Not yet implemented")
+        presenter?.sendImageMessage(imageUri)
     }
 
     override fun sendImageMessage(imageUri: Uri?, sendOriginalImage: Boolean) {
-        TODO("Not yet implemented")
+        presenter?.sendImageMessage(imageUri)
     }
 
     override fun sendLocationMessage(
@@ -130,39 +236,37 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendVideoMessage(videoUri: Uri?, videoLength: Int) {
-        TODO("Not yet implemented")
+        presenter?.sendVideoMessage(videoUri,videoLength)
     }
 
     override fun sendFileMessage(fileUri: Uri?) {
         Log.e("symbol -->", "发送文件消息待完善")
+        presenter?.sendFileMessage(fileUri)
     }
 
     override fun addMessageAttributes(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
+
     }
 
     override fun sendMessage(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
+        presenter?.sendMessage(message)
     }
 
     override fun resendMessage(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
+        presenter?.resendMessage(message)
     }
 
     override fun deleteMessage(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
+        mViewBinding.messageList.removeMessage(message)
     }
 
     override fun recallMessage(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
     }
 
     override fun translateMessage(message: BaseMessageModel?, isTranslate: Boolean) {
-        TODO("Not yet implemented")
     }
 
     override fun hideTranslate(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
     }
 
     override fun setOnChatLayoutListener(listener: OnChatLayoutListener?) {
@@ -174,38 +278,9 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun setOnRecallMessageResultListener(listener: OnRecallMessageResultListener?) {
-        TODO("Not yet implemented")
     }
 
     override fun setOnAddMsgAttrsBeforeSendEvent(sendMsgEvent: OnAddMsgAttrsBeforeSendEvent?) {
-        TODO("Not yet implemented")
-    }
-
-
-    companion object {
-        /**
-         * 正在输入的心跳
-         */
-        const val MSG_TYPING_HEARTBEAT = 0
-
-        /**
-         *正在编辑结束
-         */
-        const val MSG_TYPING_END = 1
-
-        /**
-         * 对方正在编辑结束
-         */
-        const val MSG_OTHER_TYPING_END = 2
-
-        const val ACTION_TYPING_BEGIN = "TypingBegin"
-
-        const val ACTION_TYPING_END = "TypingEnd"
-
-        const val TYPING_SHOW_TIME = 1000
-
-        const val OTHER_TYPING_SHOW_TIME = 5000
-
     }
 
 
@@ -232,7 +307,6 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun onExpressionClicked(emojicon: Any?) {
-        TODO("Not yet implemented")
     }
 
     override fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean {
@@ -256,27 +330,26 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun createThumbFileFail(message: String?) {
-        TODO("Not yet implemented")
+        listener?.onChatError(-1,message)
     }
 
     override fun addMsgAttrBeforeSend(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
     }
 
     override fun sendMessageFail(message: String?) {
-        TODO("Not yet implemented")
+        listener?.onChatError(-1,message)
     }
 
     override fun sendMessageFinish(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
+        mViewBinding.messageList.refreshToLatest()
     }
 
     override fun deleteLocalMessageSuccess(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
+        mViewBinding.messageList.removeMessage(message)
     }
 
     override fun recallMessageFinish(message: BaseMessageModel?, notification: BaseMessageModel?) {
-        TODO("Not yet implemented")
+
     }
 
     override fun recallMessageFail(code: Int, message: String?) {
@@ -354,6 +427,19 @@ class ChatLayout @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         typingHandler?.removeCallbacksAndMessages(null)
+    }
+
+    override fun onTouchItemOutside(v: View?, position: Int) {
+        mViewBinding.layoutMenu.hideSoftKeyboard()
+        mViewBinding.layoutMenu.showExtendMenu(false)
+    }
+
+    override fun onViewDragging() {
+        mViewBinding.layoutMenu.hideSoftKeyboard()
+        mViewBinding.layoutMenu.showExtendMenu(false)
+    }
+
+    override fun onReachBottom() {
     }
 
 

@@ -10,7 +10,7 @@ import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow.EaseChatRowActionCallback
 
-class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemClickListener) :
+open class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemClickListener) :
     EaseBaseRecyclerViewAdapter.ViewHolder<BaseMessageModel?>(itemView), EaseChatRowActionCallback {
     val context: Context
     var chatRow: EaseChatRow? = null
@@ -62,7 +62,7 @@ class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemCl
      * send message
      * @param message
      */
-    protected fun handleSendMessage(message: BaseMessageModel?) {
+    open fun handleSendMessage(message: BaseMessageModel?) {
         // Update the view according to the message current status.
         if (message != null) {
             chatRow!!.updateView(message)
@@ -73,7 +73,7 @@ class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemCl
      * receive message
      * @param message
      */
-    protected fun handleReceiveMessage(message: BaseMessageModel?) {}
+    protected open fun handleReceiveMessage(message: BaseMessageModel?) {}
 
     companion object {
         val TAG = EaseChatRowViewHolder::class.java.simpleName
