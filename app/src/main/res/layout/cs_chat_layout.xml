@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
         <com.ben.bencustomerserver.views.EaseChatMessageListLayout
-            android:id="@+id/message_list"
+            android:id="@+id/chat_message_list_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

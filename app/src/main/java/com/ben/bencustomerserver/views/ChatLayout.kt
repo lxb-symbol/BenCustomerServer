@@ -103,7 +103,7 @@ class ChatLayout @JvmOverloads constructor(
         voiceRecordView = mViewBinding.voiceRecorder
         presenter = EaseHandleMessagePresenterImpl()
         presenter?.attachView(this)
-        mViewBinding.messageList.setOnMessageTouchListener(this)
+        mViewBinding.chatMessageListLayout.setOnMessageTouchListener(this)
         initTypingHandler()
     }
 
@@ -257,7 +257,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun deleteMessage(message: BaseMessageModel?) {
-        mViewBinding.messageList.removeMessage(message)
+        mViewBinding.chatMessageListLayout.removeMessage(message)
     }
 
     override fun recallMessage(message: BaseMessageModel?) {
@@ -341,11 +341,11 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendMessageFinish(message: BaseMessageModel?) {
-        mViewBinding.messageList.refreshToLatest()
+        mViewBinding.chatMessageListLayout.refreshToLatest()
     }
 
     override fun deleteLocalMessageSuccess(message: BaseMessageModel?) {
-        mViewBinding.messageList.removeMessage(message)
+        mViewBinding.chatMessageListLayout.removeMessage(message)
     }
 
     override fun recallMessageFinish(message: BaseMessageModel?, notification: BaseMessageModel?) {
