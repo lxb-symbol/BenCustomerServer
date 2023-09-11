@@ -7,12 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import androidx.annotation.Nullable
 import androidx.recyclerview.widget.RecyclerView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.listener.OnItemClickListener
 import com.ben.bencustomerserver.listener.OnItemLongClickListener
-import com.ben.bencustomerserver.views.MenuItemBean
+import com.ben.bencustomerserver.model.BaseMessageModel
 
 /**
  * 作为RecyclerView Adapter的基类，有默认空白布局
@@ -157,14 +156,14 @@ abstract class EaseBaseRecyclerViewAdapter<T> :
         notifyDataSetChanged()
     }
 
-    /**
-     * 设置空白布局
-     * @param emptyView
-     */
-    fun setEmptyView(emptyView: View?) {
-        this.emptyView = emptyView
-        notifyDataSetChanged()
-    }
+//    /**
+//     * 设置空白布局
+//     * @param emptyView
+//     */
+//    fun setEmptyView(emptyView: View?) {
+//        this.emptyView = emptyView
+//        notifyDataSetChanged()
+//    }
 
     /**
      * 设置空白布局
@@ -207,7 +206,7 @@ abstract class EaseBaseRecyclerViewAdapter<T> :
      * @param data
      */
     @Synchronized
-    fun setData(data: MutableList<T>?) {
+    fun setData(data: MutableList<T>) {
         mData = data
         notifyDataSetChanged()
     }

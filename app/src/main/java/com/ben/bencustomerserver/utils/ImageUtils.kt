@@ -113,7 +113,7 @@ open class ImageUtils {
             val options = getBitmapOptions(imagePath)
 
             // Calculate inSampleSize
-            val sampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
+            val sampleSize = calculateInSampleSize(options!!, reqWidth, reqHeight)
             Log.d(
                 "img",
                 "original wid" + options.outWidth + " original height:" + options.outHeight + " sample:"
@@ -665,7 +665,8 @@ open class ImageUtils {
          * @param imagePath
          * @return
          */
-        fun getBitmapOptions(imagePath: String?): BitmapFactory.Options {
+        fun getBitmapOptions(imagePath: String?): BitmapFactory.Options? {
+            if (TextUtils.isEmpty(imagePath)) return null
             val options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
             BitmapFactory.decodeFile(imagePath, options)
@@ -680,7 +681,7 @@ open class ImageUtils {
          * @return
          */
         @JvmStatic
-		@Throws(IOException::class)
+        @Throws(IOException::class)
         fun getBitmapOptions(context: Context, uri: Uri?): BitmapFactory.Options {
             val options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
@@ -714,7 +715,7 @@ open class ImageUtils {
          * @throws IOException
          */
         @JvmStatic
-		@Throws(IOException::class)
+        @Throws(IOException::class)
         fun getBitmapByUri(context: Context, uri: Uri?, options: BitmapFactory.Options?): Bitmap {
             val parcelFileDescriptor = context.contentResolver.openFileDescriptor(
                 uri!!, "r"

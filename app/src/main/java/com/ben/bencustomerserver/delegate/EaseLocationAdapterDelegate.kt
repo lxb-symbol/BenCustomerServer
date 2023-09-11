@@ -2,7 +2,13 @@ package com.ben.bencustomerserver.delegate
 
 import android.view.View
 import android.view.ViewGroup
-import com.hyphenate.chat.BaseMessageModel
+import com.ben.bencustomerserver.listener.MessageListItemClickListener
+import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.MessageType
+import com.ben.bencustomerserver.viewholder.EaseChatRowViewHolder
+import com.ben.bencustomerserver.viewholder.EaseLocationViewHolder
+import com.ben.bencustomerserver.views.chatrow.EaseChatRow
+import com.ben.bencustomerserver.views.chatrow.EaseChatRowLocation
 
 /**
  * 定位代理类
@@ -12,11 +18,10 @@ class EaseLocationAdapterDelegate :
     constructor()
     constructor(
         itemClickListener: MessageListItemClickListener?,
-        itemStyle: EaseMessageListItemStyle?
-    ) : super(itemClickListener, itemStyle)
+    ) : super(itemClickListener)
 
-    override fun isForViewType(item: BaseMessageModel, position: Int): Boolean {
-        return item.getType() === MessageType.LOCATION
+    override fun isForViewType(item: BaseMessageModel?, position: Int): Boolean {
+        return item?.messageType === MessageType.LOCATION
     }
 
     override fun getEaseChatRow(parent: ViewGroup?, isSender: Boolean): EaseChatRow {
@@ -27,6 +32,6 @@ class EaseLocationAdapterDelegate :
         view: View?,
         itemClickListener: MessageListItemClickListener?
     ): EaseChatRowViewHolder {
-        return EaseLocationViewHolder(view, itemClickListener)
+        return EaseLocationViewHolder(view!!, itemClickListener)
     }
 }

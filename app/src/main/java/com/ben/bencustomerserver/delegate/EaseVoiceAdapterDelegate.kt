@@ -8,7 +8,7 @@ import com.ben.bencustomerserver.model.MessageType
 import com.ben.bencustomerserver.viewholder.EaseChatRowViewHolder
 import com.ben.bencustomerserver.viewholder.EaseVoiceViewHolder
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow
-import com.hyphenate.chat.BaseMessageModel
+import com.ben.bencustomerserver.views.chatrow.EaseChatRowVoice
 
 /**
  * 声音代理类

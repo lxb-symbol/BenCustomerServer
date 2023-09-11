@@ -27,7 +27,6 @@ open class EaseChatRowFile : EaseChatRow {
      * file state
      */
     protected var fileStateView: TextView? = null
-//    private var fileMessageBody: EMNormalFileMessageBody? = null
 
     constructor(context: Context?, isSender: Boolean) : super(context!!, isSender)
     constructor(

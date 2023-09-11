@@ -18,9 +18,9 @@ class EaseFileViewHolder(itemView: View, itemClickListener: MessageListItemClick
 
         val filePath: Uri = Uri.parse("")
         //检查Uri读权限
-        EaseFileUtils.takePersistableUriPermission(context, filePath)
-        if (EaseFileUtils.isFileExistByUri(context, filePath)) {
-            EaseCompat.openFile(context, filePath)
+        EaseFileUtils.takePersistableUriPermission(itemView.context , filePath)
+        if (EaseFileUtils.isFileExistByUri(itemView.context, filePath)) {
+            EaseCompat.openFile(itemView.context, filePath)
         } else {
             // download the file
 //            context.startActivity(

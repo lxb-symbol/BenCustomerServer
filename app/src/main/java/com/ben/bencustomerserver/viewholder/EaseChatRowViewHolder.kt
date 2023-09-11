@@ -9,10 +9,10 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow.EaseChatRowActionCallback
+import com.nofish.websocket.appContext
 
 open class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemClickListener) :
     EaseBaseRecyclerViewAdapter.ViewHolder<BaseMessageModel?>(itemView), EaseChatRowActionCallback {
-    val context: Context
     var chatRow: EaseChatRow? = null
         private set
     private var message: BaseMessageModel? = null
@@ -25,12 +25,13 @@ open class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListI
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         itemView.layoutParams = params
-        context = itemView.context
+//        context = itemView.context
         mItemClickListener = itemClickListener
     }
 
     override fun initView(itemView: View?) {
         chatRow = itemView as EaseChatRow?
+
     }
 
 

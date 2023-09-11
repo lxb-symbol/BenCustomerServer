@@ -28,7 +28,6 @@ import java.util.Date
  */
 abstract class EaseChatRow : LinearLayout {
     protected var inflater: LayoutInflater
-    protected var context: Context
 
     /**
      * ListView's adapter or RecyclerView's adapter
@@ -114,7 +113,6 @@ abstract class EaseChatRow : LinearLayout {
     private var itemActionCallback: EaseChatRowActionCallback? = null
 
     constructor(context: Context, isSender: Boolean) : super(context) {
-        this.context = context
         this.isSender = isSender
         inflater = LayoutInflater.from(context)
         initView()
@@ -123,7 +121,6 @@ abstract class EaseChatRow : LinearLayout {
     constructor(context: Context, message: BaseMessageModel?, position: Int, adapter: Any?) : super(
         context
     ) {
-        this.context = context
         this.message = message
         isSender = message?.direct === Direct.SEND
         this.position = position
@@ -463,7 +460,7 @@ abstract class EaseChatRow : LinearLayout {
         if (adapter != null) {
             timestamp.text = message?.msgTime?.let { Date(it) }?.let {
                 EaseDateUtils.getTimestampString(
-                    getContext(),
+                    context,
                     it
                 )
             }
@@ -474,7 +471,8 @@ abstract class EaseChatRow : LinearLayout {
                 prevMessage = (adapter as BaseAdapter).getItem(position - 1) as BaseMessageModel
             }
             if (adapter is EaseBaseAdapter<*>) {
-                prevMessage = (adapter as EaseBaseAdapter<*>).getItem(position - 1) as BaseMessageModel
+                prevMessage =
+                    (adapter as EaseBaseAdapter<*>).getItem(position - 1) as BaseMessageModel
             }
 
         }
@@ -483,7 +481,7 @@ abstract class EaseChatRow : LinearLayout {
     fun setTimestamp(preMessage: BaseMessageModel?) {
         timeStampView?.text = message?.let { Date(it.msgTime) }?.let {
             EaseDateUtils.getTimestampString(
-                getContext(),
+                context,
                 it
             )
         }
@@ -529,7 +527,7 @@ abstract class EaseChatRow : LinearLayout {
                             "symbol"
                         )
                     } else {
-                        itemClickListener!!.onUserAvatarClick(message?.from)
+                        itemClickListener!!.onUserAvatarClick(message?.from_id)
                     }
                 }
             }
@@ -542,7 +540,7 @@ abstract class EaseChatRow : LinearLayout {
                             "symbol"
                         )
                     } else {
-                        itemClickListener!!.onUserAvatarLongClick(message?.from)
+                        itemClickListener!!.onUserAvatarLongClick(message?.from_id)
                     }
                     return@OnLongClickListener true
                 }

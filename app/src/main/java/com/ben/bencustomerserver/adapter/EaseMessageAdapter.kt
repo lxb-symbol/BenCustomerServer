@@ -33,7 +33,8 @@ class EaseMessageAdapter : EaseBaseDelegateAdapter<BaseMessageModel>() {
         var clone: EaseAdapterDelegate<*, *>? = null
         try {
             clone = delegate.clone() as EaseAdapterDelegate<*, *>
-            clone!!.setTag(Direct.RECEIEVE.name)
+            clone.tag = (Direct.RECEIEVE.name)
+            clone.tags.add(Direct.RECEIEVE.name)
             //设置点击事件
             if (clone is EaseMessageAdapterDelegate<*, *>) {
                 clone.setListItemClickListener(itemClickListener)
@@ -42,7 +43,8 @@ class EaseMessageAdapter : EaseBaseDelegateAdapter<BaseMessageModel>() {
         } catch (e: CloneNotSupportedException) {
             e.printStackTrace()
         }
-        delegate.setTag(Direct.SEND.name)
+        delegate.tag = (Direct.SEND.name)
+        delegate.tags.add(Direct.SEND.name)
         //设置点击事件
         if (delegate is EaseMessageAdapterDelegate<*, *>) {
             delegate.setListItemClickListener(itemClickListener)
@@ -54,7 +56,9 @@ class EaseMessageAdapter : EaseBaseDelegateAdapter<BaseMessageModel>() {
         var clone: EaseAdapterDelegate<Any, ViewHolder<*>>? = null
         try {
             clone = delegate?.clone() as EaseAdapterDelegate<Any, ViewHolder<*>>
-            clone.setTag(Direct.RECEIEVE.name)
+            clone.tag = (Direct.RECEIEVE.name)
+            clone.tags.add(Direct.RECEIEVE.name)
+
             //设置点击事件
             if (clone is EaseMessageAdapterDelegate<*, *>) {
                 clone.setListItemClickListener(itemClickListener)
@@ -63,7 +67,7 @@ class EaseMessageAdapter : EaseBaseDelegateAdapter<BaseMessageModel>() {
         } catch (e: CloneNotSupportedException) {
             e.printStackTrace()
         }
-        delegate?.setTag(Direct.SEND.name)
+        delegate?.tag = (Direct.SEND.name)
         //设置点击事件
         if (delegate is EaseMessageAdapterDelegate<*, *>) {
             delegate.setListItemClickListener(itemClickListener)

@@ -16,7 +16,7 @@ class EaseChatMessagePresenterImpl : EaseChatMessagePresenter() {
     override fun refreshCurrentConversation() {
 
         // TODO 对
-        val allMessages: List<BaseMessageModel?> = ArrayList()
+        val allMessages: List<BaseMessageModel> = ArrayList()
         if (isActive) {
             runOnUI {
                 mView?.refreshCurrentConSuccess(allMessages, false)
@@ -27,7 +27,7 @@ class EaseChatMessagePresenterImpl : EaseChatMessagePresenter() {
     override fun refreshToLatest() {
 
 //        conversation.getAllMessages();
-        val allMessages: List<BaseMessageModel?> = ArrayList()
+        val allMessages: List<BaseMessageModel> = ArrayList()
         if (isActive) {
             runOnUI {
                 if (mView != null) {

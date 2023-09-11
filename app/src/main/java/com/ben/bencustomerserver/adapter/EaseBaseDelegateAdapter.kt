@@ -15,13 +15,16 @@ abstract class EaseBaseDelegateAdapter<T : Any> : EaseBaseRecyclerViewAdapter<T>
     }
 
     open fun addDelegate(delegate: EaseAdapterDelegate<*, *>): EaseBaseDelegateAdapter<*> {
-        delegatesManager.addDelegate(delegate, delegate.getTag())
+        delegatesManager.addDelegate(delegate, delegate.tag)
+        delegate.tags.add(delegate.tag)
+
         notifyDataSetChanged()
         return this
     }
 
     fun addDelegate(delegate: EaseAdapterDelegate<*, *>, tag: String?): EaseBaseDelegateAdapter<*> {
-        delegate.setTag(tag!!)
+        delegate.tag =(tag!!)
+        delegate.tags.add(tag)
         return addDelegate(delegate)
     }
 
@@ -33,7 +36,9 @@ abstract class EaseBaseDelegateAdapter<T : Any> : EaseBaseRecyclerViewAdapter<T>
         delegate: EaseAdapterDelegate<Any, EaseBaseRecyclerViewAdapter.ViewHolder<*>>,
         tag: String?
     ): EaseBaseDelegateAdapter<*> {
-        delegate.setTag(tag!!)
+        delegate.tag =(tag!!)
+        delegate.tags.add(tag)
+
         return setFallbackDelegate(delegate)
     }
 
@@ -72,7 +77,7 @@ abstract class EaseBaseDelegateAdapter<T : Any> : EaseBaseRecyclerViewAdapter<T>
         if (mData == null || mData!!.isEmpty()) {
             return
         }
-        if (!delegatesManager.allDelegates.isEmpty()) {
+        if (delegatesManager.allDelegates.isNotEmpty()) {
             delegatesManager.onBindViewHolder(holder, position, getItem(position))
         }
     }

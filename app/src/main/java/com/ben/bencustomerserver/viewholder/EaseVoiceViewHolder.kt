@@ -15,7 +15,7 @@ class EaseVoiceViewHolder(itemView: View, itemClickListener: MessageListItemClic
     private var voicePlayer: EaseChatRowVoicePlayer? = null
 
     init {
-        voicePlayer = EaseChatRowVoicePlayer.getInstance(context)
+        voicePlayer = EaseChatRowVoicePlayer.getInstance(itemView.context)
     }
 
     override fun onBubbleClick(message: BaseMessageModel?) {

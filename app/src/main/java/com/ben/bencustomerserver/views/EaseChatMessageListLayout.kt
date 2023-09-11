@@ -28,7 +28,6 @@ import com.ben.bencustomerserver.model.EaseReactionEmojiconEntity
 import com.ben.bencustomerserver.model.SearchDirection
 import com.ben.bencustomerserver.presenter.EaseChatMessagePresenter
 import com.ben.bencustomerserver.presenter.EaseChatMessagePresenterImpl
-import com.ben.bencustomerserver.views.EaseChatMessageListLayout
 
 class EaseChatMessageListLayout @JvmOverloads constructor(
     context: Context,
@@ -469,18 +468,17 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         }
     }
 
-    override fun loadLocalMsgSuccess(data: List<BaseMessageModel?>?) {
+    override fun loadLocalMsgSuccess(data: List<BaseMessageModel>?) {
         refreshToLatest()
     }
 
     override fun loadNoLocalMsg() {}
-    override fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel?>?) {
-    }
 
-    fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel?>) {
+
+    override fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel>?) {
         finishRefresh()
         presenter!!.refreshCurrentConversation()
-        post { smoothSeekToPosition(data.size - 1) }
+        post { smoothSeekToPosition(data?.size?.minus(1) ?:0 ) }
     }
 
     override fun loadNoMoreLocalMsg() {
@@ -488,14 +486,14 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
     }
 
     override fun loadMoreLocalHistoryMsgSuccess(
-        data: List<BaseMessageModel?>?,
+        data: List<BaseMessageModel>?,
         direction: SearchDirection?
     ) {
 
     }
 
     fun loadMoreLocalHistoryMsgSuccess(
-        data: List<BaseMessageModel?>,
+        data: List<BaseMessageModel>,
     ) {
 
     }
@@ -504,22 +502,11 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         finishRefresh()
     }
 
-    override fun loadServerMsgSuccess(data: List<BaseMessageModel?>?, cursor: String?) {
 
-    }
-
-    override fun loadMoreServerMsgSuccess(data: List<BaseMessageModel?>?, cursor: String?) {
-
-    }
-
-    override fun refreshCurrentConSuccess(data: List<BaseMessageModel?>?, toLatest: Boolean) {
-
-    }
-
-    fun loadServerMsgSuccess(data: List<BaseMessageModel?>, cursor: String?) {
+    override fun loadServerMsgSuccess(data: List<BaseMessageModel>?, cursor: String?) {
         messageCursor = cursor
         if (loadDataType == LoadDataType.THREAD) {
-            loadMoreStatus = if (data.size >= pageSize || !TextUtils.isEmpty(cursor)) {
+            loadMoreStatus = if (data?.size!! >= pageSize || !TextUtils.isEmpty(cursor)) {
                 LoadMoreStatus.HAS_MORE
             } else {
                 LoadMoreStatus.NO_MORE_DATA
@@ -530,25 +517,26 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         }
     }
 
-    fun loadMoreServerMsgSuccess(data: List<BaseMessageModel?>, cursor: String?) {
+    override fun loadMoreServerMsgSuccess(data: List<BaseMessageModel>?, cursor: String?) {
         messageCursor = cursor
         finishRefresh()
         presenter!!.refreshCurrentConversation()
         if (loadDataType == LoadDataType.THREAD) {
-            loadMoreStatus = if (data.size >= pageSize || !TextUtils.isEmpty(cursor)) {
+            loadMoreStatus = if (data?.size!! >= pageSize || !TextUtils.isEmpty(cursor)) {
                 LoadMoreStatus.HAS_MORE
             } else {
                 LoadMoreStatus.NO_MORE_DATA
             }
         } else {
-            post { smoothSeekToPosition(data.size - 1) }
+            post { smoothSeekToPosition(data?.size?.minus(1) ?: 0) }
         }
     }
 
-    fun refreshCurrentConSuccess(data: List<BaseMessageModel>, toLatest: Boolean) {
-        messageAdapter!!.setData(data.toMutableList())
+    override fun refreshCurrentConSuccess(data: List<BaseMessageModel>?, toLatest: Boolean) {
+        data?.toMutableList()?.let { messageAdapter!!.setData(it) }
+
         if (toLatest) {
-            seekToPosition(data.size - 1)
+            seekToPosition(data?.size?.minus(1) ?: 0)
         }
     }
 

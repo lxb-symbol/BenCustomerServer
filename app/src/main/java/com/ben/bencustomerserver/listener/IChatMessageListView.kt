@@ -28,7 +28,7 @@ interface IChatMessageListView : ILoadDataView {
      * 加载本地数据成功
      * @param data
      */
-    fun loadLocalMsgSuccess(data: List<BaseMessageModel?>?)
+    fun loadLocalMsgSuccess(data: List<BaseMessageModel>?)
 
     /**
      * 没有加载到本地数据
@@ -39,7 +39,7 @@ interface IChatMessageListView : ILoadDataView {
      * 加载本地更多数据成功
      * @param data
      */
-    fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel?>?)
+    fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel>?)
 
     /**
      * 没有加载到更多数据
@@ -50,7 +50,7 @@ interface IChatMessageListView : ILoadDataView {
      * 加载更多本地的历史数据
      * @param data
      */
-    fun loadMoreLocalHistoryMsgSuccess(data: List<BaseMessageModel?>?, direction: SearchDirection?)
+    fun loadMoreLocalHistoryMsgSuccess(data: List<BaseMessageModel>?, direction: SearchDirection?)
 
     /**
      * 没有更多的本地历史数据
@@ -61,19 +61,19 @@ interface IChatMessageListView : ILoadDataView {
      * 加载漫游数据
      * @param data
      */
-    fun loadServerMsgSuccess(data: List<BaseMessageModel?>?, cursor: String?)
+    fun loadServerMsgSuccess(data: List<BaseMessageModel>?, cursor: String?)
 
     /**
      * 加载更多漫游数据
      * @param data
      */
-    fun loadMoreServerMsgSuccess(data: List<BaseMessageModel?>?, cursor: String?)
+    fun loadMoreServerMsgSuccess(data: List<BaseMessageModel>?, cursor: String?)
 
     /**
      * 刷新当前会话
      * @param data
      */
-    fun refreshCurrentConSuccess(data: List<BaseMessageModel?>?, toLatest: Boolean)
+    fun refreshCurrentConSuccess(data: List<BaseMessageModel>?, toLatest: Boolean)
 
     /**
      * Insert the message to the last of message list

@@ -19,17 +19,10 @@ import androidx.recyclerview.widget.RecyclerView
  * @param <T>
  * @param <VH>
 </VH></T> */
-abstract class EaseAdapterDelegate<T, VH : RecyclerView.ViewHolder?> : Cloneable {
-    private var tag = DEFAULT_TAG
-    var tags: MutableList<String> = ArrayList()
+abstract class EaseAdapterDelegate<T, VH : RecyclerView.ViewHolder?>() : Cloneable {
+    open var tag = DEFAULT_TAG
+    open var tags: MutableList<String> = ArrayList()
 
-    constructor() {
-        setTag(tag)
-    }
-
-    constructor(tag: String) {
-        setTag(tag)
-    }
 
     open fun isForViewType(item: T, position: Int): Boolean {
         return true
@@ -65,18 +58,7 @@ abstract class EaseAdapterDelegate<T, VH : RecyclerView.ViewHolder?> : Cloneable
     val itemViewType: Int
         get() = 0
 
-    fun setTag(tag: String) {
-        this.tag = tag
-        tags.add(tag)
-    }
 
-    fun getTag(): String {
-        return tag
-    }
-
-    fun getTags(): List<String> {
-        return tags
-    }
 
     @Throws(CloneNotSupportedException::class)
     public override fun clone(): Any {

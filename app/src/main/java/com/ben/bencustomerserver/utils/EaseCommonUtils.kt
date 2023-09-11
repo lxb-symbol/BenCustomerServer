@@ -19,12 +19,10 @@ import android.net.ConnectivityManager
 import android.os.Environment
 import android.text.TextUtils
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.WindowManager
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.MessageType
-import java.util.Locale
 
 object EaseCommonUtils {
     private const val TAG = "CommonUtils"
@@ -62,11 +60,7 @@ object EaseCommonUtils {
         identityCode: String?
     ): BaseMessageModel {
         // TODO:  待完善
-        val message = BaseMessageModel(100L,
-            messageType = MessageType.CMD,
-            from = "",
-            to="",
-            )
+        val message = BaseMessageModel(messageType = MessageType.TXT)
 //        val message: BaseMessageModel = BaseMessageModel.createTxtSendMessage("[$expressioName]", toChatUsername)
 //        if (identityCode != null) {
 //            message.setAttribute(EaseConstant.MESSAGE_ATTR_EXPRESSION_ID, identityCode)

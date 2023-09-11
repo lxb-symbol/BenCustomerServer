@@ -235,14 +235,11 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
     private fun handleImageHeifToJpeg(imageUri: Uri?): Uri? {
         var imageUri = imageUri
         try {
-            val options: BitmapFactory.Options
+            val options: BitmapFactory.Options?
             val filePath: String = EaseFileUtils.getFilePath(mView!!.context(), imageUri)
-            options = if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
-                ImageUtils.getBitmapOptions(filePath)
-            } else ({
-                mView!!.context()?.let { ImageUtils.getBitmapOptions(it, imageUri) }
-            })!!
-            if ("image/heif".equals(options.outMimeType, ignoreCase = true)) {
+            options = ImageUtils.getBitmapOptions(filePath)
+
+            if ("image/heif".equals(options?.outMimeType, ignoreCase = true)) {
                 imageUri = EaseImageUtils.imageToJpeg(
                     mView!!.context(),
                     imageUri,

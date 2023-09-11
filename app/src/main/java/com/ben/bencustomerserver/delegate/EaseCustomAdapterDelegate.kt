@@ -6,6 +6,7 @@ import com.ben.bencustomerserver.listener.MessageListItemClickListener
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.MessageType
 import com.ben.bencustomerserver.viewholder.EaseChatRowViewHolder
+import com.ben.bencustomerserver.viewholder.EaseCustomViewHolder
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow
 import com.ben.bencustomerserver.views.chatrow.EaseChatRowCustom
 
@@ -23,6 +24,6 @@ class EaseCustomAdapterDelegate :
         view: View?,
         itemClickListener: MessageListItemClickListener?
     ): EaseChatRowViewHolder {
-        return EaseCustomViewHolder(view, itemClickListener)
+        return EaseCustomViewHolder(view!!, itemClickListener)
     }
 }

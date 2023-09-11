@@ -113,14 +113,14 @@ class EaseAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
         val indexList = indexesOfValue(dataTypeWithTags, typeWithTag)
         for (index in indexList) {
             val delegate = delegates[index]
-            if (delegate != null && delegate.getTags().contains(tag) && delegate.isForViewType(item, position)) {
+            if (delegate != null && delegate.tags.contains(tag) && delegate.isForViewType(item, position)) {
                 return if (hasConsistItemType) delegate.itemViewType else index
             }
         }
         if (fallbackDelegate != null && fallbackDelegate!!.isForViewType(item, position)) {
             var index = 0
-            if (fallbackDelegate!!.getTags().contains(tag)) {
-                index = fallbackDelegate!!.getTags().indexOf(tag)
+            if (fallbackDelegate!!.tags.contains(tag)) {
+                index = fallbackDelegate!!.tags.indexOf(tag)
             }
             return if (hasConsistItemType) fallbackDelegate!!.itemViewType + index else delegates.size() + index
         }
@@ -182,9 +182,9 @@ class EaseAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
         } else {
             val index =
                 if (hasConsistItemType) viewType - fallbackDelegate!!.itemViewType else viewType - delegates.size()
-            if (fallbackDelegate!!.getTags().size <= index) {
+            if (fallbackDelegate!!.tags.size <= index) {
                 null
-            } else fallbackDelegate!!.getTags()[index]
+            } else fallbackDelegate!!.tags[index]
         }
     }
 

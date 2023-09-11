@@ -1,8 +1,17 @@
 package com.ben.bencustomerserver.delegate
 
+import android.text.TextUtils
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import com.hyphenate.chat.BaseMessageModel
+import com.ben.bencustomerserver.listener.MessageListItemClickListener
+import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.Constants
+import com.ben.bencustomerserver.model.MessageType
+import com.ben.bencustomerserver.viewholder.EaseChatRowViewHolder
+import com.ben.bencustomerserver.viewholder.EaseExpressionViewHolder
+import com.ben.bencustomerserver.views.chatrow.EaseChatRow
+import com.ben.bencustomerserver.views.chatrow.EaseChatRowBigExpression
 
 /**
  * 表情代理类
@@ -12,14 +21,12 @@ class EaseExpressionAdapterDelegate :
     constructor() : super()
     constructor(
         itemClickListener: MessageListItemClickListener?,
-        itemStyle: EaseMessageListItemStyle?
-    ) : super(itemClickListener, itemStyle)
+    ) : super(itemClickListener)
 
-    override fun isForViewType(item: BaseMessageModel, position: Int): Boolean {
-        return item.getType() === MessageType.TXT && item.getBooleanAttribute(
-            EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION,
-            false
-        )
+    override fun isForViewType(item: BaseMessageModel?, position: Int): Boolean {
+        return (item?.messageType === MessageType.TXT
+                && TextUtils.equals(item.extString,Constants.EXT_MSG_EXPRESSION))
+
     }
 
     override fun getEaseChatRow(parent: ViewGroup?, isSender: Boolean): EaseChatRow {
@@ -30,6 +37,6 @@ class EaseExpressionAdapterDelegate :
         view: View?,
         itemClickListener: MessageListItemClickListener?
     ): EaseChatRowViewHolder {
-        return EaseExpressionViewHolder(view, itemClickListener)
+        return EaseExpressionViewHolder(view!!, itemClickListener)
     }
 }
