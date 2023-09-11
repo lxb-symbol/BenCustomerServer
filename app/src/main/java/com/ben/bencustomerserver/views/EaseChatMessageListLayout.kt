@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.adapter.EaseBaseDelegateAdapter
 import com.ben.bencustomerserver.adapter.EaseMessageAdapter
 import com.ben.bencustomerserver.listener.IChatMessageItemSet
 import com.ben.bencustomerserver.listener.IChatMessageListLayout
@@ -22,6 +23,7 @@ import com.ben.bencustomerserver.listener.IChatMessageListView
 import com.ben.bencustomerserver.listener.IRecyclerViewHandle
 import com.ben.bencustomerserver.listener.MessageListItemClickListener
 import com.ben.bencustomerserver.listener.OnItemClickListener
+import com.ben.bencustomerserver.manager.EaseMessageTypeSetManager
 import com.ben.bencustomerserver.manager.EaseThreadManager.Companion.instance
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.EaseReactionEmojiconEntity
@@ -145,7 +147,12 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         initListener()
     }
 
-    private fun registerChatType() {}
+    private fun registerChatType() {
+        messageAdapter?.let {
+            EaseMessageTypeSetManager.instance?.registerMessageType(it as EaseBaseDelegateAdapter<Any>)
+        }
+    }
+
     fun init(loadDataType: LoadDataType?, username: String?) {
         this.username = username
         this.loadDataType = loadDataType
@@ -478,7 +485,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
     override fun loadMoreLocalMsgSuccess(data: List<BaseMessageModel>?) {
         finishRefresh()
         presenter!!.refreshCurrentConversation()
-        post { smoothSeekToPosition(data?.size?.minus(1) ?:0 ) }
+        post { smoothSeekToPosition(data?.size?.minus(1) ?: 0) }
     }
 
     override fun loadNoMoreLocalMsg() {

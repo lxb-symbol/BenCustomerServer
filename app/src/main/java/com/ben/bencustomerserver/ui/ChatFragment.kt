@@ -1,12 +1,10 @@
 package com.ben.bencustomerserver.ui
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
@@ -16,13 +14,10 @@ import com.ben.bencustomerserver.databinding.FragmentChatBinding
 import com.ben.bencustomerserver.listener.OnChatExtendMenuItemClickListener
 import com.ben.bencustomerserver.listener.OnChatLayoutListener
 import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
-import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.bencustomerserver.repositories.ChatRepository
-import com.ben.bencustomerserver.utils.EaseCommonUtils
-import com.ben.bencustomerserver.utils.EaseCompat
 import com.ben.bencustomerserver.utils.EaseFileUtils
-import com.ben.bencustomerserver.utils.PathUtil
 import com.ben.bencustomerserver.utils.VersionUtils
+import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.lib_picture_selector.PictureSelectUtil
 import com.ben.lib_picture_selector.ResultListener
 import com.ben.module_base.ui.BaseFragment
@@ -41,15 +36,13 @@ import java.io.IOException
 open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), OnChatLayoutListener,
     OnChatRecordTouchListener {
 
-    var onChatExtendMenuItemClickListener: OnChatExtendMenuItemClickListener? = null
-    var cameraFile: File? = null
+    private var onChatExtendMenuItemClickListener: OnChatExtendMenuItemClickListener? = null
+    private var cameraFile: File? = null
 
     companion object {
         const val REQUEST_CODE_SELECT_FILE = 12
     }
 
-    //    private lateinit var messageAdapter: BenMessageAdapter
-//    private lateinit var myLayoutManager: LinearLayoutManager
     override fun getLayoutResId() = R.layout.fragment_chat
 
 
@@ -57,17 +50,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         mViewBinding.cl.chatLayoutListener = this
         mViewBinding.cl.setOnChatRecordTouchListener(this)
 
-//        myLayoutManager = LinearLayoutManager(requireContext())
-//        messageAdapter = BenMessageAdapter((mViewModel.getDataMessagesResult().value ?: emptyList()))
-//        with(mViewBinding.rv) {
-//            layoutManager = myLayoutManager
-//            adapter = messageAdapter
-//        }
-//      消息点击事件
-//        messageAdapter.setOnItemClickListener { adapter, view, position ->
-//            Log.e("symbol", " positon:$position")
-//            Log.e("symbol", " positon:$position")
-//        }
     }
 
     override fun initData() {
@@ -75,7 +57,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         mViewModel.chatMessages()
         mViewModel.getDataMessagesResult().observe(this) {
             Log.e("symbol result", "${it.size}")
-//            messageAdapter.addAll(it)
         }
     }
 
@@ -185,23 +166,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
         })
 
-//        val intent = Intent()
-//        if (VersionUtils.isTargetQ(requireContext())) {
-//            intent.action = Intent.ACTION_OPEN_DOCUMENT
-//        } else {
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-//                intent.action = Intent.ACTION_GET_CONTENT
-//            } else {
-//                intent.action = Intent.ACTION_OPEN_DOCUMENT
-//            }
-//        }
-//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-//        intent.addCategory(Intent.CATEGORY_OPENABLE)
-//        intent.type = "video/*"
-//        startActivityForResult(
-//            intent,
-//            REQUEST_CODE_SELECT_VIDEO
-//        )
     }
 
 
