@@ -24,6 +24,8 @@ var wsURL: String = ""
 
 object WsManager : CoroutineScope by MainScope() {
 
+    open var msgListeners: WebSocketMessageListener? = null
+    open var webSocketStatusListeners: WebSocketStatusListener? = null
 
     val TAG = "WsManager"
     private val wsHttpClient by lazy {

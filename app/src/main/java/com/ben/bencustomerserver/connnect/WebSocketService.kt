@@ -5,10 +5,10 @@ import android.content.Intent
 import android.os.IBinder
 
 
-class WebSocketService:Service() {
-    override fun onCreate() {
-        super.onCreate()
-    }
+/**
+ * socket 服务链接
+ */
+class WebSocketService : Service() {
 
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -17,7 +17,7 @@ class WebSocketService:Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        if (wsURL.isNotEmpty()){
+        if (wsURL.isNotEmpty()) {
             WsManager.openWs()
         }
         return super.onStartCommand(intent, flags, startId)
