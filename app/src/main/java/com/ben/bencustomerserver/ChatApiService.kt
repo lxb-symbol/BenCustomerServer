@@ -8,9 +8,11 @@ import com.ben.bencustomerserver.model.UpFileEntity
 import com.symbol.lib_net.model.BaseModel
 import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 import retrofit2.http.Streaming
 
 interface ChatApiService {
@@ -18,11 +20,13 @@ interface ChatApiService {
     @POST(ChatApi.URL_CHAT_MESSAGES)
     suspend fun getChatMessages(): BaseModel<List<BaseMessageModel>>
 
-    @GET(ChatApi.URL_TOKEN_OBTAIN)
-    suspend fun getTokenAndWs(sellerCode:String):TokenAndWsEntity
+    @FormUrlEncoded
+    @POST(ChatApi.URL_TOKEN_OBTAIN)
+    suspend fun getTokenAndWs(@Field("seller_code") sellerCode:String):BaseModel<TokenAndWsEntity>
 
 
 
+    @FormUrlEncoded
     @POST(ChatApi.URL_UP_IMAGE)
     suspend fun uploadImg(@Body body: RequestBody):BaseModel<UpFileEntity>
 

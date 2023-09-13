@@ -1,13 +1,19 @@
 package com.ben.bencustomerserver.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.connnect.WebSocketService
+import com.ben.bencustomerserver.connnect.WsManager
+import com.ben.bencustomerserver.connnect.wsURL
 import com.ben.bencustomerserver.databinding.CsActivityChatBinding
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.bencustomerserver.repositories.ChatRepository
+import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.module_base.ui.BaseActivity
 import com.symbol.lib_net.net.RetrofitClient
+import com.tencent.mmkv.MMKV
 
 /**
  * 聊天界面
@@ -17,14 +23,30 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
     private lateinit var chatFragment: ChatFragment
 
     override fun initData() {
+        mViewModel.saveUserId("symbol-8374782")
+        mViewModel.saveUserName("symbol2023")
+        mViewModel.saveUserAvatar("https://symbol-file.oss-cn-beijing.aliyuncs.com/b1aa0c85f414485bc77a122592eea150.jpg")
+        mViewModel.saveSellerCode("64fac81815246")
+
+
         mViewModel.getTokenAndWsResul().observe(this) {
             Log.e("symbol:", "${it.token}   <---> ${it.socket_url}")
+            wsURL=it.socket_url
+            val intent = Intent(this,WebSocketService::class.java)
+            startService(intent)
+
         }
-        var code: String = "测试"
-        mViewModel.getTokenAndWs(code)
+        MMkvTool.getSellerCode()?.let {
+            mViewModel.getTokenAndWs(it)
+        }
+
+
+
+
     }
 
     override fun initView() {
+        MMKV.initialize(this)
         chatFragment = ChatFragment()
         val bundle = Bundle()
         chatFragment.arguments = bundle

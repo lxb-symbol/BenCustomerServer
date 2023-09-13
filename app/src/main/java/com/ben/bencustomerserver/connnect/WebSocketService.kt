@@ -3,6 +3,10 @@ package com.ben.bencustomerserver.connnect
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.ben.bencustomerserver.model.MessageType
+import com.ben.bencustomerserver.repositories.ChatRepository
+import com.ben.bencustomerserver.vm.ChatViewModel
+import okio.ByteString
 
 
 /**
@@ -20,6 +24,7 @@ class WebSocketService : Service() {
         if (wsURL.isNotEmpty()) {
             WsManager.openWs()
         }
+
         return super.onStartCommand(intent, flags, startId)
 
     }

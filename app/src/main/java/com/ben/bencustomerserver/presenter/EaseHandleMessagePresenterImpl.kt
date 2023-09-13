@@ -7,6 +7,7 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
+import com.ben.bencustomerserver.connnect.WsManager
 import com.ben.bencustomerserver.listener.EMCallBack
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.utils.EaseCommonUtils
@@ -23,6 +24,10 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
     }
 
     override fun sendTextMessage(content: String?, isNeedGroupAck: Boolean) {
+
+        content?.let {
+            WsManager.mWebSocket?.send(it)
+        }
 //        if (EaseAtMessageHelper.get().containsAtUsername(content)) {
 //            sendAtMessage(content)
 //            return
@@ -256,7 +261,7 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
     }
 
     override fun removeReaction(message: BaseMessageModel?, reaction: String?) {
-       
+
     }
 
     companion object {

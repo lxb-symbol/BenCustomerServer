@@ -3,6 +3,9 @@ package com.ben.bencustomerserver.connnect
 import android.net.ConnectivityManager
 import android.net.Network
 import android.util.Log
+import com.ben.bencustomerserver.model.MessageUtil
+import com.google.gson.GsonBuilder
+import com.google.gson.internal.GsonBuildConfig
 import com.nofish.websocket.NetworkStatusMonitor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +27,9 @@ var wsURL: String = ""
 
 object WsManager : CoroutineScope by MainScope() {
 
-    open var msgListeners: WebSocketMessageListener? = null
-    open var webSocketStatusListeners: WebSocketStatusListener? = null
 
-    val TAG = "WsManager"
+
+    val TAG = "symbol-WsManager"
     private val wsHttpClient by lazy {
         OkHttpClient.Builder()
             .pingInterval(10, TimeUnit.SECONDS) // 设置 PING 帧发送间隔
@@ -116,26 +118,35 @@ object WsManager : CoroutineScope by MainScope() {
     }
 
     private fun connect() {
+        if (mWebSocket!=null ){
+            if (connectionStatus!= ConnectionStatus.CONNECTED){
+                reconnect()
+            }
+            return
+        }
         Log.e(TAG, "开始连接 WS")
         mWebSocket = wsHttpClient.newWebSocket(requestHttp, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 super.onOpen(webSocket, response)
-                Log.e(TAG, "WS connection successful")
+                Log.e(TAG, "WS 链接成功")
                 connectionStatus = ConnectionStatus.CONNECTED
                 // WebSocket 连接建立
+                val str = GsonBuilder().create().toJson(MessageUtil.createTestMsg())
+                mWebSocket?.send(str)
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
                 super.onMessage(webSocket, text)
-                Log.e(TAG, "openWs onMessage $text")
-
+                Log.e(TAG, "openWs onMessage 字符型 :  $text")
                 // 收到服务端发送来的 String 类型消息
+                RecieveMessageManager.parseMessageContent(text)
+
             }
 
             override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                 super.onMessage(webSocket, bytes)
                 // 收到服务端发送来的 ByteString 类型消息
-                Log.e(TAG, "openWs onMessage bytes $bytes")
+                Log.e(TAG, "openWs onMessage bytes 字节型:  $bytes")
             }
 
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -150,36 +161,7 @@ object WsManager : CoroutineScope by MainScope() {
                 Log.e(TAG, "openWs onClosed")
                 mWebSocket = null
                 // WebSocket 连接关闭
-                /**
-                 *  Defined Status Codes
 
-                Endpoints MAY use the following pre-defined status codes when sending
-                a Close frame.
-
-                1000
-
-                1000 indicates a normal closure, meaning that the purpose for
-                which the connection was established has been fulfilled.
-
-                1001
-
-                1001 indicates that an endpoint is "going away", such as a server
-                going down or a browser having navigated away from a page.
-
-                1002
-
-                1002 indicates that an endpoint is terminating the connection due
-                to a protocol error.
-
-                1003
-
-                1003 indicates that an endpoint is terminating the connection
-                because it has received a type of data it cannot accept (e.g., an
-                endpoint that understands only text data MAY send this if it
-                receives a binary message).
-                 */
-
-                // Not normally close, need to reconnect
                 if (code != 1000) {
                     reconnect()
                 }
@@ -187,7 +169,7 @@ object WsManager : CoroutineScope by MainScope() {
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 super.onFailure(webSocket, t, response)
-                Log.e(TAG, "Ws连接失败")
+                Log.e(TAG, "Ws连接失败: "+response?.message)
                 mWebSocket = null
                 // 出错了
                 reconnect()

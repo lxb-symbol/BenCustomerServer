@@ -1,6 +1,5 @@
 package com.ben.bencustomerserver.viewholder
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import com.ben.bencustomerserver.adapter.EaseBaseRecyclerViewAdapter
@@ -9,7 +8,6 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow.EaseChatRowActionCallback
-import com.nofish.websocket.appContext
 
 open class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListItemClickListener) :
     EaseBaseRecyclerViewAdapter.ViewHolder<BaseMessageModel?>(itemView), EaseChatRowActionCallback {

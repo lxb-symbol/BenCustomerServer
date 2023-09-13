@@ -7,7 +7,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
+import com.ben.bencustomerserver.utils.appContext
 
 /**
  * 小心内存泄漏

@@ -92,7 +92,7 @@ class HorizontalPageLayoutManager(rows: Int, columns: Int) : RecyclerView.Layout
             }
             totalHeight = View.MeasureSpec.getSize(heightSpec)
         }
-        Log.e("symbol :", " HorizontalPagerLayoutManager titalHeight:  $totalHeight")
+//        Log.e("symbol :", " HorizontalPagerLayoutManager titalHeight:  $totalHeight")
         super.onMeasure(recycler, state, widthSpec, heightSpec)
     }
 

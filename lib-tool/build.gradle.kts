@@ -2,15 +2,14 @@
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-
 }
 
 android {
-    namespace = "com.symbol.lib_net"
-    compileSdk = libs.versions.compile.sdk.get().toInt()
+    namespace = "com.ben.lib_tool"
+    compileSdk = 33
 
     defaultConfig {
-        minSdk = libs.versions.min.sdk.get().toInt()
+        minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -25,11 +24,6 @@ android {
             )
         }
     }
-
-    buildFeatures{
-        buildConfig =true 
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -47,9 +41,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(libs.mmkv)
-
-    api(libs.bundles.nets)
-
-
 }
