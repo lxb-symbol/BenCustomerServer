@@ -20,8 +20,8 @@ import java.io.Serializable
  *
  */
 data class BaseMessageModel(
-    var id: Long = 0,
-    var messageType: MessageType,
+    var id: Long = System.currentTimeMillis(),
+    var messageType: MessageType?=MessageType.TXT,
     var cmd: String = "",
     var direct: Direct = Direct.SEND,
     var msgId: String = "0",
@@ -40,7 +40,8 @@ data class BaseMessageModel(
     var msgTime: Long = System.currentTimeMillis(),
     var progress: Int = 0,
     var isBolt: Boolean = true,
-    var extString: String = ""// 额外的信息
+    var extString: String = "",// 额外的信息
+    var innerMessage:IMessageModel?=null
 ) : Serializable
 
 

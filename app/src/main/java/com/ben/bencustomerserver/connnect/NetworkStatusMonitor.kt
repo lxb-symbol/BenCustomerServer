@@ -16,7 +16,7 @@ object NetworkStatusMonitor {
     private val connectivityService by lazy {
         appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
-    private var isRegistered = false;
+    private var isRegistered = false
     var isAvailable = false
         private set
     var isUnAvailable = false
