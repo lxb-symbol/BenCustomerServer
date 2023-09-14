@@ -15,7 +15,7 @@ data class NetMessageBean(
     val from_avatar: String,
     val from_id: String,
     val from_name: String,
-    val log_id: Int,
+    val log_id: Long,
     val read_flag: Int,
     val seller_code: String,
     val to_id: String,

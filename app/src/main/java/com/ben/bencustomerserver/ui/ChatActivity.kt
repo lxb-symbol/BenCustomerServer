@@ -37,6 +37,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
             val intent = Intent(this,WebSocketService::class.java)
             startService(intent)
 
+
         }
         MMkvTool.getSellerCode()?.let {
             mViewModel.getTokenAndWs(it)

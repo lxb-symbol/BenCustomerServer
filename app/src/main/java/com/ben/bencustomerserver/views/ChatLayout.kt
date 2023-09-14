@@ -12,12 +12,14 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModel
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.databinding.CsChatLayoutBinding
 import com.ben.bencustomerserver.listener.ChatInputMenuListener
 import com.ben.bencustomerserver.listener.IChatLayout
 import com.ben.bencustomerserver.listener.IHandleMessageView
 import com.ben.bencustomerserver.listener.IPopupWindow
+import com.ben.bencustomerserver.listener.ISwitchHumenListener
 import com.ben.bencustomerserver.listener.OnAddMsgAttrsBeforeSendEvent
 import com.ben.bencustomerserver.listener.OnChatLayoutListener
 import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
@@ -35,7 +37,7 @@ class ChatLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr), IHandleMessageView,
-    IPopupWindow, ChatInputMenuListener, IChatLayout,
+    IPopupWindow, ChatInputMenuListener, IChatLayout,ISwitchHumenListener,
     EaseChatMessageListLayout.OnMessageTouchListener {
     private lateinit var mViewBinding: CsChatLayoutBinding
     private var chatInputMenu: EaseChatInputMenu
@@ -105,6 +107,10 @@ class ChatLayout @JvmOverloads constructor(
         presenter?.attachView(this)
         mViewBinding.chatMessageListLayout.setOnMessageTouchListener(this)
         initTypingHandler()
+    }
+
+    fun setUpViewModel(vm:ViewModel){
+        presenter?.viewModel=vm
     }
 
 
@@ -440,6 +446,13 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun onReachBottom() {
+    }
+
+    override fun switch(isHume: Boolean) {
+        if (isHume){// 转人工的信息
+
+            presenter?.sendMessage()
+        }
     }
 
 

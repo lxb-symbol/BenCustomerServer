@@ -49,14 +49,17 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     override fun initView() {
         mViewBinding.cl.chatLayoutListener = this
         mViewBinding.cl.setOnChatRecordTouchListener(this)
+        mViewBinding.cl.setUpViewModel(mViewModel)
+
 
     }
 
     override fun initData() {
         //        获取聊天消息
-        mViewModel.chatMessages()
-        mViewModel.getDataMessagesResult().observe(this) {
-            Log.e("symbol result", "${it.size}")
+        mViewModel.chatMessages(1)
+
+        mViewModel.getFinalResultMessages().observe(this) {
+            Log.e("symbol-3:", "聊天消息数目：${it.size}")
         }
     }
 

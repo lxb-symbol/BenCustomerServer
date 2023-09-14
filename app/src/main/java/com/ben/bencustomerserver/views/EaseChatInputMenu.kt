@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.ben.bencustomerserver.R
@@ -19,6 +20,7 @@ import com.ben.bencustomerserver.listener.IChatEmojiconMenu
 import com.ben.bencustomerserver.listener.IChatExtendMenu
 import com.ben.bencustomerserver.listener.IChatInputMenu
 import com.ben.bencustomerserver.listener.IChatPrimaryMenu
+import com.ben.bencustomerserver.listener.ISwitchHumenListener
 import com.ben.bencustomerserver.utils.EaseSmileUtils.getSmiledText
 
 /**
@@ -41,7 +43,9 @@ class EaseChatInputMenu : LinearLayout,
     private var chatMenuContainer: LinearLayout? = null
     private var primaryMenuContainer: FrameLayout? = null
     private var chatExtendMenuContainer: FrameLayout? = null
+    private lateinit var mTvHuman: TextView
     var menuListener: ChatInputMenuListener? = null
+    open var switchHumanListener:ISwitchHumenListener? =null
 
     /**
      * 聊天输入框
@@ -58,15 +62,24 @@ class EaseChatInputMenu : LinearLayout,
      */
     private var emojiconMenu: IChatEmojiconMenu? = null
 
+    private var human = false
+
     init {
         LayoutInflater.from(context).inflate(R.layout.ease_widget_chat_input_menu_container, this)
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
+        mTvHuman = findViewById(R.id.tv_human)
         chatMenuContainer = findViewById(R.id.chat_menu_container)
         primaryMenuContainer = findViewById(R.id.primary_menu_container)
         chatExtendMenuContainer = findViewById(R.id.extend_menu_container)
+        mTvHuman.setOnClickListener {
+            mTvHuman.isEnabled = !human
+            switchHumanListener?.let {
+                it.switch(human)
+            }
+        }
         init()
     }
 
@@ -290,4 +303,7 @@ class EaseChatInputMenu : LinearLayout,
     companion object {
         private val TAG = EaseChatInputMenu::class.java.simpleName
     }
+
+
+
 }

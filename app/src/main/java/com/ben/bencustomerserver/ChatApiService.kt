@@ -3,6 +3,7 @@ package com.ben.bencustomerserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.NetMessageBeanOut
 import com.ben.bencustomerserver.model.TokenAndWsEntity
 import com.ben.bencustomerserver.model.UpFileEntity
 import com.symbol.lib_net.model.BaseModel
@@ -13,12 +14,22 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 import retrofit2.http.Streaming
 
 interface ChatApiService {
 
-    @POST(ChatApi.URL_CHAT_MESSAGES)
-    suspend fun getChatMessages(): BaseModel<List<BaseMessageModel>>
+    /**
+     * uid：用户uid
+     * page：页数
+     * tk：token
+     * t：当前时间戳
+     * u：商家code
+     */
+    @GET(ChatApi.URL_CHAT_MESSAGES)
+    suspend fun getChatMessages(@QueryMap map:HashMap<String,String>): BaseModel<NetMessageBeanOut>
+
+
 
     @FormUrlEncoded
     @POST(ChatApi.URL_TOKEN_OBTAIN)

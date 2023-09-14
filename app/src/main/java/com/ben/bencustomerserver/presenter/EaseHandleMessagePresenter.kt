@@ -1,6 +1,7 @@
 package com.ben.bencustomerserver.presenter
 
 import android.net.Uri
+import androidx.lifecycle.ViewModel
 import com.ben.bencustomerserver.listener.IHandleMessageView
 import com.ben.bencustomerserver.listener.ILoadDataView
 import com.ben.bencustomerserver.model.BaseMessageModel
@@ -9,6 +10,13 @@ abstract class EaseHandleMessagePresenter : EaseBasePresenter() {
     protected var mView: IHandleMessageView? = null
     protected var chatType = 0
     protected var toChatUsername: String? = null
+    var viewModel:ViewModel?=null
+
+    fun setupViewModel(vm: ViewModel){
+        viewModel =vm
+    }
+
+
     override fun attachView(view: ILoadDataView?) {
         mView = view as IHandleMessageView?
     }
@@ -85,6 +93,8 @@ abstract class EaseHandleMessagePresenter : EaseBasePresenter() {
      * @param sendOriginalImage
      */
     abstract fun sendImageMessage(imageUri: Uri?, sendOriginalImage: Boolean)
+
+    abstract fun sendSwitchHumeMessage()
 
     /**
      * 发送定位消息

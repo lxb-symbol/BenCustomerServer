@@ -15,10 +15,18 @@ import com.ben.bencustomerserver.utils.EaseFileUtils
 import com.ben.bencustomerserver.utils.EaseImageUtils
 import com.ben.bencustomerserver.utils.ImageUtils
 import com.ben.bencustomerserver.utils.PathUtil
+import com.ben.bencustomerserver.vm.ChatViewModel
 import java.io.File
 import java.io.FileOutputStream
 
+/**
+ * 需要绑定 ViewModle 处理数据
+ */
 class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
+
+
+
+
     override fun sendTextMessage(content: String?) {
         sendTextMessage(content, false)
     }
@@ -28,6 +36,7 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
         content?.let {
             WsManager.mWebSocket?.send(it)
         }
+
 //        if (EaseAtMessageHelper.get().containsAtUsername(content)) {
 //            sendAtMessage(content)
 //            return
@@ -64,6 +73,10 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
 //        val message: BaseMessageModel =
 //            createImageSendMessage(imageUri, sendOriginalImage, toChatUsername)
 //        sendMessage(message)
+    }
+
+    override fun sendSwitchHumeMessage() {
+
     }
 
     override fun sendLocationMessage(

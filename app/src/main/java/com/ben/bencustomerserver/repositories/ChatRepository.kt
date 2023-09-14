@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.ben.bencustomerserver.ChatApi
 import com.ben.bencustomerserver.ChatApiService
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.NetMessageBeanOut
 import com.ben.bencustomerserver.model.TokenAndWsEntity
 import com.ben.bencustomerserver.model.UpFileEntity
 import com.symbol.lib_net.BaseRepository
@@ -20,9 +21,9 @@ import java.io.File
 
 class ChatRepository(private val service: RetrofitClient) : BaseRepository() {
 
-    suspend fun getMessageList(): NetResult<List<BaseMessageModel>> {
+    suspend fun getMessageList(map:HashMap<String,String>): NetResult<NetMessageBeanOut> {
         return callRequest {
-            handleResponse(service.create(ChatApiService::class.java).getChatMessages())
+            handleResponse(service.create(ChatApiService::class.java).getChatMessages(map))
         }
     }
 
