@@ -139,7 +139,7 @@ object WsManager : CoroutineScope by MainScope() {
                 super.onMessage(webSocket, text)
                 Log.e(TAG, "openWs onMessage 字符型 :  $text")
                 // 收到服务端发送来的 String 类型消息
-                RecieveMessageManager.parseMessageContent(text)
+                RecieveMessageManager.parseMessageContentFromSocket(text)
 
             }
 

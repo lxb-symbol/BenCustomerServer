@@ -8,6 +8,7 @@ import com.ben.bencustomerserver.connnect.WebSocketService
 import com.ben.bencustomerserver.connnect.WsManager
 import com.ben.bencustomerserver.connnect.wsURL
 import com.ben.bencustomerserver.databinding.CsActivityChatBinding
+import com.ben.bencustomerserver.model.MessageRegular
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
@@ -27,6 +28,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         mViewModel.saveUserName("symbol2023")
         mViewModel.saveUserAvatar("https://symbol-file.oss-cn-beijing.aliyuncs.com/b1aa0c85f414485bc77a122592eea150.jpg")
         mViewModel.saveSellerCode("64fac81815246")
+
 
 
         mViewModel.getTokenAndWsResul().observe(this) {

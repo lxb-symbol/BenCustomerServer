@@ -5,6 +5,7 @@ data class TextMessage(
 ) : IMessageModel
 
 data class FileMessage(
+    val name: String? = "",
     val fileSize: Long = 0,
     val localPath: String? = "",
     val netPath: String? = ""
@@ -19,7 +20,30 @@ data class VoiceMessage(
     val localPath: String? = "",
     val netPath: String? = "",
     val duration: Int = 0
-)
+) : IMessageModel
+
+
+/**
+ * location[39.913607,116.324786,北京市海淀区复兴路辅路]
+ */
+data class LocationMessage(
+    val name: String,
+    val lat: Long,
+    val lng: Long,
+
+    ) : IMessageModel
+
+
+/**
+ * video(\/uploads\/20230909\/3efac0e1c49f82d0d33e037e0c920ed3.mp4)[3efac0e1c49f82d0d33e037e0c920ed3.mp4]
+ */
+data class VideoMessage(
+    val localPath: String? = null,
+    val netPath: String? = null,
+    val name: String? = null
+) : IMessageModel
+
+
 
 
 
