@@ -3,6 +3,7 @@ package com.ben.bencustomerserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.NetMessageBean
 import com.ben.bencustomerserver.model.NetMessageBeanOut
 import com.ben.bencustomerserver.model.TokenAndWsEntity
 import com.ben.bencustomerserver.model.UpFileEntity
@@ -10,6 +11,7 @@ import com.symbol.lib_net.model.BaseModel
 import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.Field
+import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -37,6 +39,7 @@ interface ChatApiService {
 
 
 
+    @Streaming
     @FormUrlEncoded
     @POST(ChatApi.URL_UP_IMAGE)
     suspend fun uploadImg(@Body body: RequestBody):BaseModel<UpFileEntity>
@@ -45,5 +48,19 @@ interface ChatApiService {
     @FormUrlEncoded
     @POST(ChatApi.URL_UP_FILE)
     suspend fun uploadFile(@Body body: RequestBody):BaseModel<UpFileEntity>
+
+
+    @FormUrlEncoded
+    @POST(ChatApi.URL_QUERY_BOLT)
+    suspend fun queryBolt(@FieldMap map:HashMap<String,String>):String
+
+
+    @FormUrlEncoded
+    @POST(ChatApi.URL_UP_FILE)
+    suspend fun autoAnswer(@FieldMap map:HashMap<String,String>):String
+
+
+
+
 
 }

@@ -145,7 +145,8 @@ object WsManager : CoroutineScope by MainScope() {
 
             override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                 super.onMessage(webSocket, bytes)
-                // 收到服务端发送来的 ByteString 类型消息
+                // 收到服务端发送来的 ByteString 类型消息,项目中未走此函数
+
                 Log.e(TAG, "openWs onMessage bytes 字节型:  $bytes")
             }
 

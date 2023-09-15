@@ -6,6 +6,7 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.FileMessage
 import com.ben.bencustomerserver.model.ImageMessage
+import com.ben.bencustomerserver.model.InUserInit
 import com.ben.bencustomerserver.model.LocationMessage
 import com.ben.bencustomerserver.model.MessageRegular
 import com.ben.bencustomerserver.model.MessageStatus
@@ -16,6 +17,7 @@ import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.model.TextMessage
 import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
+import com.ben.bencustomerserver.utils.MMkvTool
 import com.google.gson.GsonBuilder
 import org.json.JSONObject
 
@@ -45,14 +47,33 @@ object RecieveMessageManager {
 
         val obj = JSONObject(jsonString)
         val dataJson = obj.getString("data")
-        when (obj.optString("cmd")) {
+        val dataObj = JSONObject(dataJson)
+        val code = dataObj.optInt("code")
+        // code==0 表示成功处理 socket 消息
+        if (code != 0) {
+            when (obj.optString("cmd")) {
+                OriginMessageType.TYPE_USER_INIT -> {
+                    MMkvTool.putIsHuman(false)
+                }
+            }
+            return
+        }
 
+        when (obj.optString("cmd")) {
             OriginMessageType.TYPE_CUSTOMER_IN -> {// customerIn
 
             }
 
             OriginMessageType.TYPE_USER_INIT -> {
-
+                try {
+                    val initData = GsonBuilder().create().fromJson(dataJson, InUserInit::class.java)
+                    MMkvTool.putKFId(initData.kefu_id ?: "")
+                    MMkvTool.putKFName(initData.kefu_name ?: "")
+                    MMkvTool.putKFCode(initData.kefu_code ?: "")
+                    MMkvTool.putKFAvatar(initData.kefu_avatar ?: "")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
 
             OriginMessageType.TYPE_MESSAGE_READ -> {// 已读消息
@@ -70,6 +91,7 @@ object RecieveMessageManager {
             OriginMessageType.TYPE_QUESTION -> {// 问答
 
             }
+
 
             OriginMessageType.TYPE_CHAT_MESSAGE -> {// 处理具体消息
                 if (TextUtils.isEmpty(dataJson)) return
@@ -226,6 +248,27 @@ object RecieveMessageManager {
                     }
 
                     MessageType.CMD -> {
+                        var extStr = ""
+                        if (bean.content.contains(OriginMessageType.TAG_FACE)) {
+                            extStr = OriginMessageType.EXT_MSG_EXPRESSION
+                        }
+                        with(model) {
+                            messageType = MessageType.TXT
+                            content = bean.content
+                            cmd = OriginMessageType.TYPE_CHAT_MESSAGE
+                            direct = Direct.RECEIEVE
+                            msgId = System.currentTimeMillis().toString()
+                            status = MessageStatus.SUCCESS
+                            from_id = bean.from_id
+                            from_avatar = bean.from_avatar
+                            from_name = bean.from_name
+                            seller_code = bean.seller_code
+                            to_id = bean.to_id
+                            to_name = bean.to_name
+                            innerMessage = TextMessage(bean.content)
+                            extString = extStr
+                        }
+
 
                     }
 
@@ -263,7 +306,9 @@ object RecieveMessageManager {
                     }
 
                 }
-                if (!TextUtils.isEmpty(model.content) && !TextUtils.isEmpty(model.from_id)) {
+                if (!TextUtils.isEmpty(model.content)
+                    && !TextUtils.isEmpty(model.from_id)
+                ) {
                     msgs.add(model)
                 }
 
@@ -279,7 +324,7 @@ object RecieveMessageManager {
     fun getMessageTypeByContentAndExt(content: String): MessageType {
 
         if (content.startsWith(OriginMessageType.TAG_FACE)) {
-            return MessageType.TXT
+            return MessageType.CMD
         } else if (content.startsWith(OriginMessageType.TAG_IMG)) {
             return MessageType.IMAGE
         } else if (content.startsWith(OriginMessageType.TAG_FACE)) {
@@ -293,7 +338,7 @@ object RecieveMessageManager {
         } else if (content.startsWith(OriginMessageType.TAG_FILE)) {
             return MessageType.FILE
         }
-        return MessageType.CMD
+        return MessageType.TXT
     }
 
 
@@ -453,6 +498,23 @@ object RecieveMessageManager {
             }
 
             MessageType.CMD -> {
+
+                val model = BaseMessageModel(
+                    messageType = MessageType.CMD,
+                    cmd = OriginMessageType.TYPE_CHAT_MESSAGE,
+                    direct = Direct.RECEIEVE,
+                    msgId = bean.log_id.toString(),
+                    status = MessageStatus.SUCCESS,
+                    from_id = bean.from_id,
+                    from_avatar = bean.from_avatar,
+                    from_name = bean.from_name,
+                    seller_code = bean.seller_code,
+                    to_id = bean.to_id,
+                    to_name = bean.to_name,
+                    innerMessage = TextMessage(bean.content)
+                )
+                msgs.add(model)
+
 
             }
 

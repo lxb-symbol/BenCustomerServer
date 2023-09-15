@@ -28,6 +28,7 @@ import com.ben.bencustomerserver.listener.OnRecallMessageResultListener
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.presenter.EaseHandleMessagePresenter
 import com.ben.bencustomerserver.presenter.EaseHandleMessagePresenterImpl
+import com.ben.bencustomerserver.utils.MMkvTool
 
 /**
  * 聊天的布局
@@ -37,13 +38,13 @@ class ChatLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr), IHandleMessageView,
-    IPopupWindow, ChatInputMenuListener, IChatLayout,ISwitchHumenListener,
+    IPopupWindow, ChatInputMenuListener, IChatLayout, ISwitchHumenListener,
     EaseChatMessageListLayout.OnMessageTouchListener {
     private lateinit var mViewBinding: CsChatLayoutBinding
     private var chatInputMenu: EaseChatInputMenu
     private lateinit var voiceRecordView: EaseVoiceRecorderView
     var chatLayoutListener: OnChatLayoutListener? = null
-    var presenter: EaseHandleMessagePresenter? = null
+  private lateinit var presenter: EaseHandleMessagePresenter
 
 
     /**
@@ -104,13 +105,14 @@ class ChatLayout @JvmOverloads constructor(
         clippborad = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         voiceRecordView = mViewBinding.voiceRecorder
         presenter = EaseHandleMessagePresenterImpl()
-        presenter?.attachView(this)
+        presenter.attachView(this)
         mViewBinding.chatMessageListLayout.setOnMessageTouchListener(this)
         initTypingHandler()
+        chatInputMenu.switchHumanListener=this
     }
 
-    fun setUpViewModel(vm:ViewModel){
-        presenter?.viewModel=vm
+    fun setUpViewModel(vm: ViewModel) {
+        presenter.viewModel = vm
     }
 
 
@@ -212,17 +214,17 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendBigExpressionMessage(name: String?, identityCode: String?) {
-        presenter?.sendBigExpressionMessage(name,identityCode)
+        presenter?.sendBigExpressionMessage(name, identityCode)
     }
 
     override fun sendVoiceMessage(filePath: String?, length: Int) {
         Log.e("TAG", "filePath: $filePath")
-        val uri = Uri.parse(filePath )
-        presenter?.sendVoiceMessage(uri,length)
+        val uri = Uri.parse(filePath)
+        presenter?.sendVoiceMessage(uri, length)
     }
 
     override fun sendVoiceMessage(filePath: Uri?, length: Int) {
-        presenter?.sendVoiceMessage(filePath,length)
+        presenter?.sendVoiceMessage(filePath, length)
     }
 
     override fun sendImageMessage(imageUri: Uri?) {
@@ -242,7 +244,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendVideoMessage(videoUri: Uri?, videoLength: Int) {
-        presenter?.sendVideoMessage(videoUri,videoLength)
+        presenter?.sendVideoMessage(videoUri, videoLength)
     }
 
     override fun sendFileMessage(fileUri: Uri?) {
@@ -336,14 +338,14 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun createThumbFileFail(message: String?) {
-        listener?.onChatError(-1,message)
+        listener?.onChatError(-1, message)
     }
 
     override fun addMsgAttrBeforeSend(message: BaseMessageModel?) {
     }
 
     override fun sendMessageFail(message: String?) {
-        listener?.onChatError(-1,message)
+        listener?.onChatError(-1, message)
     }
 
     override fun sendMessageFinish(message: BaseMessageModel?) {
@@ -449,9 +451,9 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun switch(isHume: Boolean) {
-        if (isHume){// 转人工的信息
-
-            presenter?.sendMessage()
+        MMkvTool.putIsHuman(isHume)
+        if (!isHume) {// 转人工的信息
+            presenter?.sendSwitchHumeMessage()
         }
     }
 

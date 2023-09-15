@@ -5,7 +5,6 @@ import com.tencent.mmkv.MMKV
 
 object MMkvTool {
 
-
     fun putToken(token: String) {
         MMKV.defaultMMKV().putString(Constants.KEY_TOKEN, token)
     }
@@ -19,6 +18,8 @@ object MMkvTool {
 
     fun getTime(): String? = MMKV.defaultMMKV().getString(Constants.KEY_TIME, "")
 
+
+    fun putSellerId(id:String) =MMKV.defaultMMKV().putString(Constants.KEY_SELLER_ID,id)
 
     fun putSellerCode(code: String) {
         MMKV.defaultMMKV().putString(Constants.KEY_SELLER_CODE, code)
@@ -40,6 +41,9 @@ object MMkvTool {
         MMKV.defaultMMKV().putString(Constants.KEY_KF_NAME, name)
     }
 
+    fun putKFAvatar(avatar: String) =MMKV.defaultMMKV().putString(Constants.KEY_KF_AVATAR,avatar)
+
+    fun putKFCode(code:String) =MMKV.defaultMMKV().putString(Constants.KEY_KF_CODE,code)
     fun getKFName(): String? = MMKV.defaultMMKV().getString(Constants.KEY_KF_NAME, "")
 
     fun putUserId(id: String) {
@@ -62,6 +66,12 @@ object MMkvTool {
     fun getUserAvatar(): String? = MMKV.defaultMMKV().getString(Constants.KEY_USER_AVATAR, "")
     fun putWsURL(socketUrl: String) {
         MMKV.defaultMMKV().putString(Constants.KEY_WS_URL, socketUrl)
+    }
+
+    fun getIsHuman(): Boolean = MMKV.defaultMMKV().getBoolean(Constants.KEY_IS_HUMAN, false)
+
+    fun putIsHuman(isHuman: Boolean) {
+        MMKV.defaultMMKV().putBoolean(Constants.KEY_IS_HUMAN, isHuman)
     }
 
 }

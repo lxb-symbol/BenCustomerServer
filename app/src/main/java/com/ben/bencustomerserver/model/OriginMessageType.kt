@@ -2,6 +2,8 @@ package com.ben.bencustomerserver.model
 
 /**
  * byte 的消息的类型
+ *
+ *
  */
 object OriginMessageType {
 
@@ -23,12 +25,20 @@ object OriginMessageType {
 
     const val TYPE_QUESTION = "comQuestion"
 
+    const val TYPE_CMD_SWITCH_HUMAN = "switch_human"
+
+
+    /**
+     * 额外的消息信息，用来判断是否是表情消息的
+     */
+    const val EXT_MSG_EXPRESSION = "isExpression"
+
     const val TAG_FACE = "face["
     const val TAG_VIDEO = "video("
     const val TAG_FILE = "file("
     const val TAG_VOICE = "audio["
-    const val TAG_LOCATION="location["
-    const val TAG_IMG="img["
+    const val TAG_LOCATION = "location["
+    const val TAG_IMG = "img["
 
 
 }

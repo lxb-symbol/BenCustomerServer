@@ -7,9 +7,9 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
-import com.ben.bencustomerserver.connnect.WsManager
 import com.ben.bencustomerserver.listener.EMCallBack
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.MessageUtil
 import com.ben.bencustomerserver.utils.EaseCommonUtils
 import com.ben.bencustomerserver.utils.EaseFileUtils
 import com.ben.bencustomerserver.utils.EaseImageUtils
@@ -25,25 +25,15 @@ import java.io.FileOutputStream
 class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
 
 
-
-
     override fun sendTextMessage(content: String?) {
         sendTextMessage(content, false)
     }
 
     override fun sendTextMessage(content: String?, isNeedGroupAck: Boolean) {
-
         content?.let {
-            WsManager.mWebSocket?.send(it)
+            val msg = MessageUtil.generateTextModel(it)
+            sendMessage(msg)
         }
-
-//        if (EaseAtMessageHelper.get().containsAtUsername(content)) {
-//            sendAtMessage(content)
-//            return
-//        }
-//        val message: BaseMessageModel = createTxtSendMessage(content, toChatUsername)
-//        message.setIsNeedGroupAck(isNeedGroupAck)
-//        sendMessage(message)
     }
 
     override fun sendAtMessage(content: String?) {
@@ -71,11 +61,14 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
         var imageUri = imageUri
         imageUri = handleImageHeifToJpeg(imageUri)
 //        val message: BaseMessageModel =
-//            createImageSendMessage(imageUri, sendOriginalImage, toChatUsername)
+//            ç(imageUri, sendOriginalImage, toChatUsername)
 //        sendMessage(message)
     }
 
     override fun sendSwitchHumeMessage() {
+
+        val model = MessageUtil.generateHumeSwitchModel()
+        sendMessage(model)
 
     }
 
@@ -154,8 +147,10 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
                 }
             }
         }
-        // send message 进行网络请求
-        TODO("message 进行网络请求")
+        //symbol  send message 进行网络请求
+        message.let {
+            (viewModel as ChatViewModel).sendMessage(it)
+        }
         if (isActive) {
             runOnUI { mView!!.sendMessageFinish(message) }
         }
@@ -166,7 +161,6 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
     }
 
     override fun resendMessage(message: BaseMessageModel?) {
-
         sendMessage(message)
     }
 

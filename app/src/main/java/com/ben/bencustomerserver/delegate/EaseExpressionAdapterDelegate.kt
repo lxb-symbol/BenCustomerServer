@@ -1,13 +1,12 @@
 package com.ben.bencustomerserver.delegate
 
 import android.text.TextUtils
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import com.ben.bencustomerserver.listener.MessageListItemClickListener
 import com.ben.bencustomerserver.model.BaseMessageModel
-import com.ben.bencustomerserver.model.Constants
 import com.ben.bencustomerserver.model.MessageType
+import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.viewholder.EaseChatRowViewHolder
 import com.ben.bencustomerserver.viewholder.EaseExpressionViewHolder
 import com.ben.bencustomerserver.views.chatrow.EaseChatRow
@@ -25,7 +24,7 @@ class EaseExpressionAdapterDelegate :
 
     override fun isForViewType(item: BaseMessageModel?, position: Int): Boolean {
         return (item?.messageType === MessageType.TXT
-                && TextUtils.equals(item.extString,Constants.EXT_MSG_EXPRESSION))
+                && TextUtils.equals(item.extString, OriginMessageType.EXT_MSG_EXPRESSION))
 
     }
 

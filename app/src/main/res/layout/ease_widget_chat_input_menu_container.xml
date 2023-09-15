@@ -4,17 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:background="@color/color_f5f5f5"
     android:orientation="vertical">
 
 
     <TextView
         android:id="@+id/tv_human"
+        android:layout_marginBottom="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginEnd="@dimen/dp_16"
-        android:layout_marginBottom="@dimen/dp_42"
         android:background="@color/color_1ab84e"
         android:gravity="center"
         android:paddingHorizontal="@dimen/dp_8"
@@ -22,7 +21,6 @@
         android:text="转人工"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_14" />
-
     <FrameLayout
         android:id="@+id/primary_menu_container"
         android:layout_width="match_parent"

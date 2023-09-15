@@ -17,16 +17,27 @@ object ChatApi {
     /**
      *获取token 和 WS 链接
      */
-    const val URL_TOKEN_OBTAIN="index/api/getToken"
+    const val URL_TOKEN_OBTAIN = "index/api/getToken"
 
     /**
      * 上传图片
      */
-    const val URL_UP_IMAGE="index/upload/uploadImg"
+    const val URL_UP_IMAGE = "index/upload/uploadImg"
 
     /**
      * 上传文件
      */
-    const val URL_UP_FILE="index/upload/uploadFile"
+    const val URL_UP_FILE = "index/upload/uploadFile"
+
+    /**
+     * 询问机器人
+     */
+    const val URL_QUERY_BOLT = "index/robot/service"
+
+
+    /**
+     * 自动回答
+     */
+    const val URL_AUTO_ANSWER = "index/robot/autoAnswer "
 
 }

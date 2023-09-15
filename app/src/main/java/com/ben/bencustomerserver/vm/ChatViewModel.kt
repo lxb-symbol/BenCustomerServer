@@ -1,13 +1,20 @@
 package com.ben.bencustomerserver.vm
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ben.bencustomerserver.connnect.RecieveMessageManager
+import com.ben.bencustomerserver.connnect.WsManager
+import com.ben.bencustomerserver.listener.INetCallback
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.ImageMessage
+import com.ben.bencustomerserver.model.MessageType
+import com.ben.bencustomerserver.model.MessageUtil
 import com.ben.bencustomerserver.model.NetMessageBean
 import com.ben.bencustomerserver.model.NetMessageBeanOut
+import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.model.TokenAndWsEntity
 import com.ben.bencustomerserver.model.UpFileEntity
 import com.ben.bencustomerserver.repositories.ChatRepository
@@ -25,10 +32,17 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     private val _upImg = MutableLiveData<UpFileEntity>()
     private val _upFile = MutableLiveData<UpFileEntity>()
 
+    // 上传错误之后，发送消息 ID
+    private val _errorUp = MutableLiveData<String>()
+
+
     /**
      * 最终网络和  socket转化后的数据
      */
     private val _finalMessages = MutableLiveData<List<BaseMessageModel>>()
+
+
+    fun getErrorUpId() = _errorUp
 
     fun saveUserId(id: String) {
         MMkvTool.putUserId(id)
@@ -77,7 +91,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
         map["page"] = "$page"
         map["t"] = "${System.currentTimeMillis()}"
         map["u"] = "${MMkvTool.getSellerCode()}"
-        map["tk"]="${MMkvTool.getToken()}"
+        map["tk"] = "${MMkvTool.getToken()}"
 
         viewModelScope.launch {
             when (val result = repository.getMessageList(map)) {
@@ -104,7 +118,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     /***
      * 网络消息转换为 BaseViewModel 的形式
      */
-    fun coverNetMessageToBaseViewModel(netList: List<NetMessageBean>) {
+    private fun coverNetMessageToBaseViewModel(netList: List<NetMessageBean>) {
 
         if (netList.isEmpty()) return
         for (i in netList.indices) {
@@ -137,40 +151,170 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     }
 
 
-    fun sendMessage(msg:BaseMessageModel,isHume: Boolean){
-        if (isHume){// 人工走 socket
+    /**
+     *  发送消息
+     */
+    fun sendMessage(msg: BaseMessageModel) {
+        val isHuman = MMkvTool.getIsHuman()
 
-        }else{//
+        when (msg.messageType) {
+
+            MessageType.TXT -> {
+                val ext = msg.extString
+                if (isHuman) {
+                    WsManager.mWebSocket?.let {
+                        val str = MessageUtil.generateWsMessageTxt(msg)
+                        it.send(str)
+                        RecieveMessageManager.msgs.add(msg)
+                    }
+                } else {
+
+                    RecieveMessageManager.msgs.add(msg)
+                    queryBolt(msg.content, object : INetCallback<String> {
+                        override fun onSuccess(data: String) {
+                            Log.i("symbol--4", "$data")
+
+                        }
+
+                        override fun onError(code: Int, msg: String) {
+                            Log.i("symbol--4", "$msg")
+                        }
+
+                    })
 
 
+                }
+            }
 
+            MessageType.CMD -> {
+                val ext = msg.extString
+                if (TextUtils.equals(ext, OriginMessageType.TYPE_CMD_SWITCH_HUMAN)) {
+                    WsManager.mWebSocket?.let {
+                        val str = MessageUtil.generateWsMessageSwitchHuman(msg)
+                        it.send(str)
+                    }
+                }
+            }
+
+            MessageType.IMAGE -> {
+                if (isHuman) {//
+                    val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
+                    val localPath = innerMsg.localPath
+                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            WsManager.mWebSocket?.let {
+                                var str = MessageUtil.generateWsMessageImage(msg)
+                                it.send(str)
+                                RecieveMessageManager.msgs.add(msg)
+                            }
+                        }
+
+                        override fun onError(code: Int, msg: String) {
+                        }
+
+                    })
+
+
+                }
+
+            }
+
+            MessageType.VOICE -> {
+
+            }
+
+            MessageType.FILE -> {
+
+            }
+
+            else -> {
+
+            }
         }
+
+
     }
 
 
-    fun uploadImg(f: File) {
+    fun uploadImg(id: String, f: File, callback: INetCallback<UpFileEntity>?) {
         viewModelScope.launch {
             val result = repository.uploadImg(f)
             when (result) {
                 is NetResult.Success -> {
                     _upImg.postValue(result.data)
+                    callback?.let {
+                        it.onSuccess(result.data)
+                    }
                 }
 
                 is NetResult.Error -> {
                     Log.e("symbol", "getTokenAndWs is error: ${result.exception.message}")
-
+                    callback?.let {
+                        it.onError(-1, result.exception.message.toString())
+                    }
                 }
             }
         }
     }
 
-    fun uploadFile() {
+    fun uploadFile(f: File, callback: INetCallback<UpFileEntity>?) {
+        viewModelScope.launch {
+            val result = repository.uploadFile(f)
+            when (result) {
+                is NetResult.Success -> {
+                    _upFile.postValue(result.data)
+                    callback?.let {
+                        it.onSuccess(result.data)
+                    }
+                }
 
+                is NetResult.Error -> {
+                    callback?.let {
+                        it.onError(-1, result.exception.message.toString())
+                    }
+                }
+            }
+        }
     }
 
 
     fun getEmojis() {
 
+    }
+
+
+    /**
+     * 问机器人
+     */
+    fun queryBolt(content: String, back: INetCallback<String>?) {
+        val map = HashMap<String, String>()
+        map["q"] = "" + content
+        map["seller_id"] = "" + MMkvTool.getSellerCode()
+        map["from_id"] = "" + MMkvTool.getUserId()
+        map["from_name"] = "" + MMkvTool.getUserName()
+        map["from_avatar"] = "" + MMkvTool.getUserAvatar()
+
+        viewModelScope.launch {
+            val result = repository.queryBolt(map)
+            when (result) {
+                is NetResult.Success -> {
+                    val str = result.data
+                    back?.let {
+                        it.onSuccess(str)
+                    }
+
+                }
+
+                is NetResult.Error -> {
+                    back?.let {
+                        it.onError(-1, result.exception.message.toString())
+                    }
+
+                }
+            }
+        }
     }
 
 }

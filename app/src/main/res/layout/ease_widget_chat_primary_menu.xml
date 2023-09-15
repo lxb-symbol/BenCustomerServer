@@ -12,6 +12,8 @@
         android:background="@color/gray_normal"
         android:visibility="invisible" />
 
+
+
     <LinearLayout
         android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
