@@ -44,7 +44,7 @@ class ChatLayout @JvmOverloads constructor(
     private var chatInputMenu: EaseChatInputMenu
     private lateinit var voiceRecordView: EaseVoiceRecorderView
     var chatLayoutListener: OnChatLayoutListener? = null
-  private lateinit var presenter: EaseHandleMessagePresenter
+    private lateinit var presenter: EaseHandleMessagePresenter
 
 
     /**
@@ -108,11 +108,18 @@ class ChatLayout @JvmOverloads constructor(
         presenter.attachView(this)
         mViewBinding.chatMessageListLayout.setOnMessageTouchListener(this)
         initTypingHandler()
-        chatInputMenu.switchHumanListener=this
+        chatInputMenu.switchHumanListener = this
+
+        loadData()
+    }
+
+    fun loadData(){
+        mViewBinding.chatMessageListLayout.loadDefaultData()
     }
 
     fun setUpViewModel(vm: ViewModel) {
         presenter.viewModel = vm
+        mViewBinding.chatMessageListLayout.setupViewModel(vm)
     }
 
 
@@ -169,7 +176,7 @@ class ChatLayout @JvmOverloads constructor(
         handler.removeMessages(MSG_TYPING_HEARTBEAT)
         handler.removeMessages(MSG_TYPING_END)
         // Send TYPING-END cmd msg
-        presenter?.sendCmdMessage(ACTION_TYPING_END)
+        presenter.sendCmdMessage(ACTION_TYPING_END)
     }
 
 
@@ -182,7 +189,7 @@ class ChatLayout @JvmOverloads constructor(
         if (!turnOnTyping) return
         // Only support single-chat type conversation.
         // Send TYPING-BEGIN cmd msg
-        presenter?.sendCmdMessage(ACTION_TYPING_BEGIN)
+        presenter.sendCmdMessage(ACTION_TYPING_BEGIN)
         handler.sendEmptyMessageDelayed(
             MSG_TYPING_HEARTBEAT,
             TYPING_SHOW_TIME.toLong()
@@ -193,7 +200,7 @@ class ChatLayout @JvmOverloads constructor(
     override fun chatInputMenu(): EaseChatInputMenu = chatInputMenu
 
     override fun inputContent(): String? {
-        TODO("Not yet implemented")
+        return ""
     }
 
     override fun turnOnTypingMonitor(turnOn: Boolean) {
@@ -202,11 +209,15 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendTextMessage(content: String?) {
-        presenter?.sendTextMessage(content)
+        content?.let {
+            presenter.sendTextMessage(it)
+        }
     }
 
     override fun sendTextMessage(content: String?, isNeedGroupAck: Boolean) {
-        presenter?.sendTextMessage(content)
+        content?.let {
+            presenter.sendTextMessage(it)
+        }
     }
 
     override fun sendAtMessage(content: String?) {
@@ -214,25 +225,25 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendBigExpressionMessage(name: String?, identityCode: String?) {
-        presenter?.sendBigExpressionMessage(name, identityCode)
+        presenter.sendBigExpressionMessage(name, identityCode)
     }
 
     override fun sendVoiceMessage(filePath: String?, length: Int) {
         Log.e("TAG", "filePath: $filePath")
         val uri = Uri.parse(filePath)
-        presenter?.sendVoiceMessage(uri, length)
+        presenter.sendVoiceMessage(uri, length)
     }
 
     override fun sendVoiceMessage(filePath: Uri?, length: Int) {
-        presenter?.sendVoiceMessage(filePath, length)
+        presenter.sendVoiceMessage(filePath, length)
     }
 
     override fun sendImageMessage(imageUri: Uri?) {
-        presenter?.sendImageMessage(imageUri)
+        presenter.sendImageMessage(imageUri)
     }
 
     override fun sendImageMessage(imageUri: Uri?, sendOriginalImage: Boolean) {
-        presenter?.sendImageMessage(imageUri)
+        presenter.sendImageMessage(imageUri)
     }
 
     override fun sendLocationMessage(
@@ -241,15 +252,16 @@ class ChatLayout @JvmOverloads constructor(
         locationAddress: String?,
         buildingName: String?
     ) {
+        presenter.sendLocationMessage(latitude,longitude,locationAddress,buildingName)
     }
 
     override fun sendVideoMessage(videoUri: Uri?, videoLength: Int) {
-        presenter?.sendVideoMessage(videoUri, videoLength)
+        presenter.sendVideoMessage(videoUri, videoLength)
     }
 
     override fun sendFileMessage(fileUri: Uri?) {
         Log.e("symbol -->", "发送文件消息待完善")
-        presenter?.sendFileMessage(fileUri)
+        presenter.sendFileMessage(fileUri)
     }
 
     override fun addMessageAttributes(message: BaseMessageModel?) {
@@ -257,11 +269,11 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun sendMessage(message: BaseMessageModel?) {
-        presenter?.sendMessage(message)
+        presenter.sendMessage(message)
     }
 
     override fun resendMessage(message: BaseMessageModel?) {
-        presenter?.resendMessage(message)
+        presenter.resendMessage(message)
     }
 
     override fun deleteMessage(message: BaseMessageModel?) {
@@ -312,6 +324,7 @@ class ChatLayout @JvmOverloads constructor(
 
     override fun onSendMessage(content: String) {
         Log.e("chatLayout onSendMessage  ", "$content")
+        presenter.sendTextMessage(content)
     }
 
     override fun onExpressionClicked(emojicon: Any?) {
@@ -453,7 +466,7 @@ class ChatLayout @JvmOverloads constructor(
     override fun switch(isHume: Boolean) {
         MMkvTool.putIsHuman(isHume)
         if (!isHume) {// 转人工的信息
-            presenter?.sendSwitchHumeMessage()
+            presenter.sendSwitchHumeMessage()
         }
     }
 

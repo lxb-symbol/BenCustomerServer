@@ -1,11 +1,18 @@
 package com.ben.bencustomerserver.presenter
 
+import androidx.lifecycle.ViewModel
 import com.ben.bencustomerserver.listener.IChatMessageListView
 import com.ben.bencustomerserver.listener.ILoadDataView
 
 abstract class EaseChatMessagePresenter : EaseBasePresenter() {
     //TODO 先屏蔽掉
     open var mView: IChatMessageListView? = null
+
+    var viewModel: ViewModel?=null
+
+    fun setupViewModel(vm: ViewModel){
+        viewModel =vm
+    }
     override fun attachView(view: ILoadDataView?) {
         mView = view as IChatMessageListView?
     }

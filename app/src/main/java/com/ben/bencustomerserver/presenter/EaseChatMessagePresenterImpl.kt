@@ -1,8 +1,10 @@
 package com.ben.bencustomerserver.presenter
 
 import android.text.TextUtils
+import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.MessageStatus
+import com.ben.bencustomerserver.vm.ChatViewModel
 
 class EaseChatMessagePresenterImpl : EaseChatMessagePresenter() {
     override fun loadLocalMessages(pageSize: Int) {
@@ -11,12 +13,15 @@ class EaseChatMessagePresenterImpl : EaseChatMessagePresenter() {
     override fun loadMoreLocalMessages(msgId: String?, pageSize: Int) {
 
     }
-    override fun loadServerMessages(pageSize: Int) {}
-    override fun loadMoreServerMessages(msgId: String?, pageSize: Int) {}
+    override fun loadServerMessages(pageSize: Int) {
+        (viewModel as ChatViewModel).chatMessages(0)
+    }
+    override fun loadMoreServerMessages(msgId: String?, pageSize: Int) {
+
+    }
     override fun refreshCurrentConversation() {
 
-        // TODO 对
-        val allMessages: List<BaseMessageModel> = ArrayList()
+        val allMessages: List<BaseMessageModel> = RecieveMessageManager.msgs
         if (isActive) {
             runOnUI {
                 mView?.refreshCurrentConSuccess(allMessages, false)
@@ -26,8 +31,8 @@ class EaseChatMessagePresenterImpl : EaseChatMessagePresenter() {
 
     override fun refreshToLatest() {
 
-//        conversation.getAllMessages();
-        val allMessages: List<BaseMessageModel> = ArrayList()
+
+        val allMessages: List<BaseMessageModel> = RecieveMessageManager.msgs
         if (isActive) {
             runOnUI {
                 if (mView != null) {

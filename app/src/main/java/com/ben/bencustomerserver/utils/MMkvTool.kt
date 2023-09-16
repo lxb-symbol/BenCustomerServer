@@ -19,7 +19,10 @@ object MMkvTool {
     fun getTime(): String? = MMKV.defaultMMKV().getString(Constants.KEY_TIME, "")
 
 
-    fun putSellerId(id:String) =MMKV.defaultMMKV().putString(Constants.KEY_SELLER_ID,id)
+    fun putSellerId(id: String) = MMKV.defaultMMKV().putString(Constants.KEY_SELLER_ID, id)
+
+
+    fun getSellerId() = MMKV.defaultMMKV().getString(Constants.KEY_SELLER_ID, "")
 
     fun putSellerCode(code: String) {
         MMKV.defaultMMKV().putString(Constants.KEY_SELLER_CODE, code)
@@ -41,9 +44,10 @@ object MMkvTool {
         MMKV.defaultMMKV().putString(Constants.KEY_KF_NAME, name)
     }
 
-    fun putKFAvatar(avatar: String) =MMKV.defaultMMKV().putString(Constants.KEY_KF_AVATAR,avatar)
+    fun putKFAvatar(avatar: String) = MMKV.defaultMMKV().putString(Constants.KEY_KF_AVATAR, avatar)
 
-    fun putKFCode(code:String) =MMKV.defaultMMKV().putString(Constants.KEY_KF_CODE,code)
+    fun getKFAvatar() = MMKV.defaultMMKV().getString(Constants.KEY_KF_AVATAR,"")
+    fun putKFCode(code: String) = MMKV.defaultMMKV().putString(Constants.KEY_KF_CODE, code)
     fun getKFName(): String? = MMKV.defaultMMKV().getString(Constants.KEY_KF_NAME, "")
 
     fun putUserId(id: String) {
@@ -53,7 +57,7 @@ object MMkvTool {
     fun getUserId(): String? = MMKV.defaultMMKV().getString(Constants.KEY_USER_ID, "")
 
     fun putUserName(name: String) {
-        MMKV.defaultMMKV().putString(Constants.KEY_USER_NAME, "")
+        MMKV.defaultMMKV().putString(Constants.KEY_USER_NAME, name)
     }
 
     fun getUserName(): String? = MMKV.defaultMMKV().getString(Constants.KEY_USER_NAME, "")

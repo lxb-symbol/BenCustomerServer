@@ -21,6 +21,8 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.utils.EaseDateUtils
+import com.ben.bencustomerserver.utils.MMkvTool
+import com.ben.lib_picture_selector.ImageLoaderUtils
 import java.util.Date
 
 /**
@@ -141,14 +143,14 @@ abstract class EaseChatRow : LinearLayout {
 //        addReactionView()
         //添加threadView
 //        addThreadView()
-        timeStampView = findViewById<View>(R.id.timestamp) as TextView
-        userAvatarView = findViewById<View>(R.id.iv_userhead) as ImageView
-        bubbleLayout = findViewById<View>(R.id.bubble)
-        usernickView = findViewById<View>(R.id.tv_userid) as TextView
-        progressBar = findViewById<View>(R.id.progress_bar) as ProgressBar
-        statusView = findViewById<View>(R.id.msg_status) as ImageView
-        ackedView = findViewById<View>(R.id.tv_ack) as TextView
-        deliveredView = findViewById<View>(R.id.tv_delivered) as TextView
+        timeStampView = findViewById<View>(R.id.timestamp) as TextView?
+        userAvatarView = findViewById<View>(R.id.iv_userhead) as ImageView?
+        bubbleLayout = findViewById<View>(R.id.bubble) as View?
+        usernickView = findViewById<View>(R.id.tv_userid) as TextView?
+        progressBar = findViewById<View>(R.id.progress_bar) as ProgressBar?
+        statusView = findViewById<View>(R.id.msg_status) as ImageView?
+        ackedView = findViewById<View>(R.id.tv_ack) as TextView?
+        deliveredView = findViewById<View>(R.id.tv_delivered) as TextView?
 //        reactionView = findViewById(R.id.reaction_view)
 
 //        setLayoutStyle();
@@ -433,6 +435,16 @@ abstract class EaseChatRow : LinearLayout {
      * set avatar and nickname
      */
     protected fun setAvatarAndNick() {
+        if (isSender) {
+            ImageLoaderUtils.load(context, userAvatarView, MMkvTool.getUserAvatar())
+        } else {
+            if (!MMkvTool.getIsHuman()) {
+                ImageLoaderUtils.load(context, userAvatarView, R.drawable.icon_head_bolt)
+            } else {
+                ImageLoaderUtils.load(context, userAvatarView, MMkvTool.getKFAvatar())
+            }
+        }
+
 //        if (isSender) {
 //            EaseUserUtils.setUserAvatar(
 //                context,
@@ -520,30 +532,30 @@ abstract class EaseChatRow : LinearLayout {
         }
         if (userAvatarView != null) {
             userAvatarView!!.setOnClickListener {
-                if (itemClickListener != null) {
-                    if (message!!.direct === Direct.SEND) {
-                        itemClickListener!!.onUserAvatarClick(
-                            // TODO 返回用户名字
-                            "symbol"
-                        )
-                    } else {
-                        itemClickListener!!.onUserAvatarClick(message?.from_id)
-                    }
-                }
+//                if (itemClickListener != null) {
+//                    if (message!!.direct === Direct.SEND) {
+//                        itemClickListener!!.onUserAvatarClick(
+//                            // TODO 返回用户名字
+//                            "symbol"
+//                        )
+//                    } else {
+//                        itemClickListener!!.onUserAvatarClick(message?.from_id)
+//                    }
+//                }
             }
             userAvatarView!!.setOnLongClickListener(OnLongClickListener {
-                if (itemClickListener != null) {
-                    if (message!!.direct === Direct.SEND) {
-                        itemClickListener!!.onUserAvatarLongClick(
-//                            todo
-//                            EMClient.getInstance().getCurrentUser()
-                            "symbol"
-                        )
-                    } else {
-                        itemClickListener!!.onUserAvatarLongClick(message?.from_id)
-                    }
-                    return@OnLongClickListener true
-                }
+//                if (itemClickListener != null) {
+//                    if (message!!.direct === Direct.SEND) {
+//                        itemClickListener!!.onUserAvatarLongClick(
+////                            todo
+////                            EMClient.getInstance().getCurrentUser()
+//                            "symbol"
+//                        )
+//                    } else {
+//                        itemClickListener!!.onUserAvatarLongClick(message?.from_id)
+//                    }
+//                    return@OnLongClickListener true
+//                }
                 false
             })
         }

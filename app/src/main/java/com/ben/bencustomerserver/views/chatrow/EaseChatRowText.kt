@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.TextMessage
 
 open class EaseChatRowText : EaseChatRow {
     private var contentView: TextView? = null
@@ -41,40 +42,16 @@ open class EaseChatRowText : EaseChatRow {
     }
 
     public override fun onSetUpView() {
-//        val txtBody: EMTextMessageBody? = message.getBody() as EMTextMessageBody?
-//        if (txtBody != null) {
+        translationContainer?.visibility = View.GONE
+        val textBody = message?.innerMessage as TextMessage?
+        contentView?.setOnClickListener {
+            contentView?.setTag(R.id.action_chat_long_click, true)
+            itemClickListener?.onBubbleClick(message)
+        }
+        contentView?.let {
+            it.text = textBody?.content
+        }
 //            val span: Spannable = EaseSmileUtils.getSmiledText(context, txtBody.getMessage())
-//            // 设置内容
-//            contentView.setText(span, TextView.BufferType.SPANNABLE)
-//            contentView!!.setOnLongClickListener { v ->
-//                contentView!!.setTag(R.id.action_chat_long_click, true)
-//                if (itemClickListener != null) {
-//                    itemClickListener!!.onBubbleLongClick(v, message)
-//                } else false
-//            }
-//            replaceSpan()
-//            val result: EMTranslationResult =
-//                EMClient.getInstance().translationManager().getTranslationResult(
-//                    message!!.msgId
-//                )
-//            if (result != null) {
-//                if (result.showTranslation()) {
-//                    translationContainer!!.visibility = VISIBLE
-//                    translationContentView.setText(result.translatedText())
-//                    translationContainer!!.setOnLongClickListener { v ->
-//                        contentView!!.setTag(R.id.action_chat_long_click, true)
-//                        if (itemClickListener != null) {
-//                            itemClickListener!!.onBubbleLongClick(v, message)
-//                        } else false
-//                    }
-//                    translationStatusView!!.setImageResource(R.drawable.translation_success)
-//                } else {
-//                    translationContainer!!.visibility = GONE
-//                }
-//            } else {
-//                translationContainer!!.visibility = GONE
-//            }
-//        }
     }
 
     /**

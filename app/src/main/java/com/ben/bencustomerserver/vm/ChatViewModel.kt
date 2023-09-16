@@ -9,6 +9,7 @@ import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.connnect.WsManager
 import com.ben.bencustomerserver.listener.INetCallback
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.ImageMessage
 import com.ben.bencustomerserver.model.MessageType
 import com.ben.bencustomerserver.model.MessageUtil
@@ -156,11 +157,11 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
      */
     fun sendMessage(msg: BaseMessageModel) {
         val isHuman = MMkvTool.getIsHuman()
-
+        msg.isBolt = !isHuman
+        msg.direct = Direct.SEND
         when (msg.messageType) {
 
             MessageType.TXT -> {
-                val ext = msg.extString
                 if (isHuman) {
                     WsManager.mWebSocket?.let {
                         val str = MessageUtil.generateWsMessageTxt(msg)
@@ -197,7 +198,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
             }
 
             MessageType.IMAGE -> {
-                if (isHuman) {//
+                if (isHuman) {// 人工都是 socket
                     val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
                     val localPath = innerMsg.localPath
                     uploadFile(File(localPath), object : INetCallback<UpFileEntity> {

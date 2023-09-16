@@ -1,5 +1,6 @@
 package com.ben.bencustomerserver.model
 
+import android.net.Uri
 import android.text.TextUtils
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.google.gson.GsonBuilder
@@ -82,6 +83,93 @@ object MessageUtil {
 
 
     /**
+     * 视频 model
+     */
+    fun generateVideoModel(videoUri: Uri?, videoLength: Int, thumbPath: String): BaseMessageModel {
+        return BaseMessageModel(
+            messageType = MessageType.VIDEO,
+            from_avatar = MMkvTool.getUserAvatar() ?: "",
+            from_id = MMkvTool.getUserId() ?: "",
+            from_name = MMkvTool.getUserName() ?: "",
+            to_id = MMkvTool.getKFId() ?: "",
+            to_name = MMkvTool.getKFName() ?: "",
+            innerMessage = VideoMessage(
+                localPath = videoUri?.path,
+                localCover = thumbPath,
+                length = videoLength
+            )
+        )
+    }
+
+    fun generateLocationModel(
+        latitude: Double, longitude: Double, locationAddress: String?,
+        buildingName: String?
+    ): BaseMessageModel {
+        return BaseMessageModel(
+            messageType = MessageType.LOCATION,
+            from_avatar = MMkvTool.getUserAvatar() ?: "",
+            from_id = MMkvTool.getUserId() ?: "",
+            from_name = MMkvTool.getUserName() ?: "",
+            to_id = MMkvTool.getKFId() ?: "",
+            to_name = MMkvTool.getKFName() ?: "",
+            innerMessage = LocationMessage(
+                lat = latitude,
+                lng = longitude,
+                name = locationAddress ?: "",
+                buildingName = buildingName ?: ""
+            )
+        )
+    }
+
+    fun generateImgModel(imageUri: Uri?, sendOriginalImage: Boolean): BaseMessageModel {
+        return BaseMessageModel(
+            messageType = MessageType.IMAGE,
+            from_avatar = MMkvTool.getUserAvatar() ?: "",
+            from_id = MMkvTool.getUserId() ?: "",
+            from_name = MMkvTool.getUserName() ?: "",
+            to_id = MMkvTool.getKFId() ?: "",
+            to_name = MMkvTool.getKFName() ?: "",
+            innerMessage = FileMessage(
+                localPath = imageUri?.path
+            )
+        )
+    }
+
+    fun generateVoiceModel(filePath: Uri?, length: Int): BaseMessageModel {
+        return BaseMessageModel(
+            messageType = MessageType.VOICE,
+            from_avatar = MMkvTool.getUserAvatar() ?: "",
+            from_id = MMkvTool.getUserId() ?: "",
+            from_name = MMkvTool.getUserName() ?: "",
+            to_id = MMkvTool.getKFId() ?: "",
+            to_name = MMkvTool.getKFName() ?: "",
+            innerMessage = VoiceMessage(
+                localPath = filePath?.path,
+                duration = length
+            )
+        )
+    }
+
+
+    /**
+     * 文件 model
+     */
+    fun generateFileModel(fileUri: Uri?): BaseMessageModel {
+        // TODO
+        return BaseMessageModel(
+            messageType = MessageType.FILE,
+            from_avatar = MMkvTool.getUserAvatar() ?: "",
+            from_id = MMkvTool.getUserId() ?: "",
+            from_name = MMkvTool.getUserName() ?: "",
+            to_id = MMkvTool.getKFId() ?: "",
+            to_name = MMkvTool.getKFName() ?: "",
+            innerMessage = FileMessage(
+                localPath = fileUri?.path
+            )
+        )
+    }
+
+    /**
      *
      * 构造成 CMD && C
      * 切换到人工服务发送 socket
@@ -103,15 +191,15 @@ object MessageUtil {
         if (content.startsWith(OriginMessageType.TAG_FACE)) {
             msgType = MessageType.CMD
         }
-        OriginMessageType.TYPE_CMD_SWITCH_HUMAN
         return BaseMessageModel(
-            messageType = MessageType.CMD,
-            extString = OriginMessageType.EXT_MSG_EXPRESSION,
+            content =content,
+            messageType = msgType,
             from_avatar = MMkvTool.getUserAvatar() ?: "",
             from_id = MMkvTool.getUserId() ?: "",
             from_name = MMkvTool.getUserName() ?: "",
             to_id = MMkvTool.getKFId() ?: "",
-            to_name = MMkvTool.getKFName() ?: ""
+            to_name = MMkvTool.getKFName() ?: "",
+            innerMessage =  TextMessage(content = content)
         )
     }
 
@@ -246,5 +334,6 @@ object MessageUtil {
         return GsonBuilder().create().toJson(img)
 
     }
+
 
 }

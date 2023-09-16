@@ -16,10 +16,6 @@ class EaseTextViewHolder(itemView: View, itemClickListener: MessageListItemClick
             return
         }
 
-        // If this msg is a ding-type msg, click to show a list who has already read this message.
-//        val i = Intent(context, EaseDingAckUserListActivity::class.java)
-//        i.putExtra("msg", message)
-//        context.startActivity(i)
     }
 
     override fun handleReceiveMessage(message: BaseMessageModel?) {

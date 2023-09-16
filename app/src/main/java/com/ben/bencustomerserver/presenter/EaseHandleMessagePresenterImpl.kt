@@ -47,8 +47,8 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
     }
 
     override fun sendVoiceMessage(filePath: Uri?, length: Int) {
-//        val message: BaseMessageModel = createVoiceSendMessage(filePath, length, toChatUsername)
-//        sendMessage(message)
+        val message: BaseMessageModel = MessageUtil.generateVoiceModel(filePath, length)
+        sendMessage(message)
     }
 
     override fun sendImageMessage(imageUri: Uri?) {
@@ -58,11 +58,9 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
     override fun sendImageMessage(imageUri: Uri?, sendOriginalImage: Boolean) {
         //Compatible with web and does not support heif image terminal
         //convert heif format to jpeg general image format
-        var imageUri = imageUri
-        imageUri = handleImageHeifToJpeg(imageUri)
-//        val message: BaseMessageModel =
-//            ç(imageUri, sendOriginalImage, toChatUsername)
-//        sendMessage(message)
+        var uri = handleImageHeifToJpeg(imageUri)
+        val message: BaseMessageModel = MessageUtil.generateImgModel(uri, sendOriginalImage)
+        sendMessage(message)
     }
 
     override fun sendSwitchHumeMessage() {
@@ -78,40 +76,19 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
         locationAddress: String?,
         buildingName: String?
     ) {
-        // TODO:  
-//        val message: BaseMessageModel = createLocationSendMessage(
-//            latitude,
-//            longitude,
-//            locationAddress,
-//            buildingName,
-//            toChatUsername
-//        )
-//       
-//        val body: BaseMessageModelBody = message.getBody()
-//        val msgId: String = message.msgId
-//        val from: String = message.from
-//        Log.i(TAG, "body = $body")
-//        Log.i(TAG, "msgId = $msgId from = $from")
-//        sendMessage(message)
+        val message  =MessageUtil.generateLocationModel(latitude,longitude,locationAddress,buildingName)
+        sendMessage(message)
     }
 
     override fun sendVideoMessage(videoUri: Uri?, videoLength: Int) {
         val thumbPath = getThumbPath(videoUri)
-        // TODO:
-//        val message: BaseMessageModel =
-//            createVideoSendMessage(
-//                videoUri,
-//                thumbPath,
-//                videoLength,
-//                toChatUsername
-//            )
-//        sendMessage(message)
+        val message = MessageUtil.generateVideoModel(videoUri, videoLength, thumbPath)
+        sendMessage(message)
     }
 
     override fun sendFileMessage(fileUri: Uri?) {
-//        val message: BaseMessageModel =
-//            createFileSendMessage(fileUri, toChatUsername)
-//        sendMessage(message)
+        val message = MessageUtil.generateFileModel(fileUri)
+        sendMessage(message)
     }
 
     override fun addMessageAttributes(message: BaseMessageModel?) {
@@ -265,6 +242,7 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
     }
 
     override fun addReaction(message: BaseMessageModel?, reaction: String?) {
+
     }
 
     override fun removeReaction(message: BaseMessageModel?, reaction: String?) {
@@ -275,3 +253,5 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
         private val TAG: String = EaseHandleMessagePresenterImpl::class.java.simpleName
     }
 }
+
+

@@ -28,9 +28,9 @@ data class VoiceMessage(
  */
 data class LocationMessage(
     val name: String,
-    val lat: Long,
-    val lng: Long,
-
+    val lat: Double,
+    val lng: Double,
+    val buildingName:String
     ) : IMessageModel
 
 
@@ -40,7 +40,10 @@ data class LocationMessage(
 data class VideoMessage(
     val localPath: String? = null,
     val netPath: String? = null,
-    val name: String? = null
+    val name: String? = null,
+    val localCover: String? = null,
+    val netConver: String? = null,
+    val length:Int ?=0
 ) : IMessageModel
 
 

@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.adapter.EaseBaseDelegateAdapter
 import com.ben.bencustomerserver.adapter.EaseMessageAdapter
+import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.listener.IChatMessageItemSet
 import com.ben.bencustomerserver.listener.IChatMessageListLayout
 import com.ben.bencustomerserver.listener.IChatMessageListView
@@ -90,6 +92,13 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         }
         initAttrs(context, attrs)
         initViews()
+    }
+
+    var viewModel: ViewModel? = null
+
+    fun setupViewModel(vm: ViewModel) {
+        viewModel = vm
+        presenter?.setupViewModel(vm)
     }
 
     private fun initAttrs(context: Context, attrs: AttributeSet?) {
@@ -583,9 +592,7 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         if (TextUtils.isEmpty(messageId)) {
             return
         }
-        //TODO 待通过 messageId 查询 message
-        val message: BaseMessageModel? = null
-//        val message: BaseMessageModel = .getMessage(messageId)
+        val message: BaseMessageModel? = RecieveMessageManager.msgs.find { it.msgId == messageId }
         if (message != null) {
             val position = messageAdapter!!.data!!.lastIndexOf(message)
             if (position != -1) {
@@ -598,11 +605,11 @@ class EaseChatMessageListLayout @JvmOverloads constructor(
         if (message == null || messageAdapter!!.data == null) {
             return
         }
-        //TODO 是否需要调用接口删除消息
+        //symbol是否需要调用接口删除消息
         runOnUi {
             if (presenter!!.isActive) {
                 val messages: MutableList<BaseMessageModel>? = messageAdapter?.data?.toMutableList()
-
+                RecieveMessageManager.msgs.remove(message)
                 val position = messages!!.lastIndexOf(message)
                 if (position != -1) {
                     //需要保证条目从集合中删除

@@ -71,6 +71,8 @@ object RecieveMessageManager {
                     MMkvTool.putKFName(initData.kefu_name ?: "")
                     MMkvTool.putKFCode(initData.kefu_code ?: "")
                     MMkvTool.putKFAvatar(initData.kefu_avatar ?: "")
+                    MMkvTool.putSellerId(initData.seller_id ?: "")
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -110,7 +112,7 @@ object RecieveMessageManager {
                         seller_code = bean.seller_code,
                         to_id = bean.to_id,
                         to_name = bean.to_name,
-                        innerMessage = TextMessage(bean.content)
+                        innerMessage = TextMessage(bean.content),
                     )
                     msgs.add(model)
                     return
@@ -187,8 +189,9 @@ object RecieveMessageManager {
                             to_name = bean.to_name
                             innerMessage = LocationMessage(
                                 name = addrName ?: "",
-                                lat = (latStr ?: "0L").toLong(),
-                                lng = (lngStr ?: "0L").toLong()
+                                lat = (latStr ?: "0L").toDouble(),
+                                lng = (lngStr ?: "0L").toDouble(),
+                                buildingName = ""
                             )
                         }
 
@@ -437,8 +440,9 @@ object RecieveMessageManager {
                     to_name = bean.to_name
                     innerMessage = LocationMessage(
                         name = addrName ?: "",
-                        lat = (latStr ?: "0L").toLong(),
-                        lng = (lngStr ?: "0L").toLong()
+                        lat = (latStr ?: "0L").toDouble(),
+                        lng = (lngStr ?: "0L").toDouble(),
+                        buildingName = ""
                     )
                 }
 
@@ -554,6 +558,7 @@ object RecieveMessageManager {
         }
 
         if (!TextUtils.isEmpty(model.content) && !TextUtils.isEmpty(model.from_id)) {
+            model.direct=Direct.RECEIEVE
             msgs.add(model)
         }
     }
