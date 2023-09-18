@@ -57,7 +57,7 @@ dependencies {
     implementation(project(mapOf("path" to ":lib-net")))
     implementation(project(mapOf("path" to ":lib-picture-selector")))
     implementation(libs.androidx.swiperefreshlayout)
-
+    implementation(libs.okhttp)
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.ext.junit)

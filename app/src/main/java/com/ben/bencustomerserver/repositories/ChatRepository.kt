@@ -8,6 +8,7 @@ import com.symbol.lib_net.BaseRepository
 import com.symbol.lib_net.model.NetResult
 import com.symbol.lib_net.net.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -31,7 +32,8 @@ class ChatRepository(private val service: RetrofitClient) : BaseRepository() {
     suspend fun uploadImg(file: File): NetResult<UpFileEntity> {
         return callRequest {
             val body: RequestBody = file.asRequestBody("image/jpg".toMediaType())
-            handleResponse(service.create(ChatApiService::class.java).uploadImg(body))
+            val part =MultipartBody.Part.create(body)
+            handleResponse(service.create(ChatApiService::class.java).uploadImg(part))
         }
     }
 
@@ -39,7 +41,8 @@ class ChatRepository(private val service: RetrofitClient) : BaseRepository() {
         return callRequest {
             val body: RequestBody =
                 file.asRequestBody("multipart/form-data; charset=utf-8".toMediaType())
-            handleResponse(service.create(ChatApiService::class.java).uploadFile(body))
+            val part =MultipartBody.Part.create(body)
+            handleResponse(service.create(ChatApiService::class.java).uploadFile(part))
         }
     }
 

@@ -251,6 +251,24 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         }
 
                         override fun onError(code: Int, msg: String) {
+                            Log.e("symbol-4", "-->$msg")
+                        }
+                    })
+                } else {
+                    val innerMsg: VoiceMessage = msg.innerMessage as VoiceMessage
+                    val localPath = innerMsg.localPath
+                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            (msg.innerMessage as VoiceMessage).netPath = data.src
+
+                            //TODO 缺少接口
+                            RecieveMessageManager.msgs.add(msg)
+                        }
+
+                        override fun onError(code: Int, msg: String) {
+                            Log.e("symbol-4", "-->$msg")
                         }
 
                     })

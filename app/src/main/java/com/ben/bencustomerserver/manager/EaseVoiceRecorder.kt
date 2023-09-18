@@ -140,6 +140,7 @@ class EaseVoiceRecorder(private val handler: Handler) {
 
     companion object {
         const val PREFIX = "voice"
-        const val EXTENSION = ".amr"
+        // symbol 改为 .mp3
+        const val EXTENSION = ".mp3"
     }
 }

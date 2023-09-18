@@ -31,6 +31,7 @@ vs-liveeventbus = "1.8.0"
 vs-xxpermission = "18.3"
 vs-mmkv = "1.3.1"
 vs-picselector = "v3.11.1"
+vs-okhttp="4.9.0"
 
 
 [libraries]
@@ -46,6 +47,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "vs-gson" 
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "vs-retrofit" }
 logging-intercepter = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "vs-logging-intercepter" }
 gson-coverter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "vs-gson-coverter" }
+okhttp ={group="com.squareup.okhttp3",name="okhttp",version="vs-okhttp"}
 koin-scope = { group = "org.koin", name = "koin-androidx-scope", version.ref = "vs-koin-scope" }
 koin-viewmodel = { group = "org.koin", name = "koin-androidx-viewmodel", version.ref = "vs-koin-viewmodel" }
 koin-fragment = { group = "org.koin", name = "koin-androidx-fragment", version.ref = "vs-koin-scope" }
@@ -72,7 +74,7 @@ com-android-library = { id = "com.android.library", version.ref = "agp" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "vs-kapt" }
 
 [bundles]
-nets = ["retrofit", "gson", "coroutines", "gson-coverter", "logging-intercepter"]
+nets = ["retrofit", "gson", "coroutines", "gson-coverter", "logging-intercepter","okhttp"]
 koins = ["koin-fragment", "koin-scope", "koin-viewmodel"]
 picselectors = ["piccompress", "piccorp", "picselector"]
 
