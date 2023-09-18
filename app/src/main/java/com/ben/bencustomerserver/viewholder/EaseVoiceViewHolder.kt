@@ -2,13 +2,24 @@ package com.ben.bencustomerserver.viewholder
 
 import android.annotation.SuppressLint
 import android.os.AsyncTask
+import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.ben.bencustomerserver.listener.MessageListItemClickListener
+import com.ben.bencustomerserver.manager.BackgroundThreadFactory
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
+import com.ben.bencustomerserver.model.MessageStatus
+import com.ben.bencustomerserver.model.VoiceMessage
+import com.ben.bencustomerserver.utils.HttpUtils
 import com.ben.bencustomerserver.views.chatrow.EaseChatRowVoice
 import com.ben.bencustomerserver.views.chatrow.EaseChatRowVoicePlayer
+import com.luck.picture.lib.utils.ToastUtils
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import okhttp3.internal.wait
+import java.io.File
 
 class EaseVoiceViewHolder(itemView: View, itemClickListener: MessageListItemClickListener?) :
     EaseChatRowViewHolder(itemView, itemClickListener!!) {
@@ -37,40 +48,29 @@ class EaseVoiceViewHolder(itemView: View, itemClickListener: MessageListItemClic
         }
         if (message?.direct === Direct.SEND) {
             // Play the voice
-//            val localPath: String = (message.getBody() as EMVoiceMessageBody).getLocalUrl()
-//            val file = File(localPath)
-//            if (file.exists() && file.isFile) {
-//                playVoice(message)
-//                // Start the voice play animation.
-//                (chatRow as EaseChatRowVoice).startVoicePlayAnimation()
-//            } else {
-//                asyncDownloadVoice(message)
-//            }
+            val localPath: String = (message.innerMessage as VoiceMessage).localPath ?: ""
+            val file = File(localPath)
+            if (file.exists() && file.isFile) {
+                playVoice(message)
+                // Start the voice play animation.
+                (chatRow as EaseChatRowVoice).startVoicePlayAnimation()
+            } else {
+                asyncDownloadVoice(message)
+            }
         } else {
-//            val st: String =
-//                context.getResources().getString(R.string.Is_download_voice_click_later)
-//            if (message.status() === BaseMessageModel.Status.SUCCESS) {
-//                if (EMClient.getInstance().getOptions().getAutodownloadThumbnail()) {
-//                    play(message)
-//                } else {
-//                    val voiceBody: EMVoiceMessageBody = message.getBody() as EMVoiceMessageBody
-//                    Log.i(TAG, "Voice body download status: " + voiceBody.downloadStatus())
-//                    when (voiceBody.downloadStatus()) {
-//                        PENDING, FAILED -> {
-//                            chatRow.updateView(message)
-//                            asyncDownloadVoice(message)
-//                        }
-//
-//                        DOWNLOADING -> Toast.makeText(context, st, Toast.LENGTH_SHORT).show()
-//                        SUCCESSED -> play(message)
-//                    }
-//                }
-//            } else if (message.status() === BaseMessageModel.Status.INPROGRESS) {
-//                Toast.makeText(context, st, Toast.LENGTH_SHORT).show()
-//            } else if (message.status() === BaseMessageModel.Status.FAIL) {
-//                Toast.makeText(context, st, Toast.LENGTH_SHORT).show()
-//                asyncDownloadVoice(message)
-//            }
+            if (message?.status === MessageStatus.SUCCESS) {
+                val voiceBody = message.innerMessage as VoiceMessage
+                if (TextUtils.isEmpty(voiceBody.localPath)) {
+                    chatRow?.updateView(message)
+                    asyncDownloadVoice(message)
+                } else {
+                    play(message)
+                }
+            } else if (message?.status === MessageStatus.INPROGRESS) {
+                ToastUtils.showToast(chatRow?.context, "下载中")
+            } else if (message?.status === MessageStatus.FAIL) {
+                asyncDownloadVoice(message)
+            }
         }
     }
 
@@ -82,39 +82,38 @@ class EaseVoiceViewHolder(itemView: View, itemClickListener: MessageListItemClic
 
     @SuppressLint("StaticFieldLeak")
     private fun asyncDownloadVoice(message: BaseMessageModel) {
-        object : AsyncTask<Void?, Void?, Void?>() {
+        val inMsg = message.innerMessage as VoiceMessage
+        val netPath = inMsg.netPath
 
-
-            override fun onPostExecute(result: Void?) {
-                super.onPostExecute(result)
+        val filePath =itemView.context.externalCacheDir?.path
+        val name = "${netPath.hashCode()}.mp3"
+        MainScope().launch {
+            val b =   HttpUtils.downFile(itemView.context,netPath?:"",filePath?:"",name)
+            Log.i("symbol-5","b-->$b")
+            if(b){
+                (message?.innerMessage as VoiceMessage)?.localPath=filePath
                 chatRow?.updateView(message)
             }
+        }
 
-            override fun doInBackground(vararg params: Void?): Void? {
-                TODO("Not yet implemented")
-            }
-        }.execute()
     }
 
     private fun play(message: BaseMessageModel) {
-//        val localPath: String = (message.getBody() as EMVoiceMessageBody).getLocalUrl()
-//        val file = File(localPath)
-//        if (file.exists() && file.isFile) {
-//            ackMessage(message)
-//            playVoice(message)
-//            // Start the voice play animation.
-//            (chatRow as EaseChatRowVoice).startVoicePlayAnimation()
-//        } else {
-//            Log.e(TAG, "file not exist")
-//        }
+        val localPath: String = (message.innerMessage as VoiceMessage).localPath ?: ""
+        val file = File(localPath)
+        if (file.exists() && file.isFile) {
+            ackMessage(message)
+            playVoice(message)
+            // Start the voice play animation.
+            (chatRow as EaseChatRowVoice).startVoicePlayAnimation()
+        } else {
+            Log.e(TAG, "file not exist")
+        }
     }
 
     private fun ackMessage(message: BaseMessageModel) {
 //        1. 更新已读状态 2. 更新已听音乐状态
 
-//        if (!message.isListened()) {
-//            EMClient.getInstance().chatManager().setVoiceMessageListened(message)
-//        }
     }
 
     override fun onDetachedFromWindow() {

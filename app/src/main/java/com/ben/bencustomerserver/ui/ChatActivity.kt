@@ -5,13 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.connnect.WebSocketService
-import com.ben.bencustomerserver.connnect.WsManager
 import com.ben.bencustomerserver.connnect.wsURL
 import com.ben.bencustomerserver.databinding.CsActivityChatBinding
-import com.ben.bencustomerserver.model.MessageRegular
-import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.ben.bencustomerserver.utils.PathUtil
+import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.module_base.ui.BaseActivity
 import com.symbol.lib_net.net.RetrofitClient
 import com.tencent.mmkv.MMKV
@@ -33,8 +32,8 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
 
         mViewModel.getTokenAndWsResul().observe(this) {
             Log.e("symbol:", "${it.token}   <---> ${it.socket_url}")
-            wsURL=it.socket_url
-            val intent = Intent(this,WebSocketService::class.java)
+            wsURL = it.socket_url
+            val intent = Intent(this, WebSocketService::class.java)
             startService(intent)
 
 
@@ -44,12 +43,12 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         }
 
 
-
-
     }
 
     override fun initView() {
-        MMKV.initialize(this)
+
+        initSome()
+
         chatFragment = ChatFragment()
         val bundle = Bundle()
         chatFragment.arguments = bundle
@@ -58,6 +57,12 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
             .commit()
 
     }
+
+    fun initSome() {
+        MMKV.initialize(this)
+        PathUtil.instance?.initDirs("", MMkvTool.getUserName() ?: "", this)
+    }
+
 
     override fun getLayoutResId() = R.layout.cs_activity_chat
 

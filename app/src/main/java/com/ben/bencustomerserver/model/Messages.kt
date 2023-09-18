@@ -17,9 +17,9 @@ data class ImageMessage(
 ) : IMessageModel
 
 data class VoiceMessage(
-    val localPath: String? = "",
+    var localPath: String? = "",
     var netPath: String? = "",
-    val duration: Int = 0
+    val duration: Int = 0,
 ) : IMessageModel
 
 

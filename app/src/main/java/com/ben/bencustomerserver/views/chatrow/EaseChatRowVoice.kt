@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
+import com.ben.bencustomerserver.model.VoiceMessage
 
 class EaseChatRowVoice : EaseChatRowFile {
     private var voiceImageView: ImageView? = null
@@ -43,72 +44,44 @@ class EaseChatRowVoice : EaseChatRowFile {
     }
 
     override fun onSetUpView() {
-//        val voiceBody: EMVoiceMessageBody = message.getBody() as EMVoiceMessageBody
-//        val len: Int = voiceBody.getLength()
-//        var padding = 0
-//        if (len > 0) {
-//            padding = EaseVoiceLengthUtils.getVoiceLength(getContext(), len)
-//            voiceLengthView.setText(voiceBody.getLength() + "\"")
-//            voiceLengthView!!.visibility = View.VISIBLE
-//        } else {
-//            voiceLengthView!!.visibility = View.INVISIBLE
-//        }
-//        if (!showSenderType) {
-//            voiceImageView!!.setImageResource(R.drawable.ease_chatfrom_voice_playing)
-//            voiceLengthView!!.setPadding(padding, 0, 0, 0)
-//        } else {
-//            voiceImageView!!.setImageResource(R.drawable.ease_chatto_voice_playing)
-//            voiceLengthView!!.setPadding(0, 0, padding, 0)
-//        }
-//        if (message?.direct === Direct.RECEIEVE) {
-//            if (readStatusView != null) {
-//                if (message.isListened()) {
-//                    // hide the unread icon
-//                    readStatusView!!.visibility = View.INVISIBLE
-//                } else {
-//                    readStatusView!!.visibility = View.VISIBLE
-//                }
-//            }
-//            Log.d(TAG, "it is receive msg")
-//            //TODO symbol
-////            if (voiceBody.downloadStatus() === EMFileMessageBody.EMDownloadStatus.DOWNLOADING ||
-////                voiceBody.downloadStatus() === EMFileMessageBody.EMDownloadStatus.PENDING
-////            ) {
-////                if (EMClient.getInstance().getOptions().getAutodownloadThumbnail()) {
-////                    progressBar.setVisibility(View.VISIBLE)
-////                } else {
-////                    progressBar.setVisibility(View.INVISIBLE)
-////                }
-////            } else {
-////                progressBar.setVisibility(View.INVISIBLE)
-////            }
-//        } else {
-//            // hide the unread icon
-//            readStatusView!!.visibility = View.INVISIBLE
-//        }
-//
-//        // To avoid the item is recycled by listview and slide to this item again but the animation is stopped.
-//        val voicePlayer = EaseChatRowVoicePlayer.getInstance(getContext())
-//        if (voicePlayer!!.isPlaying && message?.msgId.equals(voicePlayer.currentPlayingId)) {
-//            startVoicePlayAnimation()
-//        }
+        val voiceBody = message?.innerMessage as VoiceMessage
+        val len: Int = voiceBody.duration
+        var padding = 0
+        if (len > 0) {
+            voiceLengthView?.text = len.toString()
+            voiceLengthView!!.visibility = View.VISIBLE
+        } else {
+            voiceLengthView!!.visibility = View.INVISIBLE
+        }
+        if (!isSender) {
+            voiceImageView!!.setImageResource(R.drawable.ease_chatfrom_voice_playing)
+            voiceLengthView!!.setPadding(padding, 0, 0, 0)
+        } else {
+            voiceImageView!!.setImageResource(R.drawable.ease_chatto_voice_playing)
+            voiceLengthView!!.setPadding(0, 0, padding, 0)
+        }
+        if (message?.direct === Direct.RECEIEVE) {
+            if (readStatusView != null) {
+                readStatusView!!.visibility = View.VISIBLE
+            }
+        } else {
+            // hide the unread icon
+            readStatusView!!.visibility = View.INVISIBLE
+        }
+
+        val voicePlayer = EaseChatRowVoicePlayer.getInstance(context)
+        if (voicePlayer!!.isPlaying && message?.msgId.equals(voicePlayer.currentPlayingId)) {
+            startVoicePlayAnimation()
+        }
     }
 
     override fun onViewUpdate(msg: BaseMessageModel) {
         super.onViewUpdate(msg)
-
         // Only the received message has the attachment download status.
         if (message?.direct === Direct.SEND) {
             return
         }
-//        val voiceBody: EMVoiceMessageBody = msg.getBody() as EMVoiceMessageBody
-//        if (voiceBody.downloadStatus() === EMFileMessageBody.EMDownloadStatus.DOWNLOADING ||
-//            voiceBody.downloadStatus() === EMFileMessageBody.EMDownloadStatus.PENDING
-//        ) {
-//            progressBar?.setVisibility(View.VISIBLE)
-//        } else {
-//            progressBar?.setVisibility(View.INVISIBLE)
-//        }
+
     }
 
     @SuppressLint("ResourceType")
@@ -120,7 +93,6 @@ class EaseChatRowVoice : EaseChatRowFile {
         }
         voiceAnimation = voiceImageView!!.drawable as AnimationDrawable
         voiceAnimation?.start()
-
         // Hide the voice item not listened status view.
         if (message?.direct === Direct.RECEIEVE) {
             readStatusView!!.visibility = View.INVISIBLE

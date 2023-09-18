@@ -25,7 +25,7 @@ class PathUtil private constructor() {
     //initialize directions used by user data
     fun initDirs(appKey: String?, userName: String, applicationContext: Context) {
         val appPackageName = applicationContext.packageName
-        pathPrefix = "/Android/data/$appPackageName/"
+//        pathPrefix = "/Android/data/$appPackageName/"
         voicePath = generateVoicePath(appKey, userName, applicationContext)
         if (!voicePath!!.exists()) {
             voicePath!!.mkdirs()
@@ -48,7 +48,7 @@ class PathUtil private constructor() {
     }
 
     companion object {
-        var pathPrefix: String? = null
+        var pathPrefix: String? = ""
         const val historyPathName = "/chat/"
         const val imagePathName = "/image/"
         const val voicePathName = "/voice/"
@@ -72,8 +72,8 @@ class PathUtil private constructor() {
         private fun getStorageDir(applicationContext: Context): File? {
             if (storageDir == null) {
                 //try to use sd card if possible
-                val sdPath = Environment.getExternalStorageDirectory()
-                if (sdPath.exists()) {
+                val sdPath = applicationContext.getExternalFilesDir(Environment.DIRECTORY_DCIM)
+                if (sdPath!!.exists()) {
                     return sdPath
                 }
                 //use application internal storage instead

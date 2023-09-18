@@ -39,25 +39,8 @@ class EaseChatRowBigExpression : EaseChatRowText {
     }
 
     override fun onSetUpView() {
-        //todo symbol
-//        val emojiconId: String =
-//            message.getStringAttribute(EaseConstant.MESSAGE_ATTR_EXPRESSION_ID, null)
-//        var emojicon: EaseEmojicon? = null
-//        if (EaseIM.getInstance().getEmojiconInfoProvider() != null) {
-//            emojicon = EaseIM.getInstance().getEmojiconInfoProvider().getEmojiconInfo(emojiconId)
-//        }
-//        if (emojicon != null) {
-//            if (emojicon.getBigIcon() !== 0) {
-//                Glide.with(context).load(emojicon.getBigIcon())
-//                    .apply(RequestOptions.placeholderOf(R.drawable.ease_default_expression))
-//                    .into(imageView)
-//            } else if (emojicon.getBigIconPath() != null) {
-//                Glide.with(context).load(emojicon.getBigIconPath())
-//                    .apply(RequestOptions.placeholderOf(R.drawable.ease_default_expression))
-//                    .into(imageView)
-//            } else {
-//                imageView!!.setImageResource(R.drawable.ease_default_expression)
-//            }
-//        }
+        // symbol 无大表情消息
+        val messageInner  =message?.innerMessage
+
     }
 }

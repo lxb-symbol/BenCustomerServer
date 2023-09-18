@@ -27,7 +27,7 @@ class EaseChatRowImage : EaseChatRowFile {
 
     override fun onInflateView() {
         inflater.inflate(
-            if (!showSenderType) R.layout.ease_row_received_picture else R.layout.ease_row_sent_picture,
+            if (!isSender) R.layout.ease_row_received_picture else R.layout.ease_row_sent_picture,
             this
         )
     }

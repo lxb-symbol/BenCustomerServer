@@ -2,13 +2,14 @@ package com.ben.bencustomerserver.views.chatrow
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.utils.EaseImageUtils
+import com.ben.lib_picture_selector.ImageLoaderUtils
 
 class EaseChatRowVideo : EaseChatRowFile {
     private var imageView: ImageView? = null
@@ -17,33 +18,42 @@ class EaseChatRowVideo : EaseChatRowFile {
     private var playView: ImageView? = null
 
     constructor(context: Context?, isSender: Boolean) : super(context, isSender)
-    constructor(context: Context?, message: BaseMessageModel?, position: Int, adapter: Any?) : super(
+    constructor(
+        context: Context?,
+        message: BaseMessageModel?,
+        position: Int,
+        adapter: Any?
+    ) : super(
         context,
         message,
         position,
         adapter
     )
 
-    protected override fun onInflateView() {
+    override fun onInflateView() {
         inflater.inflate(
             if (!isSender) R.layout.ease_row_received_video else R.layout.ease_row_sent_video,
             this
         )
     }
 
-    protected override fun onFindViewById() {
-        imageView = findViewById(R.id.chatting_content_iv) as ImageView?
-        sizeView = findViewById(R.id.chatting_size_iv) as TextView?
-        timeLengthView = findViewById(R.id.chatting_length_iv) as TextView?
-        playView = findViewById(R.id.chatting_status_btn) as ImageView?
-        percentageView = findViewById(R.id.percentage) as TextView
+    override fun onFindViewById() {
+        imageView = findViewById<ImageView>(R.id.chatting_content_iv)
+        sizeView = findViewById<TextView>(R.id.chatting_size_iv)
+        timeLengthView = findViewById<TextView>(R.id.chatting_length_iv)
+        playView = findViewById<ImageView>(R.id.chatting_status_btn)
+        percentageView = findViewById<TextView>(R.id.percentage)
     }
 
-    protected override fun onSetUpView() {
+    override fun onSetUpView() {
         if (bubbleLayout != null) {
             bubbleLayout?.background = null
         }
-     // todo 待设置样式
+
+        val innerMessage = message?.innerMessage as VideoMessage
+        val localCover = innerMessage.localCover
+        ImageLoaderUtils.load(context, imageView, localCover)
+
     }
 
     /**

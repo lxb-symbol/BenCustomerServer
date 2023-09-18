@@ -7,6 +7,7 @@ import android.os.Message
 import android.os.SystemClock
 import android.text.format.Time
 import android.util.Log
+import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.utils.PathUtil.Companion.instance
 import java.io.File
 import java.io.IOException
@@ -48,9 +49,8 @@ class EaseVoiceRecorder(private val handler: Handler) {
             recorder!!.setAudioEncodingBitRate(64) // seems if change this to
             // 128, still got same file
             // size.
-            // TODO symbol 拿到 UID
-            val uid = "symbol"
-            voiceFileName = getVoiceFileName(uid)
+            val uid = MMkvTool.getUserId()
+            voiceFileName = getVoiceFileName(uid?:"symbolId")
             voiceFilePath =
                 Objects.requireNonNull(instance)?.voicePath.toString() + "/" + voiceFileName
             file = File(voiceFilePath)

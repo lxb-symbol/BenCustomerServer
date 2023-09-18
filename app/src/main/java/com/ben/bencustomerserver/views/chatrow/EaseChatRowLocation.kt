@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.LocationMessage
 
 /**
  * location row
@@ -12,7 +13,6 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 class EaseChatRowLocation : EaseChatRow {
     private var locationView: TextView? = null
     private var tvLocationName: TextView? = null
-//    private var locBody: EMLocationMessageBody? = null
 
     constructor(context: Context?, isSender: Boolean) : super(context!!, isSender)
     constructor(
@@ -37,8 +37,9 @@ class EaseChatRowLocation : EaseChatRow {
     }
 
     override fun onSetUpView() {
-//        locBody = message.getBody() as EMLocationMessageBody?
-//        locationView.setText(locBody.getAddress())
+        val     locBody = message?.innerMessage as LocationMessage
+        locationView?.text = locBody.name+locBody.buildingName
+        //symbol 位置图暂时不写
     }
 
     override fun onMessageCreate() {

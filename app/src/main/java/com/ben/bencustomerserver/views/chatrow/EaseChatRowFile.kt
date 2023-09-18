@@ -7,7 +7,10 @@ import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
+import com.ben.bencustomerserver.model.FileMessage
+import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.utils.EaseFileUtils
+import com.ben.bencustomerserver.utils.TextFormater
 
 /**
  * file for row
@@ -53,35 +56,30 @@ open class EaseChatRowFile : EaseChatRow {
     }
 
     override fun onSetUpView() {
-//        fileMessageBody = message.getBody() as EMNormalFileMessageBody?
-//        val filePath: Uri = fileMessageBody.getLocalUri()
-//        fileNameView.setText(fileMessageBody.getFileName())
-//        fileNameView!!.post {
-//            val content: String = EaseEditTextUtils.ellipsizeMiddleString(
-//                fileNameView,
-//                fileMessageBody.getFileName(),
-//                fileNameView!!.maxLines,
-//                fileNameView!!.width - fileNameView!!.paddingLeft - fileNameView!!.paddingRight
-//            )
-//            fileNameView!!.text = content
-//        }
-//        fileSizeView.setText(TextFormater.getDataSize(fileMessageBody.getFileSize()))
-//        if (message!!.direct() === BaseMessageModel.Direct.SEND) {
-//            if (EaseFileUtils.isFileExistByUri(context, filePath)
-//                && message!!.status() === BaseMessageModel.Status.SUCCESS
-//            ) {
-//                fileStateView.setText(R.string.have_uploaded)
-//            } else {
-//                fileStateView!!.text = ""
-//            }
-//        }
-//        if (message!!.direct === Direct.RECEIEVE) {
-//            if (EaseFileUtils.isFileExistByUri(context, filePath)) {
-//                fileStateView?.setText(R.string.have_downloaded)
-//            } else {
-//                fileStateView?.setText(R.string.did_not_download)
-//            }
-//        }
+        val innerMsg = message?.innerMessage as FileMessage
+        val netUrl = innerMsg.netPath
+        val localPath = innerMsg.localPath
+        val size = innerMsg.fileSize
+        val name = innerMsg.name
+
+        fileNameView?.text = "" + name
+        fileSizeView?.text = (TextFormater.getDataSize(size))
+        if (message?.direct === Direct.SEND) {
+            if (EaseFileUtils.isFileExistByUri(context, Uri.parse(localPath))
+                && message!!.status === MessageStatus.SUCCESS
+            ) {
+                fileStateView?.setText(R.string.have_uploaded)
+            } else {
+                fileStateView!!.text = ""
+            }
+        }
+        if (message!!.direct === Direct.RECEIEVE) {
+            if (EaseFileUtils.isFileExistByUri(context, (Uri.parse(localPath)))) {
+                fileStateView?.setText(R.string.have_downloaded)
+            } else {
+                fileStateView?.setText(R.string.did_not_download)
+            }
+        }
     }
 
     override fun onMessageCreate() {
