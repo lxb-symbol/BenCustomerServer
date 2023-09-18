@@ -75,7 +75,7 @@ interface MessageListItemClickListener {
     //	 * @param message
     //	 * @param reactionEntity
     //	 */
-    //	default void onRemoveReaction(BaseMessageModel message, EaseReactionEmojiconEntity reactionEntity) {
+    //	default void onRemoveReaction(BaseMessageModel message, BenReactionEmojiconEntity reactionEntity) {
     //	}
     //
     //	/**
@@ -85,7 +85,7 @@ interface MessageListItemClickListener {
     //	 * @param message
     //	 * @param reactionEntity
     //	 */
-    //	default void onAddReaction(BaseMessageModel message, EaseReactionEmojiconEntity reactionEntity) {
+    //	default void onAddReaction(BaseMessageModel message, BenReactionEmojiconEntity reactionEntity) {
     //	}
 
 

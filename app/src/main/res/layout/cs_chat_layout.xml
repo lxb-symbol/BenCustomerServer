@@ -10,19 +10,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.ben.bencustomerserver.views.EaseChatMessageListLayout
+        <com.ben.bencustomerserver.views.BenChatMessageListLayout
             android:id="@+id/chat_message_list_layout"
             android:layout_width="match_parent"
             android:layout_above="@id/layout_menu"
             android:layout_height="match_parent" />
 
-        <com.ben.bencustomerserver.views.EaseChatInputMenu
+        <com.ben.bencustomerserver.views.BenChatInputMenu
             android:id="@+id/layout_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" />
 
-        <com.ben.bencustomerserver.views.EaseVoiceRecorderView
+        <com.ben.bencustomerserver.views.BenVoiceRecorderView
             android:id="@+id/voice_recorder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

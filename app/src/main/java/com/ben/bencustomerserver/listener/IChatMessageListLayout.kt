@@ -1,22 +1,22 @@
 package com.ben.bencustomerserver.listener
 
-import com.ben.bencustomerserver.adapter.EaseMessageAdapter
-import com.ben.bencustomerserver.presenter.EaseChatMessagePresenter
-import com.ben.bencustomerserver.views.EaseChatMessageListLayout.OnChatErrorListener
-import com.ben.bencustomerserver.views.EaseChatMessageListLayout.OnMessageTouchListener
+import com.ben.bencustomerserver.adapter.BenMessageAdapter
+import com.ben.bencustomerserver.presenter.BenChatMessagePresenter
+import com.ben.bencustomerserver.views.BenChatMessageListLayout.OnChatErrorListener
+import com.ben.bencustomerserver.views.BenChatMessageListLayout.OnMessageTouchListener
 
 interface IChatMessageListLayout : IRecyclerView {
     /**
      * 设置presenter
      * @param presenter
      */
-    fun setPresenter(presenter: EaseChatMessagePresenter?)
+    fun setPresenter(presenter: BenChatMessagePresenter?)
 
     /**
      * 获取adapter
      * @return
      */
-    val messageAdapter: EaseMessageAdapter?
+    val messageAdapter: BenMessageAdapter?
 
     /**
      * 设置聊天区域的touch监听，判断是否点击在条目消息外，是否正在拖拽列表

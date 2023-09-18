@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="ease_row_receive_iv_userhead_style">
+    <style name="ben_row_receive_iv_userhead_style">
         <item name="android:layout_width">@dimen/size_avatar</item>
         <item name="android:layout_height">@dimen/size_avatar</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_alignParentTop">true</item>
-        <item name="android:layout_marginLeft">@dimen/ease_chat_avatar_margin</item>
-        <item name="android:src">@drawable/ease_default_avatar</item>
+        <item name="android:layout_marginLeft">@dimen/ben_chat_avatar_margin</item>
+        <item name="android:src">@drawable/ben_default_avatar</item>
         <item name="android:scaleType">fitXY</item>
     </style>
 
-    <style name="ease_chat_input_button_size">
+    <style name="ben_chat_input_button_size">
         <item name="android:layout_width">34dp</item>
         <item name="android:layout_height">34dp</item>
         <item name="android:padding">0dp</item>
@@ -26,7 +26,7 @@
 
 
 
-    <style name="ease_row_sent_iv_userhead_style">
+    <style name="ben_row_sent_iv_userhead_style">
         <item name="android:layout_width">@dimen/dp_42</item>
         <item name="android:layout_height">@dimen/dp_42</item>
         <item name="android:layout_alignParentRight">true</item>
@@ -43,14 +43,14 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="ease_row_sent_iv_fail_style">
+    <style name="ben_row_sent_iv_fail_style">
         <item name="android:layout_width">12dp</item>
         <item name="android:layout_height">12dp</item>
         <item name="android:layout_marginTop">5dp</item>
         <item name="android:layout_marginRight">5dp</item>
         <item name="android:layout_marginLeft">5dp</item>
         <item name="android:clickable">true</item>
-        <item name="android:src">@drawable/ease_msg_state_failed_resend</item>
+        <item name="android:src">@drawable/ben_msg_state_failed_resend</item>
         <item name="android:visibility">gone</item>
     </style>
 

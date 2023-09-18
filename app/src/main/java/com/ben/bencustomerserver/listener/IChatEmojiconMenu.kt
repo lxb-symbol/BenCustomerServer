@@ -1,19 +1,19 @@
 package com.ben.bencustomerserver.listener
 
-import com.ben.bencustomerserver.views.EaseEmojiconGroupEntity
+import com.ben.bencustomerserver.views.BenEmojiconGroupEntity
 
 interface IChatEmojiconMenu {
     /**
      * 添加表情
      * @param groupEntity
      */
-    fun addEmojiconGroup(groupEntity: EaseEmojiconGroupEntity?)
+    fun addEmojiconGroup(groupEntity: BenEmojiconGroupEntity?)
 
     /**
      * 添加表情列表
      * @param groupEntitieList
      */
-    fun addEmojiconGroup(groupEntitieList: List<EaseEmojiconGroupEntity?>?)
+    fun addEmojiconGroup(groupEntitieList: List<BenEmojiconGroupEntity?>?)
 
     /**
      * 移除表情
@@ -31,5 +31,5 @@ interface IChatEmojiconMenu {
      * 设置表情监听
      * @param listener
      */
-    fun setEmojiconMenuListener(listener: EaseEmojiconMenuListener?)
+    fun setEmojiconMenuListener(listener: BenEmojiconMenuListener?)
 }

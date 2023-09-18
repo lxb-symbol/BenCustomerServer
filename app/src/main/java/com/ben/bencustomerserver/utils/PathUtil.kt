@@ -57,7 +57,7 @@ class PathUtil private constructor() {
         const val netdiskDownloadPathName = "/netdisk/"
         const val meetingPathName = "/meeting/"
 
-        //protected final static String netdiskHost = EaseMob.EASEMOB_STORAGE_URL + "/share/";
+        //protected final static String netdiskHost = BenMob.EASEMOB_STORAGE_URL + "/share/";
         private var storageDir: File? = null
         @JvmStatic
         var instance: PathUtil? = null

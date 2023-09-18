@@ -258,9 +258,9 @@ open class ImageUtils {
             if (TextUtils.isEmpty(fileUri)) {
                 return ""
             }
-            return if (!EMFileHelper.instance.isFileExist(context, Uri.parse(fileUri))) {
+            return if (!BenFileHelper.instance.isFileExist(context, Uri.parse(fileUri))) {
                 ""
-            } else EMFileHelper.instance.getFilename(fileUri)
+            } else BenFileHelper.instance.getFilename(fileUri)
         }
 
         /**
@@ -272,7 +272,7 @@ open class ImageUtils {
         fun getFileLength(context: Context?, fileUri: String?): Long {
             return if (TextUtils.isEmpty(fileUri)) {
                 0
-            } else EMFileHelper.instance.getFileLength(fileUri)
+            } else BenFileHelper.instance.getFileLength(fileUri)
         }
 
         /**
@@ -287,10 +287,10 @@ open class ImageUtils {
             }
             Log.d("img", "original localPath: $localPath")
             val localUri = Uri.parse(localPath)
-            if (!EMFileHelper.instance.isFileExist(context, localPath)) {
+            if (!BenFileHelper.instance.isFileExist(context, localPath)) {
                 return localPath
             }
-            val filePath: String = EMFileHelper.instance.getFilePath(context, localUri)
+            val filePath: String = BenFileHelper.instance.getFilePath(context, localUri)
             return if (!TextUtils.isEmpty(filePath)) {
                 getScaledImage(context, filePath)
             } else {
@@ -372,7 +372,7 @@ open class ImageUtils {
                 return imageUri
             }
             try {
-                val fileSize: Long = EMFileHelper.instance.getFileLength(imageUri)
+                val fileSize: Long = BenFileHelper.instance.getFileLength(imageUri)
                 //			Log.d("img", "original img size:" + fileSize);
                 if (fileSize <= 100 * 1024) {
                     Log.d("img", "use original small image")
@@ -418,7 +418,7 @@ open class ImageUtils {
          */
         fun checkDegreeAndRestoreImage(context: Context, imageUri: Uri?): Uri? {
             try {
-                val filePath: String = EMFileHelper.instance.getFilePath(context, imageUri)
+                val filePath: String = BenFileHelper.instance.getFilePath(context, imageUri)
                 var bm: Bitmap? = null
                 var degree = 0
                 val options = BitmapFactory.Options()
@@ -644,10 +644,10 @@ open class ImageUtils {
             if (TextUtils.isEmpty(fileUri)) {
                 return null
             }
-            if (!EMFileHelper.instance.isFileExist(context, fileUri)) {
+            if (!BenFileHelper.instance.isFileExist(context, fileUri)) {
                 return null
             }
-            val filePath: String? = EMFileHelper.instance.getFilePath(context, fileUri)
+            val filePath: String? = BenFileHelper.instance.getFilePath(context, fileUri)
             if (!TextUtils.isEmpty(filePath)) {
                 return getBitmapOptions(filePath)
             } else {

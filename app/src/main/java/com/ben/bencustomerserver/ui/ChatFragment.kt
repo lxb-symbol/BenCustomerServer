@@ -15,7 +15,7 @@ import com.ben.bencustomerserver.listener.OnChatExtendMenuItemClickListener
 import com.ben.bencustomerserver.listener.OnChatLayoutListener
 import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
 import com.ben.bencustomerserver.repositories.ChatRepository
-import com.ben.bencustomerserver.utils.EaseFileUtils
+import com.ben.bencustomerserver.utils.BenFileUtils
 import com.ben.bencustomerserver.utils.VersionUtils
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.lib_picture_selector.PictureSelectUtil
@@ -209,11 +209,11 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     private fun onActivityResultForLocalFiles(data: Intent?) {
         val uri = data?.data
-        val filePath = EaseFileUtils.getFilePath(context, uri)
+        val filePath = BenFileUtils.getFilePath(context, uri)
         if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
             mViewBinding.cl.sendFileMessage(Uri.parse(filePath))
         } else {
-            EaseFileUtils.saveUriPermission(context, uri, data)
+            BenFileUtils.saveUriPermission(context, uri, data)
             mViewBinding.cl.sendFileMessage(uri)
         }
     }
@@ -238,12 +238,12 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     private fun onActivityResultForLocalPhotos(data: Intent?) {
         val selectedImage = data?.data
         selectedImage?.let {
-            val filePath: String = EaseFileUtils.getFilePath(context, it)
+            val filePath: String = BenFileUtils.getFilePath(context, it)
             if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
                 mViewBinding.cl.sendImageMessage(Uri.parse(filePath))
 
             } else {
-                EaseFileUtils.saveUriPermission(context, it, data)
+                BenFileUtils.saveUriPermission(context, it, data)
                 mViewBinding.cl.sendImageMessage(it)
 
             }
@@ -284,7 +284,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 //        cameraFile?.parentFile?.mkdirs()
 //        startActivityForResult(
 //            Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
-//                MediaStore.EXTRA_OUTPUT, EaseCompat.getUriForFile(
+//                MediaStore.EXTRA_OUTPUT, BenCompat.getUriForFile(
 //                    context, cameraFile!!
 //                )
 //            ),

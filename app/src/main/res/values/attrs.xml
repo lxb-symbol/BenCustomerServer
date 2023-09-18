@@ -2,69 +2,69 @@
 <resources>
 
 
-    <declare-styleable name="EaseChatMessageListLayout">
+    <declare-styleable name="BenChatMessageListLayout">
         <!-- 文本消息文本字体大小 -->
-        <attr name="ease_chat_item_text_size" format="dimension"/>
+        <attr name="ben_chat_item_text_size" format="dimension"/>
         <!-- 文本消息文本颜色 -->
-        <attr name="ease_chat_item_text_color" format="reference|color"/>
+        <attr name="ben_chat_item_text_color" format="reference|color"/>
         <!-- 文本消息文本最小高度 -->
-        <attr name="ease_chat_item_min_height" format="dimension"/>
+        <attr name="ben_chat_item_min_height" format="dimension"/>
         <!-- 时间线文本字体大小 -->
-        <attr name="ease_chat_item_time_text_size" format="dimension"/>
+        <attr name="ben_chat_item_time_text_size" format="dimension"/>
         <!-- 时间线文本字体颜色 -->
-        <attr name="ease_chat_item_time_text_color" format="reference|color"/>
+        <attr name="ben_chat_item_time_text_color" format="reference|color"/>
         <!-- 时间线背景色 -->
-        <attr name="ease_chat_item_time_background" format="reference|color"/>
+        <attr name="ben_chat_item_time_background" format="reference|color"/>
         <!-- 设置默认头像 -->
-        <attr name="ease_chat_item_avatar_default_src" format="reference"/>
+        <attr name="ben_chat_item_avatar_default_src" format="reference"/>
         <!-- 头像大小 宽和高一样 -->
-        <!--<attr name="ease_chat_item_avatar_size" format="dimension"/>-->
+        <!--<attr name="ben_chat_item_avatar_size" format="dimension"/>-->
         <!-- 头像形状 -->
-        <attr name="ease_chat_item_avatar_shape_type" format="enum">
+        <attr name="ben_chat_item_avatar_shape_type" format="enum">
             <enum name="none" value="0" />
             <enum name="round" value="1" />
             <enum name="rectangle" value="2" />
         </attr>
         <!-- 头像圆角半径 -->
-        <!--<attr name="ease_chat_item_avatar_radius" format="dimension"/>-->
+        <!--<attr name="ben_chat_item_avatar_radius" format="dimension"/>-->
         <!-- 描边宽度 -->
-        <!--<attr name="ease_chat_item_avatar_border_width" format="dimension"/>-->
+        <!--<attr name="ben_chat_item_avatar_border_width" format="dimension"/>-->
         <!-- 描边颜色 -->
-        <!--<attr name="ease_chat_item_avatar_border_color" format="reference|color"/>-->
+        <!--<attr name="ben_chat_item_avatar_border_color" format="reference|color"/>-->
         <!-- 条目背景资源 -->
-        <attr name="ease_chat_item_receiver_background" format="reference|color"/>
-        <attr name="ease_chat_item_sender_background" format="reference|color"/>
+        <attr name="ben_chat_item_receiver_background" format="reference|color"/>
+        <attr name="ben_chat_item_sender_background" format="reference|color"/>
         <!-- 是否展示头像 -->
-        <!--<attr name="ease_chat_item_show_avatar" format="boolean"/>-->
+        <!--<attr name="ben_chat_item_show_avatar" format="boolean"/>-->
         <!-- 是否展示昵称 -->
-        <attr name="ease_chat_item_show_nickname" format="boolean"/>
+        <attr name="ben_chat_item_show_nickname" format="boolean"/>
         <!-- 条目的展示形式 -->
-        <attr name="ease_chat_item_show_type" format="enum">
+        <attr name="ben_chat_item_show_type" format="enum">
             <enum name="normal" value="0"/>
             <enum name="left" value="1"/>
             <enum name="right" value="2"/>
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="EaseImageView">
-        <attr name="ease_border_color" format="color" />
-        <attr name="ease_border_width" format="dimension" />
-        <attr name="ease_press_alpha" format="integer" />
-        <attr name="ease_press_color" format="color" />
-        <attr name="ease_radius" format="dimension" />
-        <attr name="ease_shape_type" format="enum">
+    <declare-styleable name="BenImageView">
+        <attr name="ben_border_color" format="color" />
+        <attr name="ben_border_width" format="dimension" />
+        <attr name="ben_press_alpha" format="integer" />
+        <attr name="ben_press_color" format="color" />
+        <attr name="ben_radius" format="dimension" />
+        <attr name="ben_shape_type" format="enum">
             <enum name="none" value="0" />
             <enum name="round" value="1" />
             <enum name="rectangle" value="2" />
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="EaseChatExtendMenu">
+    <declare-styleable name="BenChatExtendMenu">
         <attr name="numColumns" format="integer" />
         <attr name="numRows" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="EaseEmojiconMenu">
+    <declare-styleable name="BenEmojiconMenu">
         <attr name="bigEmojiconRows" format="integer" />
         <attr name="emojiconColumns" format="integer" />
     </declare-styleable>

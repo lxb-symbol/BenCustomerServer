@@ -1,6 +1,6 @@
 package com.ben.bencustomerserver.model
 
-import com.ben.bencustomerserver.listener.EMCallBack
+import com.ben.bencustomerserver.listener.BenCallBack
 import java.io.Serializable
 
 
@@ -26,7 +26,7 @@ data class BaseMessageModel(
     var direct: Direct = Direct.SEND,
     var msgId: String = "0",
     var status: MessageStatus = MessageStatus.CREATE,
-    var messageStatusCallback: EMCallBack? = null,
+    var messageStatusCallback: BenCallBack? = null,
     var delivered: Boolean = false,
     var acked: Boolean = false,
     var from_name: String = "",

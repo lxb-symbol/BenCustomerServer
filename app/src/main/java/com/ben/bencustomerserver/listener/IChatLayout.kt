@@ -2,14 +2,14 @@ package com.ben.bencustomerserver.listener
 
 import android.net.Uri
 import com.ben.bencustomerserver.model.BaseMessageModel
-import com.ben.bencustomerserver.views.EaseChatInputMenu
+import com.ben.bencustomerserver.views.BenChatInputMenu
 
 interface IChatLayout {
     /**
      * 获取输入菜单
      * @return
      */
-    fun  chatInputMenu(): EaseChatInputMenu?
+    fun  chatInputMenu(): BenChatInputMenu?
 
     /**
      * 获取输入框内容

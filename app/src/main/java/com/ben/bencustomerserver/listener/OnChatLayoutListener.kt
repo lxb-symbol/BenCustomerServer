@@ -3,7 +3,7 @@ package com.ben.bencustomerserver.listener
 import android.view.View
 
 /**
- * 用于监听[com.hyphenate.easeui.modules.chat.EaseChatLayout]中的变化
+ * 用于监听[com.hyphenate.easeui.modules.chat.BenChatLayout]中的变化
  */
 interface OnChatLayoutListener {
     /**

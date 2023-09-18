@@ -30,5 +30,5 @@ interface IChatExtendMenu {
      * 设置条目监听
      * @param listener
      */
-    fun setEaseChatExtendMenuItemClickListener(listener: EaseChatExtendMenuItemClickListener?)
+    fun setBenChatExtendMenuItemClickListener(listener: BenChatExtendMenuItemClickListener?)
 }

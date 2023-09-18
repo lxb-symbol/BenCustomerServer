@@ -1,6 +1,6 @@
 package com.ben.bencustomerserver.listener
 
-import com.ben.bencustomerserver.views.EasePopupWindowHelper
+import com.ben.bencustomerserver.views.BenPopupWindowHelper
 import com.ben.bencustomerserver.views.MenuItemBean
 
 interface IPopupWindow {
@@ -54,5 +54,5 @@ interface IPopupWindow {
      * 返回菜单帮助类
      * @return
      */
-    val menuHelper: EasePopupWindowHelper?
+    val menuHelper: BenPopupWindowHelper?
 }

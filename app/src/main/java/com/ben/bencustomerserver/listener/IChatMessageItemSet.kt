@@ -2,7 +2,7 @@ package com.ben.bencustomerserver.listener
 
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
-import com.ben.bencustomerserver.views.EaseChatMessageListLayout
+import com.ben.bencustomerserver.views.BenChatMessageListLayout
 
 interface IChatMessageItemSet {
     /**
@@ -73,5 +73,5 @@ interface IChatMessageItemSet {
      * 聊天列表条目的展示方式
      * @param type
      */
-    fun setItemShowType(type: EaseChatMessageListLayout.ShowType?)
+    fun setItemShowType(type: BenChatMessageListLayout.ShowType?)
 }

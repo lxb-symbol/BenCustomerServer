@@ -26,8 +26,8 @@ import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
 import com.ben.bencustomerserver.listener.OnMenuChangeListener
 import com.ben.bencustomerserver.listener.OnRecallMessageResultListener
 import com.ben.bencustomerserver.model.BaseMessageModel
-import com.ben.bencustomerserver.presenter.EaseHandleMessagePresenter
-import com.ben.bencustomerserver.presenter.EaseHandleMessagePresenterImpl
+import com.ben.bencustomerserver.presenter.BenHandleMessagePresenter
+import com.ben.bencustomerserver.presenter.BenHandleMessagePresenterImpl
 import com.ben.bencustomerserver.utils.MMkvTool
 
 /**
@@ -39,12 +39,12 @@ class ChatLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr), IHandleMessageView,
     IPopupWindow, ChatInputMenuListener, IChatLayout, ISwitchHumenListener,
-    EaseChatMessageListLayout.OnMessageTouchListener {
+    BenChatMessageListLayout.OnMessageTouchListener {
     private lateinit var mViewBinding: CsChatLayoutBinding
-    private var chatInputMenu: EaseChatInputMenu
-    private lateinit var voiceRecordView: EaseVoiceRecorderView
+    private var chatInputMenu: BenChatInputMenu
+    private lateinit var voiceRecordView: BenVoiceRecorderView
     var chatLayoutListener: OnChatLayoutListener? = null
-    private lateinit var presenter: EaseHandleMessagePresenter
+    private lateinit var presenter: BenHandleMessagePresenter
 
 
     /**
@@ -57,7 +57,7 @@ class ChatLayout @JvmOverloads constructor(
      */
     private var typingHandler: Handler? = null
 
-    override var menuHelper: EasePopupWindowHelper? = null
+    override var menuHelper: BenPopupWindowHelper? = null
 
     private var clippborad: ClipboardManager
 
@@ -100,11 +100,11 @@ class ChatLayout @JvmOverloads constructor(
             true
         )
         chatInputMenu = mViewBinding.layoutMenu
-        menuHelper = EasePopupWindowHelper()
+        menuHelper = BenPopupWindowHelper()
         mViewBinding.layoutMenu.menuListener = this
         clippborad = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         voiceRecordView = mViewBinding.voiceRecorder
-        presenter = EaseHandleMessagePresenterImpl()
+        presenter = BenHandleMessagePresenterImpl()
         presenter.attachView(this)
         mViewBinding.chatMessageListLayout.setOnMessageTouchListener(this)
         initTypingHandler()
@@ -197,7 +197,7 @@ class ChatLayout @JvmOverloads constructor(
     }
 
 
-    override fun chatInputMenu(): EaseChatInputMenu = chatInputMenu
+    override fun chatInputMenu(): BenChatInputMenu = chatInputMenu
 
     override fun inputContent(): String {
         return ""
@@ -338,7 +338,7 @@ class ChatLayout @JvmOverloads constructor(
         return voiceRecordView.onPressToSpeakBtnTouch(
             v,
             event,
-            object : EaseVoiceRecorderView.EaseVoiceRecorderCallback {
+            object : BenVoiceRecorderView.BenVoiceRecorderCallback {
                 override fun onVoiceRecordComplete(voiceFilePath: String?, voiceTimeLength: Int) {
                     sendVoiceMessage(voiceFilePath, voiceTimeLength)
                 }

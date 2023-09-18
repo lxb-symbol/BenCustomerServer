@@ -2,14 +2,14 @@ package com.ben.bencustomerserver.listener
 
 import android.graphics.drawable.Drawable
 import android.widget.EditText
-import com.ben.bencustomerserver.views.EaseInputMenuStyle
+import com.ben.bencustomerserver.views.BenInputMenuStyle
 
 interface IChatPrimaryMenu {
     /**
      * 菜单展示类型
      * @param style
      */
-    fun setMenuShowType(style: EaseInputMenuStyle?)
+    fun setMenuShowType(style: BenInputMenuStyle?)
 
     /**
      * 常规模式
@@ -85,5 +85,5 @@ interface IChatPrimaryMenu {
      * 设置监听
      * @param listener
      */
-    fun setEaseChatPrimaryMenuListener(listener: EaseChatPrimaryMenuListener?)
+    fun setBenChatPrimaryMenuListener(listener: BenChatPrimaryMenuListener?)
 }
