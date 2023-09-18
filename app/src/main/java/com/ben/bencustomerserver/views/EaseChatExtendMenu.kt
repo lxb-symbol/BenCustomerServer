@@ -52,19 +52,16 @@ class EaseChatExtendMenu
         R.string.attach_picture,
         R.string.attach_video,
         R.string.attach_file,
-        R.string.attach_location
     )
     private val itemdrawables = intArrayOf(
         R.drawable.ease_chat_takepic_selector,
         R.drawable.ease_chat_image_selector,
         R.drawable.em_chat_video_selector,
         R.drawable.em_chat_file_selector,
-        R.drawable.ease_chat_location_selector
     )
     private val itemIds = intArrayOf(
         R.id.extend_item_take_picture,
         R.id.extend_item_picture,
-        R.id.extend_item_location,
         R.id.extend_item_video,
         R.id.extend_item_file
     )
@@ -86,7 +83,7 @@ class EaseChatExtendMenu
     private fun initAttr(context: Context, attrs: AttributeSet?) {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.EaseChatExtendMenu)
         numColumns = ta.getInt(R.styleable.EaseChatExtendMenu_numColumns, 4)
-        numRows = ta.getInt(R.styleable.EaseChatExtendMenu_numRows, 2)
+        numRows = ta.getInt(R.styleable.EaseChatExtendMenu_numRows, 1)
         ta.recycle()
     }
 
@@ -300,7 +297,7 @@ class EaseChatExtendMenu
     }
 
     override fun registerMenuItem(name: String?, drawableRes: Int, itemId: Int, orderInt: Int) {
-        registerMenuItem(name, drawableRes, itemId, null)
+        registerMenuItem(name, drawableRes, itemId, itemListener)
     }
 
 

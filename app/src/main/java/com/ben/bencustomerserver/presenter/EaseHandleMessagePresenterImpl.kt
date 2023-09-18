@@ -58,9 +58,7 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
 
     override fun sendImageMessage(imageUri: Uri?, sendOriginalImage: Boolean) {
         //Compatible with web and does not support heif image terminal
-        //convert heif format to jpeg general image format
-        var uri = handleImageHeifToJpeg(imageUri)
-        val message: BaseMessageModel = MessageUtil.generateImgModel(uri, sendOriginalImage)
+        val message: BaseMessageModel = MessageUtil.generateImgModel(imageUri, sendOriginalImage)
         sendMessage(message)
     }
 
@@ -106,26 +104,25 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
             return
         }
         addMessageAttributes(message)
-
-        message.messageStatusCallback = object : EMCallBack {
-            override fun onSuccess() {
-                if (isActive) {
-                    runOnUI { mView!!.onPresenterMessageSuccess(message) }
-                }
-            }
-
-            override fun onError(code: Int, error: String?) {
-                if (isActive) {
-                    runOnUI { mView!!.onPresenterMessageError(message, code, error) }
-                }
-            }
-
-            override fun onProgress(progress: Int, status: String?) {
-                if (isActive) {
-                    runOnUI { mView!!.onPresenterMessageInProgress(message, progress) }
-                }
-            }
-        }
+//        message.messageStatusCallback = object : EMCallBack {
+//            override fun onSuccess() {
+//                if (isActive) {
+//                    runOnUI { mView!!.onPresenterMessageSuccess(message) }
+//                }
+//            }
+//
+//            override fun onError(code: Int, error: String?) {
+//                if (isActive) {
+//                    runOnUI { mView!!.onPresenterMessageError(message, code, error) }
+//                }
+//            }
+//
+//            override fun onProgress(progress: Int, status: String?) {
+//                if (isActive) {
+//                    runOnUI { mView!!.onPresenterMessageInProgress(message, progress) }
+//                }
+//            }
+//        }
         //symbol  send message 进行网络请求
         message.let {
             (viewModel as ChatViewModel).sendMessage(it, object : INetCallback<String> {

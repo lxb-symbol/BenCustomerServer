@@ -129,7 +129,7 @@ object MessageUtil {
             from_name = MMkvTool.getUserName() ?: "",
             to_id = MMkvTool.getKFId() ?: "",
             to_name = MMkvTool.getKFName() ?: "",
-            innerMessage = FileMessage(
+            innerMessage = ImageMessage(
                 localPath = imageUri?.path
             )
         )

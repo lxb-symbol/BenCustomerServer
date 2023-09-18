@@ -113,7 +113,7 @@ class ChatLayout @JvmOverloads constructor(
         loadData()
     }
 
-    fun loadData(){
+    fun loadData() {
         mViewBinding.chatMessageListLayout.loadDefaultData()
     }
 
@@ -199,7 +199,7 @@ class ChatLayout @JvmOverloads constructor(
 
     override fun chatInputMenu(): EaseChatInputMenu = chatInputMenu
 
-    override fun inputContent(): String? {
+    override fun inputContent(): String {
         return ""
     }
 
@@ -252,7 +252,7 @@ class ChatLayout @JvmOverloads constructor(
         locationAddress: String?,
         buildingName: String?
     ) {
-        presenter.sendLocationMessage(latitude,longitude,locationAddress,buildingName)
+        presenter.sendLocationMessage(latitude, longitude, locationAddress, buildingName)
     }
 
     override fun sendVideoMessage(videoUri: Uri?, videoLength: Int) {
@@ -414,35 +414,30 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun context(): Context? {
-        TODO("Not yet implemented")
+        return context
     }
 
     override fun showItemDefaultMenu(showDefault: Boolean) {
-        TODO("Not yet implemented")
     }
 
     override fun clearMenu() {
-        TODO("Not yet implemented")
     }
 
     override fun addItemMenu(item: MenuItemBean?) {
-        TODO("Not yet implemented")
     }
 
     override fun addItemMenu(groupId: Int, itemId: Int, order: Int, title: String?) {
-        TODO("Not yet implemented")
     }
 
     override fun findItem(id: Int): MenuItemBean? {
-        TODO("Not yet implemented")
+        return menuHelper?.findItem(id)
     }
 
     override fun findItemVisible(id: Int, visible: Boolean) {
-        TODO("Not yet implemented")
+        menuHelper?.findItemVisible(id, visible)
     }
 
     override fun setOnPopupWindowItemClickListener(listener: OnMenuChangeListener?) {
-        TODO("Not yet implemented")
     }
 
     override fun onDetachedFromWindow() {

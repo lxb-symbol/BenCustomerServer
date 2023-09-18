@@ -12,6 +12,7 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.FileMessage
 import com.ben.bencustomerserver.model.ImageMessage
+import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.model.MessageType
 import com.ben.bencustomerserver.model.MessageUtil
 import com.ben.bencustomerserver.model.NetMessageBean
@@ -229,6 +230,28 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         }
 
                     })
+                } else {
+                    Log.e("symbol-4", "-->$msg")
+                    val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
+                    val localPath = innerMsg.localPath
+                    uploadImg(msg.msgId, File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            (msg.innerMessage as ImageMessage).netPath = data.src
+
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            // TODO 缺少
+                            RecieveMessageManager.msgs.add(msg)
+                        }
+
+                        override fun onError(code: Int, errorMsg: String) {
+                            msg.status=MessageStatus.FAIL
+                            RecieveMessageManager.msgs.add(msg)
+
+                        }
+
+                    })
+
                 }
 
             }

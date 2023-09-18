@@ -78,28 +78,28 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     override fun onChatExtendMenuItemClick(view: View?, itemId: Int) {
         onChatExtendMenuItemClickListener?.onChatExtendMenuItemClick(view, itemId)
 
-        if (view?.id == R.id.extend_item_take_picture) {
+        if (itemId == R.id.extend_item_take_picture) {
             selectPicFromCamera()
             return
         }
 
-        if (view?.id == R.id.extend_item_picture) {
+        if (itemId == R.id.extend_item_picture) {
             selectPicFromLocal()
             return
         }
 
-        if (view?.id == R.id.extend_item_location) {
+        if (itemId == R.id.extend_item_location) {
 
             return
         }
 
-        if (view?.id == R.id.extend_item_video) {
+        if (itemId == R.id.extend_item_video) {
 
             selectVideoFromLocal()
             return
         }
 
-        if (view?.id == R.id.extend_item_file) {
+        if (itemId== R.id.extend_item_file) {
             XXPermissions.with(requireContext())
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
@@ -179,7 +179,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         PictureSelectUtil.get().selectImages(requireContext(), object : ResultListener {
             override fun onResult(medias: MutableList<LocalMedia>?) {
                 medias?.let {
-                    mViewBinding.cl.sendImageMessage(Uri.parse(it[0].path))
+                    mViewBinding.cl.sendImageMessage(Uri.parse(it[0].availablePath))
                 }
             }
 
