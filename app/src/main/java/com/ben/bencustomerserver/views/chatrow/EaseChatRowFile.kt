@@ -40,7 +40,7 @@ open class EaseChatRowFile : EaseChatRow {
 
     override fun onInflateView() {
         inflater.inflate(
-            if (!showSenderType) R.layout.ease_row_received_file else R.layout.ease_row_sent_file,
+            if (!isSender) R.layout.ease_row_received_file else R.layout.ease_row_sent_file,
             this
         )
     }

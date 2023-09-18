@@ -8,17 +8,17 @@ data class FileMessage(
     val name: String? = "",
     val fileSize: Long = 0,
     val localPath: String? = "",
-    val netPath: String? = ""
+    var netPath: String? = ""
 ) : IMessageModel
 
 data class ImageMessage(
     val localPath: String? = "",
-    val netPath: String? = ""
+    var netPath: String? = ""
 ) : IMessageModel
 
 data class VoiceMessage(
     val localPath: String? = "",
-    val netPath: String? = "",
+    var netPath: String? = "",
     val duration: Int = 0
 ) : IMessageModel
 

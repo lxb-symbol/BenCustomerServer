@@ -49,6 +49,11 @@ class ChatRepository(private val service: RetrofitClient) : BaseRepository() {
         }
     }
 
+    suspend fun getEmojis( code:String?): NetResult<List<String>> {
+        return callRequest {
+            handleResponse(service.create(ChatApiService::class.java).emojis(code?:""))
+        }
+    }
 
     /**
      * 自动回复

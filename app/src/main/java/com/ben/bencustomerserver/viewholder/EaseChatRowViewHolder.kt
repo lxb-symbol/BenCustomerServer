@@ -50,9 +50,9 @@ open class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListI
     override fun onBubbleClick(message: BaseMessageModel?) {}
     override fun onDetachedFromWindow() {}
     private fun handleMessage() {
-        if (message!!.direct === Direct.SEND) {
+        if (message!!.direct == Direct.SEND) {
             handleSendMessage(message)
-        } else if (message!!.direct === Direct.RECEIEVE) {
+        } else if (message!!.direct == Direct.RECEIEVE) {
             handleReceiveMessage(message)
         }
     }
@@ -72,7 +72,9 @@ open class EaseChatRowViewHolder(itemView: View, itemClickListener: MessageListI
      * receive message
      * @param message
      */
-    protected open fun handleReceiveMessage(message: BaseMessageModel?) {}
+    protected open fun handleReceiveMessage(message: BaseMessageModel?) {
+
+    }
 
     companion object {
         val TAG = EaseChatRowViewHolder::class.java.simpleName

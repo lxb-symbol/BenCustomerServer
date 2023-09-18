@@ -22,7 +22,7 @@ class EaseChatRowCustom : EaseChatRow {
 
     override fun onInflateView() {
         inflater.inflate(
-            if (!showSenderType) R.layout.ease_row_received_message else R.layout.ease_row_sent_message,
+            if (!isSender) R.layout.ease_row_received_message else R.layout.ease_row_sent_message,
             this
         )
     }

@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
  */
 class EaseChatRowImage : EaseChatRowFile {
     protected var imageView: ImageView? = null
-//    private var imgBody: EMImageMessageBody? = null
 
     constructor(context: Context?, isSender: Boolean) : super(context, isSender)
     constructor(

@@ -26,7 +26,7 @@ class EaseChatRowLocation : EaseChatRow {
 
     override fun onInflateView() {
         inflater.inflate(
-            if (!showSenderType) R.layout.ease_row_received_location else R.layout.ease_row_sent_location,
+            if (!isSender) R.layout.ease_row_received_location else R.layout.ease_row_sent_location,
             this
         )
     }

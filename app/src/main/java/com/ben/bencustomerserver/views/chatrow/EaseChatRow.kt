@@ -99,8 +99,9 @@ abstract class EaseChatRow : LinearLayout {
 
     /**
      * normal along with [.isSender]
+     *  本 app 中弃用
      */
-    protected var showSenderType = false
+    private  var showSenderType = false
 
     /**
      * chat message callback
@@ -124,7 +125,7 @@ abstract class EaseChatRow : LinearLayout {
         context
     ) {
         this.message = message
-        isSender = message?.direct === Direct.SEND
+        isSender = message?.direct == Direct.SEND
         this.position = position
         this.adapter = adapter
         inflater = LayoutInflater.from(context)

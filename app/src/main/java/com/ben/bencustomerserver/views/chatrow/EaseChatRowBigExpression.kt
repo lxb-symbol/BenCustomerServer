@@ -28,7 +28,7 @@ class EaseChatRowBigExpression : EaseChatRowText {
 
     override fun onInflateView() {
         inflater.inflate(
-            if (!showSenderType) R.layout.ease_row_received_bigexpression else R.layout.ease_row_sent_bigexpression,
+            if (!isSender) R.layout.ease_row_received_bigexpression else R.layout.ease_row_sent_bigexpression,
             this
         )
     }

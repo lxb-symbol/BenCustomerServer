@@ -12,7 +12,7 @@ class EaseTextViewHolder(itemView: View, itemClickListener: MessageListItemClick
     EaseChatRowViewHolder(itemView, itemClickListener!!) {
     override fun onBubbleClick(message: BaseMessageModel?) {
         super.onBubbleClick(message)
-        if (message?.direct !== Direct.SEND) {
+        if (message?.direct != Direct.SEND) {
             return
         }
 

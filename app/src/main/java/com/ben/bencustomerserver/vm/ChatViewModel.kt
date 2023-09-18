@@ -10,6 +10,7 @@ import com.ben.bencustomerserver.connnect.WsManager
 import com.ben.bencustomerserver.listener.INetCallback
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
+import com.ben.bencustomerserver.model.FileMessage
 import com.ben.bencustomerserver.model.ImageMessage
 import com.ben.bencustomerserver.model.MessageType
 import com.ben.bencustomerserver.model.MessageUtil
@@ -18,6 +19,7 @@ import com.ben.bencustomerserver.model.NetMessageBeanOut
 import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.model.TokenAndWsEntity
 import com.ben.bencustomerserver.model.UpFileEntity
+import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.symbol.lib_net.model.NetResult
@@ -109,6 +111,10 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                 is NetResult.Error -> {
                     Log.e("symbol", "getChatMessages is error: ${result.exception.message}")
                 }
+
+                else -> {
+
+                }
             }
         }
         return _messages
@@ -155,7 +161,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     /**
      *  发送消息
      */
-    fun sendMessage(msg: BaseMessageModel) {
+    fun sendMessage(msg: BaseMessageModel, callback: INetCallback<String>?) {
         val isHuman = MMkvTool.getIsHuman()
         msg.isBolt = !isHuman
         msg.direct = Direct.SEND
@@ -169,16 +175,21 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         RecieveMessageManager.msgs.add(msg)
                     }
                 } else {
-
                     RecieveMessageManager.msgs.add(msg)
                     queryBolt(msg.content, object : INetCallback<String> {
                         override fun onSuccess(data: String) {
                             Log.i("symbol--4", "$data")
+                            callback?.let {
+                                it.onSuccess("")
+                            }
 
                         }
 
                         override fun onError(code: Int, msg: String) {
                             Log.i("symbol--4", "$msg")
+                            callback?.let {
+                                it.onError(code, msg)
+                            }
                         }
 
                     })
@@ -201,8 +212,10 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                 if (isHuman) {// 人工都是 socket
                     val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
                     val localPath = innerMsg.localPath
-                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                    uploadImg(msg.msgId, File(localPath), object : INetCallback<UpFileEntity> {
                         override fun onSuccess(data: UpFileEntity) {
+                            (msg.innerMessage as ImageMessage).netPath = data.src
+
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)
                             WsManager.mWebSocket?.let {
@@ -216,17 +229,57 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         }
 
                     })
-
-
                 }
 
             }
 
             MessageType.VOICE -> {
+                if (isHuman) {// 人工都是 socket
+                    val innerMsg: VoiceMessage = msg.innerMessage as VoiceMessage
+                    val localPath = innerMsg.localPath
+                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            (msg.innerMessage as VoiceMessage).netPath = data.src
+
+                            WsManager.mWebSocket?.let {
+                                var str = MessageUtil.generateWsMessageVoice(msg)
+                                it.send(str)
+                                RecieveMessageManager.msgs.add(msg)
+                            }
+                        }
+
+                        override fun onError(code: Int, msg: String) {
+                        }
+
+                    })
+                }
 
             }
 
             MessageType.FILE -> {
+                if (isHuman) {// 人工都是 socket
+                    val innerMsg: FileMessage = msg.innerMessage as FileMessage
+                    val localPath = innerMsg.localPath
+                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            (msg.innerMessage as FileMessage).netPath = data.src
+
+                            WsManager.mWebSocket?.let {
+                                var str = MessageUtil.generateWsMessageFile(msg)
+                                it.send(str)
+                                RecieveMessageManager.msgs.add(msg)
+                            }
+                        }
+
+                        override fun onError(code: Int, msg: String) {
+                        }
+
+                    })
+                }
 
             }
 
@@ -239,7 +292,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     }
 
 
-    fun uploadImg(id: String, f: File, callback: INetCallback<UpFileEntity>?) {
+    private fun uploadImg(id: String, f: File, callback: INetCallback<UpFileEntity>?) {
         viewModelScope.launch {
             val result = repository.uploadImg(f)
             when (result) {
@@ -260,7 +313,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
         }
     }
 
-    fun uploadFile(f: File, callback: INetCallback<UpFileEntity>?) {
+    private fun uploadFile(f: File, callback: INetCallback<UpFileEntity>?) {
         viewModelScope.launch {
             val result = repository.uploadFile(f)
             when (result) {
@@ -281,8 +334,26 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     }
 
 
-    fun getEmojis() {
+    fun getEmojis(back: INetCallback<String>?) {
+        val code = MMkvTool.getSellerCode()
+        viewModelScope.launch {
+            val result = repository.getEmojis(code)
+            when (result) {
+                is NetResult.Success -> {
+                    val str = result.data
+                    back?.let {
+                        it.onSuccess("")
+                    }
 
+                }
+
+                is NetResult.Error -> {
+                    back?.let {
+                        it.onError(-1, result.exception.message.toString())
+                    }
+                }
+            }
+        }
     }
 
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Spannable
 import android.text.Spanned
 import android.text.style.URLSpan
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -28,8 +29,9 @@ open class EaseChatRowText : EaseChatRow {
     )
 
     override fun onInflateView() {
+        Log.i("symbol-5", "isSender:$isSender")
         inflater.inflate(
-            if (!showSenderType) R.layout.ease_row_received_message else R.layout.ease_row_sent_message,
+            if (isSender) R.layout.ease_row_received_message else R.layout.ease_row_sent_message,
             this
         )
     }
@@ -53,6 +55,7 @@ open class EaseChatRowText : EaseChatRow {
         }
 //            val span: Spannable = EaseSmileUtils.getSmiledText(context, txtBody.getMessage())
     }
+
 
     /**
      * 解决长按事件与relink冲突，参考：https://www.jianshu.com/p/d3bef8449960

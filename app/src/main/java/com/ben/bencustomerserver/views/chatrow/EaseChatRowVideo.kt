@@ -26,7 +26,7 @@ class EaseChatRowVideo : EaseChatRowFile {
 
     protected override fun onInflateView() {
         inflater.inflate(
-            if (!showSenderType) R.layout.ease_row_received_video else R.layout.ease_row_sent_video,
+            if (!isSender) R.layout.ease_row_received_video else R.layout.ease_row_sent_video,
             this
         )
     }

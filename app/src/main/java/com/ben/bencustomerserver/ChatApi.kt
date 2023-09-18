@@ -38,6 +38,11 @@ object ChatApi {
     /**
      * 自动回答
      */
-    const val URL_AUTO_ANSWER = "index/robot/autoAnswer "
+    const val URL_AUTO_ANSWER = "index/robot/autoAnswer"
+
+    /***
+     * 表情列表
+     */
+    const val URL_EMOJI_LIST = "index/api/getEmojiList"
 
 }

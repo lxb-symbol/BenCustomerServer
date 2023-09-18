@@ -23,7 +23,7 @@ class EaseExpressionAdapterDelegate :
     ) : super(itemClickListener)
 
     override fun isForViewType(item: BaseMessageModel?, position: Int): Boolean {
-        return (item?.messageType === MessageType.TXT
+        return (item?.messageType === MessageType.CMD
                 && TextUtils.equals(item.extString, OriginMessageType.EXT_MSG_EXPRESSION))
 
     }

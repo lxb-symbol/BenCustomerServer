@@ -8,6 +8,7 @@ import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import com.ben.bencustomerserver.listener.EMCallBack
+import com.ben.bencustomerserver.listener.INetCallback
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.MessageUtil
 import com.ben.bencustomerserver.utils.EaseCommonUtils
@@ -76,7 +77,8 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
         locationAddress: String?,
         buildingName: String?
     ) {
-        val message  =MessageUtil.generateLocationModel(latitude,longitude,locationAddress,buildingName)
+        val message =
+            MessageUtil.generateLocationModel(latitude, longitude, locationAddress, buildingName)
         sendMessage(message)
     }
 
@@ -126,11 +128,22 @@ class EaseHandleMessagePresenterImpl : EaseHandleMessagePresenter() {
         }
         //symbol  send message 进行网络请求
         message.let {
-            (viewModel as ChatViewModel).sendMessage(it)
+            (viewModel as ChatViewModel).sendMessage(it, object : INetCallback<String> {
+                override fun onSuccess(data: String) {
+                    
+                }
+
+                override fun onError(code: Int, msg: String) {
+                    if (isActive) {
+                        runOnUI { mView!!.sendMessageFail(msg) }
+                    }
+                }
+            })
         }
         if (isActive) {
             runOnUI { mView!!.sendMessageFinish(message) }
         }
+
     }
 
     override fun sendCmdMessage(action: String?) {
