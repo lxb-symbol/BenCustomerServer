@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_fafafa"
+    android:orientation="vertical"
+    android:paddingTop="2dip">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray_normal"
+        android:visibility="invisible" />
+
+
+
+    <LinearLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_52"
+        android:gravity="center_vertical"
+        android:minHeight="52dp"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <ImageView
+            android:id="@+id/btn_set_mode_voice"
+            style="@style/ben_chat_input_button_size"
+            android:layout_marginStart="@dimen/dp_8"
+            android:src="@drawable/ben_chatting_setmode_voice_btn"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/btn_set_mode_keyboard"
+            style="@style/ben_chat_input_button_size"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/ben_chatting_setmode_keyboard_btn"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/btn_press_to_speak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_42"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/ben_chat_press_speak_btn"
+                android:gravity="center"
+                android:minHeight="32dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text="发送语音"
+                android:textColor="#666666"
+                android:textSize="14sp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/edittext_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:visibility="visible">
+
+            <com.ben.bencustomerserver.views.BenInputEditText
+                android:id="@+id/et_sendmessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ben_send_message_et_bg"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:hint="发送消息"
+                android:imeOptions="actionSend"
+                android:maxLines="4"
+                android:minHeight="42dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/color_333333"
+                android:textColorHint="@color/circle_gray_929497"
+                android:textSize="16sp" />
+
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_face"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="6dp"
+            android:layout_marginRight="6dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_face_normal"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:src="@drawable/ben_chatting_biaoqing_btn_normal"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/iv_face_checked"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_centerInParent="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ben_chatting_setmode_keyboard_btn"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+
+        <CheckBox
+            android:id="@+id/btn_more"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/dp_8"
+            android:background="@drawable/ben_type_select_btn"
+            android:button="@null"
+            android:visibility="visible" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/btn_send"
+                android:layout_width="@dimen/dp_42"
+                android:layout_height="30dp"
+                android:layout_marginEnd="@dimen/dp_8"
+                android:background="@drawable/shape_rect_white_radius_10"
+                android:gravity="center"
+                android:text="发送"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

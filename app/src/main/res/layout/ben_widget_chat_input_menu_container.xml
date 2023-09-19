@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chat_menu_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tv_human"
+        android:layout_marginBottom="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:background="@color/color_1ab84e"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/dp_8"
+        android:paddingVertical="4dp"
+        android:text="转人工"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
+    <FrameLayout
+        android:id="@+id/primary_menu_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:id="@+id/extend_menu_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+</LinearLayout>
