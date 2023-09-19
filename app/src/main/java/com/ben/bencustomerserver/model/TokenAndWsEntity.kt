@@ -13,5 +13,6 @@ import java.io.Serializable
 data class TokenAndWsEntity(
     val time:String,
     val token: String,
-    val socket_url: String
+    val socket_url: String,
+    val seller_id:String
 ) : Serializable

@@ -7,6 +7,9 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
+import com.ben.bencustomerserver.connnect.HttpMessageListener
+import com.ben.bencustomerserver.connnect.RecieveMessageManager
+import com.ben.bencustomerserver.connnect.WebSocketMessageListener
 import com.ben.bencustomerserver.listener.INetCallback
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.MessageUtil
@@ -126,7 +129,7 @@ class BenHandleMessagePresenterImpl : BenHandleMessagePresenter() {
         message.let {
             (viewModel as ChatViewModel).sendMessage(it, object : INetCallback<String> {
                 override fun onSuccess(data: String) {
-                    
+
                 }
 
                 override fun onError(code: Int, msg: String) {
@@ -256,6 +259,30 @@ class BenHandleMessagePresenterImpl : BenHandleMessagePresenter() {
 
     override fun removeReaction(message: BaseMessageModel?, reaction: String?) {
 
+    }
+
+    /**
+     * 这里只刷新数据 ，不处理数据
+     */
+    open fun addHttpListener() {
+        RecieveMessageManager.addHttpMessageListener(this.toString(), object : HttpMessageListener {
+
+            override fun receiveBoltMessage(model: BaseMessageModel) {
+                if (isActive) {
+                    mView?.sendMessageFinish(model)
+                }
+            }
+
+        })
+
+        RecieveMessageManager.addSocketMessageListener(this.toString(),
+            object : WebSocketMessageListener {
+                override fun onReceiveMessage(model: BaseMessageModel) {
+                    if (isActive) {
+                        mView?.sendMessageFinish(model)
+                    }
+                }
+            })
     }
 
     companion object {

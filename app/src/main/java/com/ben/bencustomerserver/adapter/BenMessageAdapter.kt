@@ -1,5 +1,6 @@
 package com.ben.bencustomerserver.adapter
 
+import android.util.Log
 import android.view.ViewGroup
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.delegate.BenMessageAdapterDelegate

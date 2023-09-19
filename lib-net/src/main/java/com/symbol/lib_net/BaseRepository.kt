@@ -1,5 +1,6 @@
 package com.symbol.lib_net
 
+import com.symbol.lib_net.exception.ApiResultCode
 import com.symbol.lib_net.exception.DealException
 import com.symbol.lib_net.exception.ResultException
 import com.symbol.lib_net.model.BaseModel
@@ -29,12 +30,12 @@ open class BaseRepository {
         errorBlock: (suspend CoroutineScope.() -> Unit)? = null
     ): NetResult<T> {
         return coroutineScope {
-            if (response.code == -1) {
-                errorBlock?.let { it() }
-                NetResult.Error(ResultException(response.code.toString(), response.msg))
-            } else {
+            if (response.code == 0) {
                 successBlock?.let { it() }
                 NetResult.Success(response.data)
+            } else {
+                errorBlock?.let { it() }
+                NetResult.Error(ResultException(response.code.toString(), response.msg))
             }
         }
     }
@@ -47,7 +48,7 @@ open class BaseRepository {
         return coroutineScope {
             if (response is Unit){
                 errorBlock?.let { it() }
-                NetResult.Error(ResultException("-1","解析出错"))
+                NetResult.Error(ResultException(ApiResultCode.PARSE_ERROR,"解析出错"))
             }else{
                 successBlock?.let { it() }
                 NetResult.Success(response)

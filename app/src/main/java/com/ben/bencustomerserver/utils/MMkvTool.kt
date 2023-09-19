@@ -22,7 +22,11 @@ object MMkvTool {
     fun putSellerId(id: String) = MMKV.defaultMMKV().putString(Constants.KEY_SELLER_ID, id)
 
 
-    fun getSellerId() = MMKV.defaultMMKV().getString(Constants.KEY_SELLER_ID, "")
+    /**
+     * TODO 测试用
+     * MMKV.defaultMMKV().getString(Constants.KEY_SELLER_ID, "-1")
+     */
+    fun getSellerId() = 1
 
     fun putSellerCode(code: String) {
         MMKV.defaultMMKV().putString(Constants.KEY_SELLER_CODE, code)

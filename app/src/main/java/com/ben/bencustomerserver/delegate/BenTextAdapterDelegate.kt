@@ -1,5 +1,6 @@
 package com.ben.bencustomerserver.delegate
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.ben.bencustomerserver.listener.MessageListItemClickListener
@@ -25,6 +26,7 @@ class BenTextAdapterDelegate :
     }
 
     override fun getBenChatRow(parent: ViewGroup?, isSender: Boolean): BenChatRow {
+        Log.i("symbol--> 10 :","isSender :$isSender")
         return BenChatRowText(parent!!.context, isSender)
     }
 

@@ -1,6 +1,7 @@
 package com.ben.bencustomerserver.listener
 
 import android.view.View
+import com.ben.bencustomerserver.model.BaseMessageModel
 
 /**
  * 用于监听[com.hyphenate.easeui.modules.chat.BenChatLayout]中的变化
@@ -53,7 +54,7 @@ interface OnChatLayoutListener {
      * 发送消息成功后的回调
      * @param message
      */
-//    fun onChatSuccess(message: BaseMessageModel?) {}
+    fun onChatSuccess(message: BaseMessageModel?) {}
 
     /**
      * 聊天中错误信息

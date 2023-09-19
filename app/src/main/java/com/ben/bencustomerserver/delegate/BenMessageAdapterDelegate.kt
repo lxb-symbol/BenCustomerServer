@@ -1,6 +1,7 @@
 package com.ben.bencustomerserver.delegate
 
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.ben.bencustomerserver.adapter.BenAdapterDelegate
@@ -28,6 +29,9 @@ abstract class BenMessageAdapterDelegate<T, VH : BenChatRowViewHolder?>() :
     }
 
     private fun isSender(tag: String?): Boolean {
+
+        Log.i("symbol-->10 :", "tag :$tag")
+
         return !TextUtils.isEmpty(tag) && TextUtils.equals(tag, Direct.SEND.toString())
     }
 

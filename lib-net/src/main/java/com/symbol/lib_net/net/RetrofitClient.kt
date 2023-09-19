@@ -12,9 +12,10 @@ import java.util.concurrent.TimeUnit
  class RetrofitClient private constructor() {
 
     private var retrofit: Retrofit
-    private val BASE_URL="https://kf.saizhuge.com"
 
     companion object {
+         const val BASE_URL="https://kf.saizhuge.com"
+
         val instance: RetrofitClient by lazy { RetrofitClient() }
     }
 

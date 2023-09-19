@@ -16,20 +16,20 @@ import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.model.MessageType
 import com.ben.bencustomerserver.model.MessageUtil
 import com.ben.bencustomerserver.model.NetMessageBean
-import com.ben.bencustomerserver.model.NetMessageBeanOut
 import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.model.TokenAndWsEntity
 import com.ben.bencustomerserver.model.UpFileEntity
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.symbol.lib_net.exception.ResultException
 import com.symbol.lib_net.model.NetResult
 import kotlinx.coroutines.launch
 import java.io.File
 
 class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
-    private val _messages = MutableLiveData<NetMessageBeanOut>()
+    private val _messages = MutableLiveData<List<NetMessageBean>>()
 
     private val _tokenAndWs = MutableLiveData<TokenAndWsEntity>()
 
@@ -89,7 +89,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
      *      * t：当前时间戳
      *      * u：商家code
      */
-    fun chatMessages(page: Int): MutableLiveData<NetMessageBeanOut> {
+    fun chatMessages(page: Int): MutableLiveData<List<NetMessageBean>> {
         val map = HashMap<String, String>()
         map["uid"] = "${MMkvTool.getUserId()}"
         map["page"] = "$page"
@@ -101,9 +101,9 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
             when (val result = repository.getMessageList(map)) {
                 is NetResult.Success -> {
                     _messages.postValue(result.data)
-                    _messages.value?.data.let {
-                        Log.e("symbol-3", " 历史消息条数： ${it?.size}")
-                        it?.let { tmp ->
+                    _messages.value?.let {
+                        Log.e("symbol-3", " 历史消息条数： ${it.size}")
+                        it.let { tmp ->
                             coverNetMessageToBaseViewModel(tmp)
                         }
                     }
@@ -147,6 +147,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         MMkvTool.putTime(it.time)
                         MMkvTool.putToken(it.token)
                         MMkvTool.putWsURL(it.socket_url)
+                        MMkvTool.putSellerId(it.seller_id)
                     }
 
                 }
@@ -173,6 +174,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                     WsManager.mWebSocket?.let {
                         val str = MessageUtil.generateWsMessageTxt(msg)
                         it.send(str)
+                        msg.status = MessageStatus.SUCCESS
                         RecieveMessageManager.msgs.add(msg)
                     }
                 } else {
@@ -183,13 +185,16 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             callback?.let {
                                 it.onSuccess("")
                             }
-
                         }
 
                         override fun onError(code: Int, msg: String) {
                             Log.i("symbol--4", "$msg")
                             callback?.let {
                                 it.onError(code, msg)
+                            }
+
+                            if (code == -3|| code==-1) {// 来自机器人的回复,取 msg 的值
+                                RecieveMessageManager.addBoltResponseData(msg, MessageType.TXT, "")
                             }
                         }
 
@@ -245,7 +250,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         }
 
                         override fun onError(code: Int, errorMsg: String) {
-                            msg.status=MessageStatus.FAIL
+                            msg.status = MessageStatus.FAIL
                             RecieveMessageManager.msgs.add(msg)
 
                         }
@@ -381,7 +386,6 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
             val result = repository.getEmojis(code)
             when (result) {
                 is NetResult.Success -> {
-                    val str = result.data
                     back?.let {
                         it.onSuccess("")
                     }
@@ -404,10 +408,11 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     fun queryBolt(content: String, back: INetCallback<String>?) {
         val map = HashMap<String, String>()
         map["q"] = "" + content
-        map["seller_id"] = "" + MMkvTool.getSellerCode()
+        map["seller_id"] = "" + MMkvTool.getSellerId()
         map["from_id"] = "" + MMkvTool.getUserId()
         map["from_name"] = "" + MMkvTool.getUserName()
         map["from_avatar"] = "" + MMkvTool.getUserAvatar()
+        map["seller_code"] = "" + MMkvTool.getSellerCode()
 
         viewModelScope.launch {
             val result = repository.queryBolt(map)
@@ -417,14 +422,13 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                     back?.let {
                         it.onSuccess(str)
                     }
-
                 }
 
                 is NetResult.Error -> {
                     back?.let {
-                        it.onError(-1, result.exception.message.toString())
+                        val code = (result.exception as ResultException).errCode ?: "-1"
+                        it.onError(code.toInt(), result.exception.message.toString())
                     }
-
                 }
             }
         }

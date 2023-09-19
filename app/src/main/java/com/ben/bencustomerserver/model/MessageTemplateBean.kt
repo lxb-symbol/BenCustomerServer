@@ -9,5 +9,5 @@ data class MessageTemplateBean(
     val seller_code: String,
     val to_id: String,
     val to_name: String
-)
+):SocketBean
 

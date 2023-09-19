@@ -5,7 +5,6 @@ import android.net.Network
 import android.util.Log
 import com.ben.bencustomerserver.model.MessageUtil
 import com.google.gson.GsonBuilder
-import com.google.gson.internal.GsonBuildConfig
 import com.nofish.websocket.NetworkStatusMonitor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +18,8 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
+import java.util.Timer
+import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
@@ -28,6 +29,9 @@ var wsURL: String = ""
 object WsManager : CoroutineScope by MainScope() {
 
 
+    val pingTimer by lazy {
+        Timer()
+    }
 
     val TAG = "symbol-WsManager"
     private val wsHttpClient by lazy {
@@ -118,8 +122,8 @@ object WsManager : CoroutineScope by MainScope() {
     }
 
     private fun connect() {
-        if (mWebSocket!=null ){
-            if (connectionStatus!= ConnectionStatus.CONNECTED){
+        if (mWebSocket != null) {
+            if (connectionStatus != ConnectionStatus.CONNECTED) {
                 reconnect()
             }
             return
@@ -133,27 +137,40 @@ object WsManager : CoroutineScope by MainScope() {
                 // WebSocket 连接建立
                 val str = GsonBuilder().create().toJson(MessageUtil.createTestMsg())
                 mWebSocket?.send(str)
+                pingTimer.scheduleAtFixedRate(object : TimerTask() {
+                    override fun run() {
+                        mWebSocket?.let {
+                            it.send(MessageUtil.generatePing())
+//                            Log.i(TAG, "ping is send")
+                        }
+                    }
+                }, 0, 1000) // 5000 毫秒 = 5 秒
+
             }
+
 
             override fun onMessage(webSocket: WebSocket, text: String) {
                 super.onMessage(webSocket, text)
                 Log.e(TAG, "openWs onMessage 字符型 :  $text")
                 // 收到服务端发送来的 String 类型消息
-                RecieveMessageManager.parseMessageContentFromSocket(text)
+                try {
+                    RecieveMessageManager.parseMessageContentFromSocket(text)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
 
             }
 
             override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                 super.onMessage(webSocket, bytes)
                 // 收到服务端发送来的 ByteString 类型消息,项目中未走此函数
-
-                Log.e(TAG, "openWs onMessage bytes 字节型:  $bytes")
             }
 
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
                 super.onClosing(webSocket, code, reason)
                 Log.e(TAG, "openWs onClosing")
                 mWebSocket = null
+                pingTimer.cancel()
                 // 收到服务端发来的 CLOSE 帧消息，准备关闭连接
             }
 
@@ -162,7 +179,7 @@ object WsManager : CoroutineScope by MainScope() {
                 Log.e(TAG, "openWs onClosed")
                 mWebSocket = null
                 // WebSocket 连接关闭
-
+                pingTimer.cancel()
                 if (code != 1000) {
                     reconnect()
                 }
@@ -170,7 +187,9 @@ object WsManager : CoroutineScope by MainScope() {
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 super.onFailure(webSocket, t, response)
-                Log.e(TAG, "Ws连接失败: "+response?.message)
+                Log.e(TAG, "Ws连接失败 --1: " + response?.message)
+                Log.e(TAG, "Ws连接失败--2: " + t.message)
+                Log.e(TAG, "Ws连接失败--3: $t")
                 mWebSocket = null
                 // 出错了
                 reconnect()

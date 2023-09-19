@@ -101,7 +101,7 @@ abstract class BenChatRow : LinearLayout {
      * normal along with [.isSender]
      *  本 app 中弃用
      */
-    private  var showSenderType = false
+    private var showSenderType = false
 
     /**
      * chat message callback
@@ -146,7 +146,7 @@ abstract class BenChatRow : LinearLayout {
 //        addThreadView()
         timeStampView = findViewById<View>(R.id.timestamp) as TextView?
         userAvatarView = findViewById<View>(R.id.iv_userhead) as ImageView?
-        bubbleLayout = findViewById<View>(R.id.bubble) as View?
+        bubbleLayout = findViewById<View>(R.id.bubble)
         usernickView = findViewById<View>(R.id.tv_userid) as TextView?
         progressBar = findViewById<View>(R.id.progress_bar) as ProgressBar?
         statusView = findViewById<View>(R.id.msg_status) as ImageView?
@@ -436,32 +436,20 @@ abstract class BenChatRow : LinearLayout {
      * set avatar and nickname
      */
     protected fun setAvatarAndNick() {
-        if (isSender) {
-            ImageLoaderUtils.load(context, userAvatarView, MMkvTool.getUserAvatar())
-        } else {
-            if (!MMkvTool.getIsHuman()) {
-                ImageLoaderUtils.load(context, userAvatarView, R.drawable.icon_head_bolt)
+        Log.i("symbol-7", "sendAvatarAndNick isSender: $isSender")
+        if (!MMkvTool.getIsHuman()) {// 机器人聊天
+            if (isSender) {// 发送方
+                ImageLoaderUtils.load(context, userAvatarView, message?.from_avatar)
             } else {
-                ImageLoaderUtils.load(context, userAvatarView, MMkvTool.getKFAvatar())
+                ImageLoaderUtils.load(context, userAvatarView, R.drawable.icon_head_bolt)
+            }
+        } else {
+            if (isSender) {
+                ImageLoaderUtils.load(context, userAvatarView, message?.from_avatar)
+            } else {
+                ImageLoaderUtils.load(context, userAvatarView, message?.to_avatar)
             }
         }
-
-//        if (isSender) {
-//            BenUserUtils.setUserAvatar(
-//                context,
-//                EMClient.getInstance().getCurrentUser(),
-//                userAvatarView
-//            )
-//            //只要不是常规布局形式，就展示昵称
-//            if (BenChatItemStyleHelper.getInstance().getStyle(context)
-//                    .getItemShowType() !== BenChatMessageListLayout.ShowType.NORMAL.ordinal()
-//            ) {
-//                BenUserUtils.setUserNick(message.getFrom(), usernickView)
-//            }
-//        } else {
-//            BenUserUtils.setUserAvatar(context, message.getFrom(), userAvatarView)
-//            BenUserUtils.setUserNick(message.getFrom(), usernickView)
-//        }
     }
 
     /**

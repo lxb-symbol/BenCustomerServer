@@ -33,6 +33,11 @@ object OriginMessageType {
      */
     const val EXT_MSG_EXPRESSION = "isExpression"
 
+    /**
+     * 返回 -3
+     */
+    const val EXT_MSG_ZERO_3 = "ZERO_3"
+
     const val TAG_FACE = "face["
     const val TAG_VIDEO = "video("
     const val TAG_FILE = "file("

@@ -26,10 +26,8 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         mViewModel.saveUserId("symbol-8374782")
         mViewModel.saveUserName("symbol2023")
         mViewModel.saveUserAvatar("https://symbol-file.oss-cn-beijing.aliyuncs.com/b1aa0c85f414485bc77a122592eea150.jpg")
-        mViewModel.saveSellerCode("64fac81815246")
-
-
-
+        mViewModel.saveSellerCode("5c6cbcb7d55ca")
+        MMkvTool.putIsHuman(false)
         mViewModel.getTokenAndWsResul().observe(this) {
             Log.e("symbol:", "${it.token}   <---> ${it.socket_url}")
             wsURL = it.socket_url

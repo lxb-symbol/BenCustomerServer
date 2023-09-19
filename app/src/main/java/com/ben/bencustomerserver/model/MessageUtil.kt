@@ -335,5 +335,10 @@ object MessageUtil {
 
     }
 
+    fun generatePing():String{
+        val ping =PingMessage()
+        return GsonBuilder().create().toJson(ping)
+    }
+
 
 }

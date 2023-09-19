@@ -106,6 +106,7 @@ class ChatLayout @JvmOverloads constructor(
         voiceRecordView = mViewBinding.voiceRecorder
         presenter = BenHandleMessagePresenterImpl()
         presenter.attachView(this)
+        (presenter as BenHandleMessagePresenterImpl).addHttpListener()
         mViewBinding.chatMessageListLayout.setOnMessageTouchListener(this)
         initTypingHandler()
         chatInputMenu.switchHumanListener = this
@@ -378,39 +379,33 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun onPresenterMessageSuccess(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
+        listener?.onChatSuccess(message)
     }
 
     override fun onPresenterMessageError(message: BaseMessageModel?, code: Int, error: String?) {
-        TODO("Not yet implemented")
+        listener?.onChatError(code, error)
     }
 
     override fun onPresenterMessageInProgress(message: BaseMessageModel?, progress: Int) {
-        TODO("Not yet implemented")
+        Log.i("symbol-6", "onPresenterMessageInProgress")
     }
 
     override fun translateMessageSuccess(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
     }
 
     override fun translateMessageFail(message: BaseMessageModel?, code: Int, error: String?) {
-        TODO("Not yet implemented")
     }
 
     override fun addReactionMessageSuccess(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
     }
 
     override fun addReactionMessageFail(message: BaseMessageModel?, code: Int, error: String?) {
-        TODO("Not yet implemented")
     }
 
     override fun removeReactionMessageSuccess(message: BaseMessageModel?) {
-        TODO("Not yet implemented")
     }
 
     override fun removeReactionMessageFail(message: BaseMessageModel?, code: Int, error: String?) {
-        TODO("Not yet implemented")
     }
 
     override fun context(): Context? {

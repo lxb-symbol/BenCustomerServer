@@ -99,7 +99,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
             return
         }
 
-        if (itemId== R.id.extend_item_file) {
+        if (itemId == R.id.extend_item_file) {
             XXPermissions.with(requireContext())
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
@@ -147,10 +147,10 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     protected open fun selectVideoFromLocal() {
 
-        PictureSelectUtil.get().selectVideos(requireContext(), object : ResultListener {
+        PictureSelectUtil.get().selectVideos(requireContext(),1, object : ResultListener {
             override fun onResult(medias: MutableList<LocalMedia>?) {
                 medias?.let {
-                    val uri = Uri.parse(it[0].path)
+                    val uri = Uri.parse(it[0].availablePath)
                     val mediaPlayer = MediaPlayer()
                     try {
                         mediaPlayer.setDataSource(requireContext(), uri!!)
@@ -176,7 +176,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
      * select local image
      */
     private fun selectPicFromLocal() {
-        PictureSelectUtil.get().selectImages(requireContext(), object : ResultListener {
+        PictureSelectUtil.get().selectImages(requireContext(),1, object : ResultListener {
             override fun onResult(medias: MutableList<LocalMedia>?) {
                 medias?.let {
                     mViewBinding.cl.sendImageMessage(Uri.parse(it[0].availablePath))
@@ -218,48 +218,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         }
     }
 
-    private fun onActivityResultForLocalVideos(data: Intent?) {
-        val uri = data?.data
-        val mediaPlayer = MediaPlayer()
-        try {
-            mediaPlayer.setDataSource(requireContext(), uri!!)
-            mediaPlayer.prepare()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        val duration = mediaPlayer.duration
-        Log.d(
-            "ChatFragment",
-            "path = " + uri!!.path + ",duration=" + duration
-        )
-        mViewBinding.cl.sendVideoMessage(uri, duration)
-    }
-
-    private fun onActivityResultForLocalPhotos(data: Intent?) {
-        val selectedImage = data?.data
-        selectedImage?.let {
-            val filePath: String = BenFileUtils.getFilePath(context, it)
-            if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
-                mViewBinding.cl.sendImageMessage(Uri.parse(filePath))
-
-            } else {
-                BenFileUtils.saveUriPermission(context, it, data)
-                mViewBinding.cl.sendImageMessage(it)
-
-            }
-        }
-
-    }
-
-
-    private fun onActivityResultForCamera(data: Intent?) {
-        cameraFile?.let {
-            mViewBinding.cl.sendImageMessage(Uri.parse(it.absolutePath))
-        }
-
-
-    }
-
 
     /**
      * select picture from camera
@@ -274,22 +232,9 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
             }
 
             override fun onCancel() {
-
             }
         })
 
-//        cameraFile = File(
-//            PathUtil.instance?.imagePath, (System.currentTimeMillis()).toString() + ".jpg"
-//        )
-//        cameraFile?.parentFile?.mkdirs()
-//        startActivityForResult(
-//            Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
-//                MediaStore.EXTRA_OUTPUT, BenCompat.getUriForFile(
-//                    context, cameraFile!!
-//                )
-//            ),
-//            REQUEST_CODE_CAMERA
-//        )
     }
 
     override fun onRecordTouch(v: View?, event: MotionEvent?): Boolean {
