@@ -83,7 +83,7 @@ class BenVoiceViewHolder(itemView: View, itemClickListener: MessageListItemClick
         val netPath = inMsg.netPath
 
         val filePath =itemView.context.externalCacheDir?.path
-        val name = "${netPath.hashCode()}.mp3"
+        val name = "${netPath.hashCode()}.amr"
         MainScope().launch {
             val b =   HttpUtils.downFile(itemView.context,netPath?:"",filePath?:"",name)
             Log.i("symbol-5","b-->$b")

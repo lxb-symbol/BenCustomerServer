@@ -147,9 +147,10 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     protected open fun selectVideoFromLocal() {
 
-        PictureSelectUtil.get().selectVideos(requireContext(),1, object : ResultListener {
+        PictureSelectUtil.get().selectVideos(requireContext(), 1, object : ResultListener {
             override fun onResult(medias: MutableList<LocalMedia>?) {
                 medias?.let {
+                    if (it.size == 0 || it.isEmpty()) return
                     val uri = Uri.parse(it[0].availablePath)
                     val mediaPlayer = MediaPlayer()
                     try {
@@ -159,7 +160,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
                         e.printStackTrace()
                     }
                     val duration = mediaPlayer.duration
-                    Log.d("ChatFragment", "path = " + uri!!.path + ",duration=" + duration)
+                    Log.d("ChatFragment", "vide opath = " + uri!!.path + ",duration=" + duration)
                     mViewBinding.cl.sendVideoMessage(uri, duration)
                 }
             }
@@ -176,7 +177,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
      * select local image
      */
     private fun selectPicFromLocal() {
-        PictureSelectUtil.get().selectImages(requireContext(),1, object : ResultListener {
+        PictureSelectUtil.get().selectImages(requireContext(), 1, object : ResultListener {
             override fun onResult(medias: MutableList<LocalMedia>?) {
                 medias?.let {
                     mViewBinding.cl.sendImageMessage(Uri.parse(it[0].availablePath))

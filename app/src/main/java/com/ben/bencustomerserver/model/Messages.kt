@@ -38,12 +38,12 @@ data class LocationMessage(
  * video(\/uploads\/20230909\/3efac0e1c49f82d0d33e037e0c920ed3.mp4)[3efac0e1c49f82d0d33e037e0c920ed3.mp4]
  */
 data class VideoMessage(
-    val localPath: String? = null,
-    val netPath: String? = null,
-    val name: String? = null,
-    val localCover: String? = null,
-    val netConver: String? = null,
-    val length:Int ?=0
+    var localPath: String? = null,
+    var netPath: String? = null,
+    var name: String? = null,
+    var localCover: String? = null,
+    var netConver: String? = null,
+    var length:Int ?=0
 ) : IMessageModel
 
 

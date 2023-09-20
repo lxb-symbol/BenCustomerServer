@@ -4,7 +4,9 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
+import android.net.Uri
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.VoiceMessage
 import java.io.IOException
 
 /**
@@ -34,26 +36,21 @@ class BenChatRowVoicePlayer private constructor(cxt: Context) {
         get() = player.isPlaying
 
     fun play(msg: BaseMessageModel, listener: OnCompletionListener?) {
-        TODO("2023-9-1 留下的注释")
-//        if (msg.getBody() !is EMVoiceMessageBody) return
-
+        val voiceMessage =msg.innerMessage as VoiceMessage
         if (player.isPlaying) {
             stop()
         }
-//        currentPlayingId = msg.getMsgId()
+        currentPlayingId = msg.msgId
         onCompletionListener = listener
         try {
             setSpeaker()
-            //            EMVoiceMessageBody voiceBody = (EMVoiceMessageBody) msg.getBody();
-//            player.setDataSource(baseContext, voiceBody.getLocalUri())
+            player.setDataSource(baseContext,Uri.parse(voiceMessage.localPath))
             player.prepare()
-            player.setOnCompletionListener(object : OnCompletionListener {
-                override fun onCompletion(mp: MediaPlayer) {
-                    stop()
-                    currentPlayingId = null
-                    onCompletionListener = null
-                }
-            })
+            player.setOnCompletionListener {
+                stop()
+                currentPlayingId = null
+                onCompletionListener = null
+            }
             player.start()
         } catch (e: IOException) {
             e.printStackTrace()

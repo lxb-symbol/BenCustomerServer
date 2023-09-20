@@ -83,8 +83,7 @@ class BenHandleMessagePresenterImpl : BenHandleMessagePresenter() {
     }
 
     override fun sendVideoMessage(videoUri: Uri?, videoLength: Int) {
-        val thumbPath = getThumbPath(videoUri)
-        val message = MessageUtil.generateVideoModel(videoUri, videoLength, thumbPath)
+        val message = MessageUtil.generateVideoModel(videoUri, videoLength, "")
         sendMessage(message)
     }
 

@@ -30,8 +30,6 @@ abstract class BenMessageAdapterDelegate<T, VH : BenChatRowViewHolder?>() :
 
     private fun isSender(tag: String?): Boolean {
 
-        // symbol-todo 关键此处有 bug
-        Log.i("symbol-->10 :", "symbol--tag----> :$tag}")
 
         return !TextUtils.isEmpty(tag) && TextUtils.equals(tag, Direct.SEND.toString())
     }

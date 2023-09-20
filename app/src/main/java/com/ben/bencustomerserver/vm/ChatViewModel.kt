@@ -1,5 +1,6 @@
 package com.ben.bencustomerserver.vm
 
+import android.provider.MediaStore.Video
 import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +20,7 @@ import com.ben.bencustomerserver.model.NetMessageBean
 import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.model.TokenAndWsEntity
 import com.ben.bencustomerserver.model.UpFileEntity
+import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
@@ -302,6 +304,48 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                     })
                 }
 
+            }
+
+            MessageType.VIDEO->{
+                if (isHuman) {// 人工都是 socket
+                    val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
+                    val localPath = innerMsg.localPath
+                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            (msg.innerMessage as VideoMessage).netPath = data.src
+
+                            WsManager.mWebSocket?.let {
+                                var str = MessageUtil.generateWsMessageVideo(msg)
+                                it.send(str)
+                                RecieveMessageManager.msgs.add(msg)
+                            }
+                        }
+
+                        override fun onError(code: Int, msg: String) {
+                            Log.e("symbol-4", "-->$msg")
+                        }
+                    })
+                } else {
+                    val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
+                    val localPath = innerMsg.localPath
+                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            (msg.innerMessage as VideoMessage).netPath = data.src
+
+                            //TODO 缺少接口
+                            RecieveMessageManager.msgs.add(msg)
+                        }
+
+                        override fun onError(code: Int, msg: String) {
+                            Log.e("symbol-4", "-->$msg")
+                        }
+
+                    })
+                }
             }
 
             MessageType.FILE -> {
