@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BenCustomerServer</string>
+    <string name="app_name">客服</string>
 
     <string name="attach_smile">Emojis</string>
     <string name="attach_picture">相册</string>
