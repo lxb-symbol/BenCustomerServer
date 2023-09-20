@@ -2,6 +2,7 @@ package com.ben.bencustomerserver.views.chatrow
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.text.TextUtils
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,6 +11,9 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.utils.BenImageUtils
 import com.ben.lib_picture_selector.ImageLoaderUtils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.symbol.lib_net.net.RetrofitClient
 
 class BenChatRowVideo : BenChatRowFile {
     private var imageView: ImageView? = null
@@ -52,7 +56,18 @@ class BenChatRowVideo : BenChatRowFile {
 
         val innerMessage = message?.innerMessage as VideoMessage
         val localCover = innerMessage.localCover
-        ImageLoaderUtils.load(context, imageView, localCover)
+        if(!TextUtils.isEmpty(localCover)){
+            ImageLoaderUtils.load(context, imageView, localCover)
+        }else{
+            val netPath =RetrofitClient.BASE_URL+ innerMessage?.netPath
+            imageView?.let {
+                Glide.with(context).load(netPath)
+                    .apply(RequestOptions
+                        .centerCropTransform().frame(1000))
+                    .into(it)
+            }
+
+        }
 
     }
 

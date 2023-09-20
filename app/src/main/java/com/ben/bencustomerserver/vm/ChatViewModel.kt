@@ -47,8 +47,11 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
      */
     private val _finalMessages = MutableLiveData<List<BaseMessageModel>>()
 
+    private val _isHumanTalk =MutableLiveData<Boolean>()
 
     fun getErrorUpId() = _errorUp
+
+    fun getHumanTak() = _isHumanTalk
 
     fun saveUserId(id: String) {
         MMkvTool.putUserId(id)

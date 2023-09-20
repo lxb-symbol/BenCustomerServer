@@ -19,9 +19,11 @@ import com.ben.bencustomerserver.model.TextMessage
 import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.ben.bencustomerserver.vm.ChatViewModel
 import com.google.gson.GsonBuilder
 import com.symbol.lib_net.net.RetrofitClient
 import org.json.JSONObject
+import java.lang.ref.WeakReference
 
 
 /***
@@ -29,6 +31,8 @@ import org.json.JSONObject
  * 然后把处理过的数据存放到此处
  */
 object RecieveMessageManager {
+
+    var vm:WeakReference<ChatViewModel>?=null
 
     const val TAG = "symbol-RecieveMessageManager:"
 
@@ -58,6 +62,10 @@ object RecieveMessageManager {
             when (obj.optString("cmd")) {
                 OriginMessageType.TYPE_USER_INIT -> {
                     MMkvTool.putIsHuman(false)
+                    vm.let {
+                        it?.get()?.getHumanTak()?.postValue(false)
+                    }
+
                 }
             }
             return
@@ -77,6 +85,9 @@ object RecieveMessageManager {
                     MMkvTool.putKFAvatar(initData.kefu_avatar ?: "")
                     MMkvTool.putSellerId(initData.seller_id ?: "")
                     MMkvTool.putIsHuman(true)
+                    vm.let {
+                        it?.get()?.getHumanTak()?.postValue(true)
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -88,6 +99,9 @@ object RecieveMessageManager {
 
             OriginMessageType.TYPE_IS_CLOSE -> {// 关闭
                 MMkvTool.putIsHuman(false)
+                vm.let {
+                    it?.get()?.getHumanTak()?.postValue(false)
+                }
             }
 
             OriginMessageType.TYPE_HELLO -> {// 欢迎语

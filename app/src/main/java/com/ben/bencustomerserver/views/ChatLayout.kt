@@ -29,6 +29,7 @@ import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.presenter.BenHandleMessagePresenter
 import com.ben.bencustomerserver.presenter.BenHandleMessagePresenterImpl
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.ben.bencustomerserver.vm.ChatViewModel
 
 /**
  * 聊天的布局
@@ -455,6 +456,11 @@ class ChatLayout @JvmOverloads constructor(
 
     override fun switch(isHume: Boolean) {
         MMkvTool.putIsHuman(isHume)
+
+        presenter.viewModel?.let {
+            val mv = it as ChatViewModel
+            mv.getHumanTak().postValue(isHume)
+        }
         if (!isHume) {// 转人工的信息
             presenter.sendSwitchHumeMessage()
         }
