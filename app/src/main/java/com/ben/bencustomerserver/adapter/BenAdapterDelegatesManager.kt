@@ -1,6 +1,7 @@
 package com.ben.bencustomerserver.adapter
 
 import android.text.TextUtils
+import android.util.Log
 import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -72,6 +73,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
     fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BenBaseRecyclerViewAdapter.ViewHolder<*> {
         val delegate = getDelegate(viewType)
             ?: throw NullPointerException("No BenAdapterDelegate added for ViewType $viewType")
+
         val tag = getTagByViewType(viewType)
         return delegate.onCreateViewHolder(parent, tag)
     }
@@ -171,6 +173,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
     }
 
     private fun getTagByViewType(viewType: Int): String? {
+        //最关键 为什么一直返回 receive symbol-todo 有时候 tag 获取是空
         return if (dataTypeWithTags.containsKey(viewType)) {
             val typeWithTag = dataTypeWithTags[viewType]
             if (TextUtils.isEmpty(typeWithTag)) {
@@ -178,7 +181,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
             }
             if (!typeWithTag!!.contains(":")) {
                 typeWithTag
-            } else typeWithTag.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+            } else typeWithTag.split(":".toRegex())[1]
         } else {
             val index =
                 if (hasConsistItemType) viewType - fallbackDelegate!!.itemViewType else viewType - delegates.size()

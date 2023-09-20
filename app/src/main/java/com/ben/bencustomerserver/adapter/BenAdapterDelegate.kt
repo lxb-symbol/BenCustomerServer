@@ -1,5 +1,6 @@
 package com.ben.bencustomerserver.adapter
 
+import android.text.TextUtils
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
@@ -19,9 +20,22 @@ import androidx.recyclerview.widget.RecyclerView
  * @param <T>
  * @param <VH>
 </VH></T> */
-abstract class BenAdapterDelegate<T, VH : RecyclerView.ViewHolder?>() : Cloneable {
+abstract class BenAdapterDelegate<T, VH : RecyclerView.ViewHolder?> : Cloneable {
     open var tag = DEFAULT_TAG
     open var tags: MutableList<String> = ArrayList()
+
+
+    constructor(){
+        if (!TextUtils.isEmpty(tag)) {
+            tags.add(tag)
+        }
+    }
+
+    constructor(tag: String) {
+        if (!TextUtils.isEmpty(tag)) {
+            tags.add(tag)
+        }
+    }
 
 
     open fun isForViewType(item: T, position: Int): Boolean {
@@ -57,7 +71,6 @@ abstract class BenAdapterDelegate<T, VH : RecyclerView.ViewHolder?>() : Cloneabl
     fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {}
     val itemViewType: Int
         get() = 0
-
 
 
     @Throws(CloneNotSupportedException::class)

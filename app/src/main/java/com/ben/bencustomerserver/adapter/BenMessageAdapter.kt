@@ -69,6 +69,7 @@ class BenMessageAdapter : BenBaseDelegateAdapter<BaseMessageModel>() {
             e.printStackTrace()
         }
         delegate?.tag = (Direct.SEND.name)
+        delegate?.tags?.add(Direct.SEND.name)
         //设置点击事件
         if (delegate is BenMessageAdapterDelegate<*, *>) {
             delegate.setListItemClickListener(itemClickListener)
@@ -82,7 +83,7 @@ class BenMessageAdapter : BenBaseDelegateAdapter<BaseMessageModel>() {
      * @return
      */
     private fun getItemMessage(position: Int): BaseMessageModel? {
-        return if (mData != null && !mData!!.isEmpty()) {
+        return if (mData != null && mData!!.isNotEmpty()) {
             mData!![position]
         } else null
     }

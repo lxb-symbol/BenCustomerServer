@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.TextMessage
 
 open class BenChatRowText : BenChatRow {
@@ -29,9 +30,8 @@ open class BenChatRowText : BenChatRow {
     )
 
     override fun onInflateView() {
-        Log.i("symbol-5", "isSender:$isSender")
         inflater.inflate(
-            if (isSender) R.layout.ben_row_received_message else R.layout.ben_row_sent_message,
+            if (!isSender) R.layout.ben_row_received_message else R.layout.ben_row_sent_message,
             this
         )
     }

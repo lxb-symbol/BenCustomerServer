@@ -16,8 +16,6 @@ abstract class BenBaseDelegateAdapter<T : Any> : BenBaseRecyclerViewAdapter<T> {
 
     open fun addDelegate(delegate: BenAdapterDelegate<*, *>): BenBaseDelegateAdapter<*> {
         delegatesManager.addDelegate(delegate, delegate.tag)
-        delegate.tags.add(delegate.tag)
-
         notifyDataSetChanged()
         return this
     }
@@ -90,7 +88,7 @@ abstract class BenBaseDelegateAdapter<T : Any> : BenBaseRecyclerViewAdapter<T> {
         if (mData == null || mData!!.isEmpty()) {
             return
         }
-        if (!delegatesManager.allDelegates.isEmpty()) {
+        if (delegatesManager.allDelegates.isNotEmpty()) {
             delegatesManager.onBindViewHolder(holder, position, payloads, getItem(position))
         }
     }

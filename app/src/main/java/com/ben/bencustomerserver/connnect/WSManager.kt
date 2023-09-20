@@ -136,6 +136,7 @@ object WsManager : CoroutineScope by MainScope() {
                 connectionStatus = ConnectionStatus.CONNECTED
                 // WebSocket 连接建立
                 val str = GsonBuilder().create().toJson(MessageUtil.createTestMsg())
+                Log.i("---->",""+str)
                 mWebSocket?.send(str)
                 pingTimer.scheduleAtFixedRate(object : TimerTask() {
                     override fun run() {
