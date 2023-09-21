@@ -1,6 +1,5 @@
 package com.ben.bencustomerserver.vm
 
-import android.provider.MediaStore.Video
 import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -47,7 +46,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
      */
     private val _finalMessages = MutableLiveData<List<BaseMessageModel>>()
 
-    private val _isHumanTalk =MutableLiveData<Boolean>()
+    private val _isHumanTalk = MutableLiveData<Boolean>()
 
     fun getErrorUpId() = _errorUp
 
@@ -181,8 +180,12 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         it.send(str)
                         msg.status = MessageStatus.SUCCESS
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.let {
+                            it.onSuccess("")
+                        }
                     }
                 } else {
+                    msg.status = MessageStatus.SUCCESS
                     RecieveMessageManager.msgs.add(msg)
                     queryBolt(msg.content, object : INetCallback<String> {
                         override fun onSuccess(data: String) {
@@ -198,13 +201,11 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                                 it.onError(code, msg)
                             }
 
-                            if (code == -3|| code==-1) {// 来自机器人的回复,取 msg 的值
+                            if (code == -3 || code == -1) {// 来自机器人的回复,取 msg 的值
                                 RecieveMessageManager.addBoltResponseData(msg, MessageType.TXT, "")
                             }
                         }
-
                     })
-
 
                 }
             }
@@ -232,6 +233,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             WsManager.mWebSocket?.let {
                                 var str = MessageUtil.generateWsMessageImage(msg)
                                 it.send(str)
+                                msg.status = MessageStatus.SUCCESS
                                 RecieveMessageManager.msgs.add(msg)
                             }
                         }
@@ -251,7 +253,11 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)
                             // TODO 缺少
+                            msg.status = MessageStatus.SUCCESS
                             RecieveMessageManager.msgs.add(msg)
+                            callback?.let {
+                                it.onSuccess("")
+                            }
                         }
 
                         override fun onError(code: Int, errorMsg: String) {
@@ -275,16 +281,22 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)
                             (msg.innerMessage as VoiceMessage).netPath = data.src
+                            msg.status = MessageStatus.SUCCESS
 
                             WsManager.mWebSocket?.let {
                                 var str = MessageUtil.generateWsMessageVoice(msg)
                                 it.send(str)
                                 RecieveMessageManager.msgs.add(msg)
+                                callback?.let {
+                                    it.onSuccess("")
+                                }
                             }
                         }
 
-                        override fun onError(code: Int, msg: String) {
-                            Log.e("symbol-4", "-->$msg")
+                        override fun onError(code: Int, em: String) {
+                            Log.e("symbol-4", "-->$em")
+                            msg.status = MessageStatus.FAIL
+
                         }
                     })
                 } else {
@@ -295,9 +307,12 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)
                             (msg.innerMessage as VoiceMessage).netPath = data.src
-
+                            msg.status = MessageStatus.SUCCESS
                             //TODO 缺少接口
                             RecieveMessageManager.msgs.add(msg)
+                            callback?.let {
+                                it.onSuccess("")
+                            }
                         }
 
                         override fun onError(code: Int, msg: String) {
@@ -309,7 +324,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
             }
 
-            MessageType.VIDEO->{
+            MessageType.VIDEO -> {
                 if (isHuman) {// 人工都是 socket
                     val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
                     val localPath = innerMsg.localPath
@@ -318,11 +333,15 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)
                             (msg.innerMessage as VideoMessage).netPath = data.src
+                            msg.status = MessageStatus.SUCCESS
 
                             WsManager.mWebSocket?.let {
                                 var str = MessageUtil.generateWsMessageVideo(msg)
                                 it.send(str)
                                 RecieveMessageManager.msgs.add(msg)
+                                callback?.let {
+                                    it.onSuccess("")
+                                }
                             }
                         }
 
@@ -338,9 +357,13 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)
                             (msg.innerMessage as VideoMessage).netPath = data.src
+                            msg.status = MessageStatus.SUCCESS
 
                             //TODO 缺少接口
                             RecieveMessageManager.msgs.add(msg)
+                            callback?.let {
+                                it.onSuccess("")
+                            }
                         }
 
                         override fun onError(code: Int, msg: String) {
@@ -360,11 +383,15 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)
                             (msg.innerMessage as FileMessage).netPath = data.src
+                            msg.status = MessageStatus.SUCCESS
 
                             WsManager.mWebSocket?.let {
                                 var str = MessageUtil.generateWsMessageFile(msg)
                                 it.send(str)
                                 RecieveMessageManager.msgs.add(msg)
+                                callback?.let {
+                                    it.onSuccess("")
+                                }
                             }
                         }
 
@@ -372,6 +399,31 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         }
 
                     })
+                } else {
+                    val innerMsg: FileMessage = msg.innerMessage as FileMessage
+                    val localPath = innerMsg.localPath
+                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                        override fun onSuccess(data: UpFileEntity) {
+                            Log.e("symbol-4", "-->" + data.name)
+                            Log.e("symbol-4", "-->" + data.src)
+                            (msg.innerMessage as FileMessage).netPath = data.src
+                            msg.status = MessageStatus.SUCCESS
+
+                            RecieveMessageManager.msgs.add(msg)
+                            callback?.let {
+                                it.onSuccess("")
+                            }
+                        }
+
+                        override fun onError(code: Int, emsg: String) {
+                            msg.status = MessageStatus.SUCCESS
+                            callback?.let {
+                                it.onError(code, emsg)
+                            }
+                        }
+
+                    })
+
                 }
 
             }

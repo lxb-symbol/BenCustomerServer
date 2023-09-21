@@ -128,7 +128,9 @@ class BenHandleMessagePresenterImpl : BenHandleMessagePresenter() {
         message.let {
             (viewModel as ChatViewModel).sendMessage(it, object : INetCallback<String> {
                 override fun onSuccess(data: String) {
-
+                    if (isActive) {
+                        runOnUI { mView!!.sendMessageFinish(message) }
+                    }
                 }
 
                 override fun onError(code: Int, msg: String) {

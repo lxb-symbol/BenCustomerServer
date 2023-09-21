@@ -21,6 +21,7 @@ import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.google.gson.GsonBuilder
+import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient
 import org.json.JSONObject
 import java.lang.ref.WeakReference
@@ -65,7 +66,6 @@ object RecieveMessageManager {
                     vm.let {
                         it?.get()?.getHumanTak()?.postValue(false)
                     }
-
                 }
             }
             return

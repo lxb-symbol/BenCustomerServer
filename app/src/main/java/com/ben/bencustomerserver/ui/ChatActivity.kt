@@ -41,6 +41,9 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
             mViewModel.getTokenAndWs(it)
         }
 
+        mViewModel.getHumanTak().observe(this) {
+            mViewBinding.tvTitle.text = if (it) "人工客服" else "机器人"
+        }
 
 
     }
