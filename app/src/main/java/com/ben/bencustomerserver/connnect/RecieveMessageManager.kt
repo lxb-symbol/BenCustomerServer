@@ -18,11 +18,13 @@ import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.model.TextMessage
 import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
+import com.ben.bencustomerserver.model.WsChatMessage
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.google.gson.GsonBuilder
 import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient
+import com.tencent.mmkv.MMKV
 import org.json.JSONObject
 import java.lang.ref.WeakReference
 
@@ -33,7 +35,7 @@ import java.lang.ref.WeakReference
  */
 object RecieveMessageManager {
 
-    var vm:WeakReference<ChatViewModel>?=null
+    var vm: WeakReference<ChatViewModel>? = null
 
     const val TAG = "symbol-RecieveMessageManager:"
 
@@ -176,13 +178,17 @@ object RecieveMessageManager {
 
     }
 
+
+    /***
+     * 接受人工的消息
+     */
     private fun handleOtherSocketType(dataJson: String) {
         var model: BaseMessageModel? = null
         if (TextUtils.isEmpty(dataJson)) return
-        var bean: MessageTemplateBean? = null
+        var bean: WsChatMessage? = null
         try {
             bean = GsonBuilder().create()
-                .fromJson(dataJson, MessageTemplateBean::class.java)
+                .fromJson(dataJson, WsChatMessage::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
             Log.i("symbol-2023->:", "${e.message}")
@@ -199,14 +205,14 @@ object RecieveMessageManager {
                 messageType = MessageType.TXT,
                 cmd = OriginMessageType.TYPE_CHAT_MESSAGE,
                 direct = Direct.RECEIEVE,
-                msgId = System.currentTimeMillis().toString(),
                 status = MessageStatus.SUCCESS,
-                from_id = bean.from_id,
-                from_avatar = bean.from_avatar,
-                from_name = bean.from_name,
-                seller_code = bean.seller_code,
-                to_id = bean.to_id,
-                to_name = bean.to_name,
+                msgId =bean.chat_log_id,
+                from_id = bean.id,
+                from_avatar = bean.avatar,
+                from_name = bean.name,
+                seller_code = MMkvTool.getSellerCode(),
+                to_id = MMkvTool.getUserId()?:"",
+                to_name = MMkvTool.getUserName()?:"",
                 innerMessage = TextMessage(bean.content),
             )
             msgs.add(model)
@@ -220,14 +226,15 @@ object RecieveMessageManager {
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = Direct.RECEIEVE
-                    msgId = System.currentTimeMillis().toString()
                     status = MessageStatus.SUCCESS
-                    from_id = bean.from_id
-                    from_avatar = bean.from_avatar
-                    from_name = bean.from_name
-                    seller_code = bean.seller_code
-                    to_id = bean.to_id
-                    to_name = bean.to_name
+                    msgId =bean.chat_log_id
+                    from_id = bean.id
+                    from_avatar = bean.avatar
+                    from_name = bean.name
+                    seller_code = MMkvTool.getSellerCode()
+                    to_id =  MMkvTool.getUserId()?:""
+                    to_name = MMkvTool.getUserName()?:""
+                    to_avatar = MMkvTool.getUserAvatar()?:""
                     innerMessage = TextMessage(bean.content)
                 }
             }
@@ -240,14 +247,15 @@ object RecieveMessageManager {
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = Direct.RECEIEVE
-                    msgId = System.currentTimeMillis().toString()
                     status = MessageStatus.CREATE
-                    from_id = bean.from_id
-                    from_avatar = bean.from_avatar
-                    from_name = bean.from_name
-                    seller_code = bean.seller_code
-                    to_id = bean.to_id
-                    to_name = bean.to_name
+                    msgId =bean.chat_log_id
+                    from_id = bean.id
+                    from_avatar = bean.avatar
+                    from_name = bean.name
+                    seller_code = MMkvTool.getSellerCode()
+                    to_id =  MMkvTool.getUserId()?:""
+                    to_name = MMkvTool.getUserName()?:""
+                    to_avatar = MMkvTool.getUserAvatar()?:""
                     innerMessage = ImageMessage(
                         localPath = "",
                         netPath = imgUrl
@@ -273,14 +281,16 @@ object RecieveMessageManager {
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = Direct.RECEIEVE
+                    status = MessageStatus.SUCCESS
                     msgId = System.currentTimeMillis().toString()
-                    status = MessageStatus.CREATE
-                    from_id = bean.from_id
-                    from_avatar = bean.from_avatar
-                    from_name = bean.from_name
-                    seller_code = bean.seller_code
-                    to_id = bean.to_id
-                    to_name = bean.to_name
+                    msgId =bean.chat_log_id
+                    from_id = bean.id
+                    from_avatar = bean.avatar
+                    from_name = bean.name
+                    seller_code = MMkvTool.getSellerCode()
+                    to_id =  MMkvTool.getUserId()?:""
+                    to_name = MMkvTool.getUserName()?:""
+                    to_avatar = MMkvTool.getUserAvatar()?:""
                     innerMessage = LocationMessage(
                         name = addrName ?: "",
                         lat = (latStr ?: "0L").toDouble(),
@@ -297,20 +307,21 @@ object RecieveMessageManager {
                 val url = tmp?.let {
                     MessageRegular.getVoiceUrl(it)
                 }
-                val duration = tmp?.let { MessageRegular.getVoiceDuration(it) }
+                val duration = tmp?.let { MessageRegular.getVoiceDuration(it).replace(",","") }
                 with(model) {
                     messageType = MessageType.VOICE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = Direct.RECEIEVE
-                    msgId = System.currentTimeMillis().toString()
-                    status = MessageStatus.CREATE
-                    from_id = bean.from_id
-                    from_avatar = bean.from_avatar
-                    from_name = bean.from_name
-                    seller_code = bean.seller_code
-                    to_id = bean.to_id
-                    to_name = bean.to_name
+                    status = MessageStatus.SUCCESS
+                    msgId =bean.chat_log_id
+                    from_id = bean.id
+                    from_avatar = bean.avatar
+                    from_name = bean.name
+                    seller_code = MMkvTool.getSellerCode()
+                    to_id =  MMkvTool.getUserId()?:""
+                    to_name = MMkvTool.getUserName()?:""
+                    to_avatar = MMkvTool.getUserAvatar()?:""
                     innerMessage = VoiceMessage(
                         netPath = url,
                         duration = (duration ?: "0").toInt()
@@ -327,14 +338,15 @@ object RecieveMessageManager {
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = Direct.RECEIEVE
-                    msgId = System.currentTimeMillis().toString()
                     status = MessageStatus.CREATE
-                    from_id = bean.from_id
-                    from_avatar = bean.from_avatar
-                    from_name = bean.from_name
-                    seller_code = bean.seller_code
-                    to_id = bean.to_id
-                    to_name = bean.to_name
+                    msgId =bean.chat_log_id
+                    from_id = bean.id
+                    from_avatar = bean.avatar
+                    from_name = bean.name
+                    seller_code = MMkvTool.getSellerCode()
+                    to_id =  MMkvTool.getUserId()?:""
+                    to_name = MMkvTool.getUserName()?:""
+                    to_avatar = MMkvTool.getUserAvatar()?:""
                     innerMessage = VideoMessage(
                         netPath = "",
                         localPath = videoUrl,
@@ -354,14 +366,15 @@ object RecieveMessageManager {
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = Direct.RECEIEVE
-                    msgId = System.currentTimeMillis().toString()
                     status = MessageStatus.SUCCESS
-                    from_id = bean.from_id
-                    from_avatar = bean.from_avatar
-                    from_name = bean.from_name
-                    seller_code = bean.seller_code
-                    to_id = bean.to_id
-                    to_name = bean.to_name
+                    msgId =bean.chat_log_id
+                    from_id = bean.id
+                    from_avatar = bean.avatar
+                    from_name = bean.name
+                    seller_code = MMkvTool.getSellerCode()
+                    to_id =  MMkvTool.getUserId()?:""
+                    to_name = MMkvTool.getUserName()?:""
+                    to_avatar = MMkvTool.getUserAvatar()?:""
                     innerMessage = TextMessage(bean.content)
                     extString = extStr
                 }
@@ -380,14 +393,15 @@ object RecieveMessageManager {
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = Direct.RECEIEVE
-                    msgId = System.currentTimeMillis().toString()
-                    status = MessageStatus.CREATE
-                    from_id = bean.from_id
-                    from_avatar = bean.from_avatar
-                    from_name = bean.from_name
-                    seller_code = bean.seller_code
-                    to_id = bean.to_id
-                    to_name = bean.to_name
+                    status = MessageStatus.SUCCESS
+                    msgId =bean.chat_log_id
+                    from_id = bean.id
+                    from_avatar = bean.avatar
+                    from_name = bean.name
+                    seller_code = MMkvTool.getSellerCode()
+                    to_id =  MMkvTool.getUserId()?:""
+                    to_name = MMkvTool.getUserName()?:""
+                    to_avatar = MMkvTool.getUserAvatar()?:""
                     innerMessage = FileMessage(
                         name = name,
                         netPath = fileUrl ?: "",

@@ -1,6 +1,11 @@
 package com.ben.bencustomerserver.model
 
 
+/***
+*
+ * 发消息给 web
+ */
+
 data class MessageTemplateBean(
     val content: String,
     val from_avatar: String,

@@ -239,7 +239,8 @@ object MessageUtil {
             to_name = MMkvTool.getKFName() ?: "",
             seller_code = MMkvTool.getSellerCode() ?: ""
         )
-        return GsonBuilder().create().toJson(img)
+        val out = WsMessageSendOut(data = img)
+        return GsonBuilder().create().toJson(out)
     }
 
 
@@ -258,7 +259,9 @@ object MessageUtil {
             to_name = MMkvTool.getKFName() ?: "",
             seller_code = MMkvTool.getSellerCode() ?: ""
         )
-        return GsonBuilder().create().toJson(img)
+
+        val out = WsMessageSendOut(data = img)
+        return GsonBuilder().create().toJson(out)
     }
 
     /**
@@ -276,7 +279,9 @@ object MessageUtil {
             to_name = MMkvTool.getKFName() ?: "",
             seller_code = MMkvTool.getSellerCode() ?: ""
         )
-        return GsonBuilder().create().toJson(img)
+        val out = WsMessageSendOut(data = img)
+
+        return GsonBuilder().create().toJson(out)
     }
 
     /**
@@ -294,7 +299,8 @@ object MessageUtil {
             to_name = MMkvTool.getKFName() ?: "",
             seller_code = MMkvTool.getSellerCode() ?: ""
         )
-        return GsonBuilder().create().toJson(img)
+        val out = WsMessageSendOut(data = img)
+        return GsonBuilder().create().toJson(out)
     }
 
 
@@ -313,7 +319,9 @@ object MessageUtil {
             to_name = MMkvTool.getKFName() ?: "",
             seller_code = MMkvTool.getSellerCode() ?: ""
         )
-        return GsonBuilder().create().toJson(img)
+        val out = WsMessageSendOut(data = img)
+
+        return GsonBuilder().create().toJson(out)
     }
 
     /**
@@ -331,7 +339,8 @@ object MessageUtil {
             to_name = MMkvTool.getKFName() ?: "",
             seller_code = MMkvTool.getSellerCode() ?: ""
         )
-        return GsonBuilder().create().toJson(img)
+        val out = WsMessageSendOut(data = img)
+        return GsonBuilder().create().toJson(out)
 
     }
 

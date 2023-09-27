@@ -177,6 +177,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                 if (isHuman) {
                     WsManager.mWebSocket?.let {
                         val str = MessageUtil.generateWsMessageTxt(msg)
+                        Log.i("symbol","send ws TXT : $str")
                         it.send(str)
                         msg.status = MessageStatus.SUCCESS
                         RecieveMessageManager.msgs.add(msg)
