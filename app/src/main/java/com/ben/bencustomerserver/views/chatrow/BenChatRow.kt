@@ -23,6 +23,8 @@ import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.utils.BenDateUtils
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.lib_picture_selector.ImageLoaderUtils
+import com.symbol.lib_net.net.RetrofitClient
+import retrofit2.Retrofit
 import java.util.Date
 
 /**
@@ -437,15 +439,19 @@ abstract class BenChatRow : LinearLayout {
      */
     protected fun setAvatarAndNick() {
         Log.i("symbol-7", "sendAvatarAndNick isSender: $isSender")
-        if (!MMkvTool.getIsHuman()) {// 机器人聊天
+        if (message?.isBolt == true) {// 机器人聊天
             if (isSender) {// 发送方
                 ImageLoaderUtils.load(context, userAvatarView, message?.from_avatar)
             } else {
                 ImageLoaderUtils.load(context, userAvatarView, R.drawable.icon_head_bolt)
             }
-        } else {
-            if (isSender) {
-                ImageLoaderUtils.load(context, userAvatarView, message?.from_avatar)
+        } else {//人工
+            if (!isSender) {
+                ImageLoaderUtils.load(
+                    context,
+                    userAvatarView,
+                    "${RetrofitClient.BASE_URL}${message?.from_avatar}"
+                )
             } else {
                 ImageLoaderUtils.load(context, userAvatarView, message?.to_avatar)
             }
