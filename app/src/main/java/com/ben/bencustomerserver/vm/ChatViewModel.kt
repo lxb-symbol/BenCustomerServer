@@ -23,10 +23,14 @@ import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.symbol.lib_net.exception.ResultException
 import com.symbol.lib_net.model.NetResult
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.launch
 import java.io.File
+
 
 class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
@@ -177,7 +181,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                 if (isHuman) {
                     WsManager.mWebSocket?.let {
                         val str = MessageUtil.generateWsMessageTxt(msg)
-                        Log.i("symbol","send ws TXT : $str")
+                        Log.i("symbol", "send ws TXT : $str")
                         it.send(str)
                         msg.status = MessageStatus.SUCCESS
                         RecieveMessageManager.msgs.add(msg)
@@ -483,22 +487,27 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     fun getEmojis(back: INetCallback<String>?) {
         val code = MMkvTool.getSellerCode()
         viewModelScope.launch {
-            val result = repository.getEmojis(code)
-            when (result) {
+            when (val result = repository.getEmojis(code)) {
                 is NetResult.Success -> {
-                    back?.let {
-                        it.onSuccess("")
-                    }
-
+                    Log.e("symbol", "表情：${result.data}")
+                    covertToJsonAndSave(result.data)
                 }
 
                 is NetResult.Error -> {
-                    back?.let {
-                        it.onError(-1, result.exception.message.toString())
-                    }
+                    Log.e("symbol", "表情：${result.exception.message}")
                 }
             }
         }
+    }
+
+    private fun covertToJsonAndSave(source: List<String>) {
+        val result = mutableListOf<String>()
+        for (str in source) {
+            result.add("https://$str")
+        }
+        val type = object : TypeToken<ArrayList<String>>() {}.type
+        val json = GsonBuilder().create().toJson(result, type)
+        MMkvTool.putEmojis(json)
     }
 
 

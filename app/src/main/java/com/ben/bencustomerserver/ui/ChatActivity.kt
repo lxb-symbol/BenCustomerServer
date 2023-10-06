@@ -29,6 +29,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         mViewModel.saveUserName("symbol2023")
         mViewModel.saveUserAvatar("https://symbol-file.oss-cn-beijing.aliyuncs.com/b1aa0c85f414485bc77a122592eea150.jpg")
         mViewModel.saveSellerCode("5c6cbcb7d55ca")
+        mViewModel.getEmojis(null)
         MMkvTool.putIsHuman(false)
         mViewModel.getHumanTak().postValue(MMkvTool.getIsHuman())
         mViewModel.getTokenAndWsResul().observe(this) {

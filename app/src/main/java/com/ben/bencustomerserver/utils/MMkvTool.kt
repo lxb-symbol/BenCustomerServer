@@ -1,6 +1,10 @@
 package com.ben.bencustomerserver.utils
 
+import android.text.TextUtils
 import com.ben.bencustomerserver.model.Constants
+import com.google.gson.GsonBuilder
+import com.google.gson.internal.GsonBuildConfig
+import com.google.gson.reflect.TypeToken
 import com.tencent.mmkv.MMKV
 
 object MMkvTool {
@@ -80,6 +84,17 @@ object MMkvTool {
 
     fun putIsHuman(isHuman: Boolean) {
         MMKV.defaultMMKV().putBoolean(Constants.KEY_IS_HUMAN, isHuman)
+    }
+
+    fun putEmojis(json:String){
+        MMKV.defaultMMKV().putString(Constants.KEY_EMOJIS,json)
+    }
+
+    fun getEmojis():MutableList<String>{
+        val json = MMKV.defaultMMKV().getString(Constants.KEY_EMOJIS ,"")
+        if (TextUtils.isEmpty(json))return mutableListOf()
+        val type = object : TypeToken<ArrayList<String>>() {}.type
+        return GsonBuilder().create().fromJson(json,type)
     }
 
 }

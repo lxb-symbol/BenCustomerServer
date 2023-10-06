@@ -17,6 +17,7 @@ import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.BenFileUtils
 import com.ben.bencustomerserver.utils.VersionUtils
+import com.ben.bencustomerserver.views.CustomerServerEmojiMenu
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.lib_picture_selector.PictureSelectUtil
 import com.ben.lib_picture_selector.ResultListener
@@ -50,7 +51,8 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         mViewBinding.cl.chatLayoutListener = this
         mViewBinding.cl.setOnChatRecordTouchListener(this)
         mViewBinding.cl.setUpViewModel(mViewModel)
-
+        mViewBinding.cl.chatInputMenu()
+            .setCustomEmojiconMenu(CustomerServerEmojiMenu(requireContext()))
 
     }
 

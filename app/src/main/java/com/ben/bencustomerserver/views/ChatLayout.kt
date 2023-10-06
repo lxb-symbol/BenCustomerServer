@@ -30,6 +30,7 @@ import com.ben.bencustomerserver.presenter.BenHandleMessagePresenter
 import com.ben.bencustomerserver.presenter.BenHandleMessagePresenterImpl
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.vm.ChatViewModel
+import com.luck.picture.lib.utils.ToastUtils
 
 /**
  * 聊天的布局
@@ -330,6 +331,12 @@ class ChatLayout @JvmOverloads constructor(
     }
 
     override fun onExpressionClicked(emojicon: Any?) {
+        //发送表情
+        //todo 发送 gif 表情
+        emojicon?.let {
+            ToastUtils.showToast(context, it as String)
+        }
+
     }
 
     override fun onPressToSpeakBtnTouch(v: View, event: MotionEvent): Boolean {

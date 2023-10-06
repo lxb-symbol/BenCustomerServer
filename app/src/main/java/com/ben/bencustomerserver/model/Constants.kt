@@ -2,6 +2,7 @@ package com.ben.bencustomerserver.model
 
 object Constants {
 
+    const val KEY_EMOJIS: String = "KEY_EMOJIS"
     const val KEY_SELLER_ID: String = "KEY_SELLER_ID"
     const val KEY_KF_AVATAR: String = "KEY_KF_AVATAR"
     const val KEY_KF_CODE: String = "KEY_KF_CODE"
