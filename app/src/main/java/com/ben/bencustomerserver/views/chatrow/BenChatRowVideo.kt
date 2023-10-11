@@ -3,17 +3,26 @@ package com.ben.bencustomerserver.views.chatrow
 import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.Direct
+import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.model.VideoMessage
+import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.utils.BenImageUtils
+import com.ben.bencustomerserver.utils.HttpUtils
 import com.ben.lib_picture_selector.ImageLoaderUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 
 class BenChatRowVideo : BenChatRowFile {
     private var imageView: ImageView? = null
@@ -53,21 +62,30 @@ class BenChatRowVideo : BenChatRowFile {
         if (bubbleLayout != null) {
             bubbleLayout?.background = null
         }
-
         val innerMessage = message?.innerMessage as VideoMessage
-        val localCover = innerMessage.localCover
-        if(!TextUtils.isEmpty(localCover)){
-            ImageLoaderUtils.load(context, imageView, localCover)
-        }else{
-            val netPath =RetrofitClient.BASE_URL+ innerMessage?.netPath
+        val localPath = innerMessage.localPath
+        if (!TextUtils.isEmpty(localPath)) {
             imageView?.let {
-                Glide.with(context).load(netPath)
-                    .apply(RequestOptions
-                        .centerCropTransform().frame(1000))
+                Glide.with(context).load(localPath)
+                    .apply(RequestOptions.centerCropTransform().frame(1000))
                     .into(it)
+            }
+        } else {
+            val netPath = RetrofitClient.BASE_URL + innerMessage.netPath
+            showVideoThumbView(netPath)
+            MainScope().launch {
+                val filePath = context.externalCacheDir?.path
+                val name = "${netPath.hashCode()}.mp4"
+                val b = HttpUtils.downFile(context, netPath, filePath ?: "", name)
+                Log.i("symbol-5", "video-->$b")
+                if (b) {
+                    showVideoThumbView(str = "$filePath/$name")
+                    (message?.innerMessage as VideoMessage).localPath = "$filePath/$name"
+                }
             }
 
         }
+
 
     }
 
@@ -76,10 +94,13 @@ class BenChatRowVideo : BenChatRowFile {
      * @param message
      */
     @SuppressLint("StaticFieldLeak")
-    private fun showVideoThumbView(message: BaseMessageModel) {
-        val params: ViewGroup.LayoutParams =
-            BenImageUtils.showVideoThumb(context, imageView!!, message)
-        setBubbleView(params.width, params.height)
+    private fun showVideoThumbView(str: String) {
+        imageView?.let {
+            Glide.with(context).load(str)
+                .apply(RequestOptions.centerCropTransform().frame(1000))
+                .into(it)
+        }
+
     }
 
     private fun setBubbleView(width: Int, height: Int) {

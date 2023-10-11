@@ -358,8 +358,8 @@ object RecieveMessageManager {
                     to_name = MMkvTool.getUserName() ?: ""
                     to_avatar = MMkvTool.getUserAvatar() ?: ""
                     innerMessage = VideoMessage(
-                        netPath = "",
-                        localPath = videoUrl,
+                        netPath = videoUrl,
+                        localPath = "",
                         name = videoName
                     )
                 }

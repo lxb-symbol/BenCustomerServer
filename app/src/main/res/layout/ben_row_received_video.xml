@@ -78,8 +78,8 @@
              <ImageView
                  android:clickable="false"
                  android:id="@+id/chatting_status_btn"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
+                 android:layout_width="@dimen/dp_32"
+                 android:layout_height="@dimen/dp_32"
                  android:layout_centerInParent="true"
                  android:background="@drawable/ben_video_play_btn_small_nor" />
         </RelativeLayout>

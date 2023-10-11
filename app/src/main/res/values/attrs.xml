@@ -70,5 +70,27 @@
     </declare-styleable>
 
 
+    <declare-styleable name="BenVideoPlayer">
+        <!--播放资源-->
+        <attr name="ben_source" format="string" />
+        <!--播放按钮-->
+        <attr name="ben_playDrawable" format="reference" />
+        <!--暂定按钮-->
+        <attr name="ben_pauseDrawable" format="reference" />
+        <!--播放开始时隐藏控制盘-->
+        <attr name="ben_hideControlsOnPlay" format="boolean" />
+        <!--自动播放-->
+        <attr name="ben_autoPlay" format="boolean" />
+        <!--controls不可用-->
+        <attr name="ben_disableControls" format="boolean" />
+        <!--主题颜色-->
+        <attr name="ben_themeColor" format="color" />
+        <!--全屏-->
+        <attr name="ben_autoFullscreen" format="boolean" />
+        <!--自动循环播放-->
+        <attr name="ben_loop" format="boolean" />
+    </declare-styleable>
+
+
 
 </resources>

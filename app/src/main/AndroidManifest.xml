@@ -68,6 +68,13 @@
 
         </activity>
 
+        <activity
+            android:name=".ui.BenShowVideoActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+
+        </activity>
+
         <service android:name=".connnect.WebSocketService" />
 
         <provider

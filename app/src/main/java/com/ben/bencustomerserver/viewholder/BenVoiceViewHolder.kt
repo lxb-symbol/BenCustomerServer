@@ -88,7 +88,7 @@ class BenVoiceViewHolder(itemView: View, itemClickListener: MessageListItemClick
             val b =   HttpUtils.downFile(itemView.context,netPath?:"",filePath?:"",name)
             Log.i("symbol-5","b-->$b")
             if(b){
-                (message?.innerMessage as VoiceMessage)?.localPath=filePath
+                (message?.innerMessage as VoiceMessage)?.localPath="$filePath/$name"
                 chatRow?.updateView(message)
             }
         }

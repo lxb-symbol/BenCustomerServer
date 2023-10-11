@@ -2,6 +2,7 @@ package com.ben.bencustomerserver.views.chatrow
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -12,6 +13,7 @@ import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.ImageMessage
+import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.utils.BenImageUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -51,10 +53,8 @@ class BenChatRowImage : BenChatRowFile {
         val imgBody = message?.innerMessage as ImageMessage
         // received messages
         if (message!!.direct === Direct.RECEIEVE) {
-            val layoutParams = imageView!!.layoutParams
-            layoutParams.width = 20
-            layoutParams.height =20
-            return
+            message?.status=MessageStatus.SUCCESS
+            onViewUpdate(message!!)
         }
         showImageView(imgBody)
     }
@@ -62,6 +62,7 @@ class BenChatRowImage : BenChatRowFile {
     override fun onViewUpdate(msg: BaseMessageModel) {
         super.onViewUpdate(msg)
         //此方法中省略掉了之前的有关非自动下载缩略图后展示图片的逻辑
+        showImageView(msg.innerMessage as ImageMessage)
     }
 
     override fun onMessageSuccess() {

@@ -1,9 +1,12 @@
 package com.ben.bencustomerserver.viewholder
 
+import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import com.ben.bencustomerserver.listener.MessageListItemClickListener
 import com.ben.bencustomerserver.model.BaseMessageModel
+import com.ben.bencustomerserver.model.VideoMessage
+import com.ben.bencustomerserver.ui.BenShowVideoActivity
 import com.ben.bencustomerserver.views.chatrow.BenChatRowVideo
 
 class BenVideoViewHolder(itemView: View, itemClickListener: MessageListItemClickListener?) :
@@ -13,20 +16,10 @@ class BenVideoViewHolder(itemView: View, itemClickListener: MessageListItemClick
 
         // 1. 下载视频封面
         // 2. 预览视频
-
-//        val videoBody: EMVideoMessageBody = message.getBody() as EMVideoMessageBody
-//        if (EMClient.getInstance().getOptions().getAutodownloadThumbnail()) {
-//        } else {
-//            if (videoBody.thumbnailDownloadStatus() === EMFileMessageBody.EMDownloadStatus.DOWNLOADING || videoBody.thumbnailDownloadStatus() === EMFileMessageBody.EMDownloadStatus.PENDING || videoBody.thumbnailDownloadStatus() === EMFileMessageBody.EMDownloadStatus.FAILED) {
-//                // retry download with click event of user
-//                EMClient.getInstance().chatManager().downloadThumbnail(message)
-//                return
-//            }
-//        }
-//        val intent = Intent(context, BenShowVideoActivity::class.java)
-//        intent.putExtra("msg", message)
-//
-//        context.startActivity(intent)
+        val videoBody: VideoMessage = message?.innerMessage as VideoMessage
+        val intent = Intent(itemView.context, BenShowVideoActivity::class.java)
+        intent.putExtra("path", videoBody.localPath ?: videoBody.netPath)
+        itemView.context.startActivity(intent)
     }
 
     companion object {

@@ -51,5 +51,6 @@
     <item name="extend_item_video" type="id"/>
     <!-- 文件 -->
     <item name="extend_item_file" type="id"/>
+    <item name="btnPlayPause" type="id"/>
 
 </resources>

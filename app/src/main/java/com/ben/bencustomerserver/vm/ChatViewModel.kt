@@ -240,10 +240,14 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                                 it.send(str)
                                 msg.status = MessageStatus.SUCCESS
                                 RecieveMessageManager.msgs.add(msg)
+                                callback?.let {
+                                    it.onSuccess("")
+                                }
                             }
                         }
 
-                        override fun onError(code: Int, msg: String) {
+                        override fun onError(code: Int, msg1: String) {
+                            RecieveMessageManager.msgs.add(msg)
                         }
 
                     })
