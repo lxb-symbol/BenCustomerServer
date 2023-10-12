@@ -39,14 +39,14 @@ object RecieveMessageManager {
 
     const val TAG = "symbol-RecieveMessageManager:"
 
-    open var socketMsgListeners = mutableMapOf<String, WebSocketMessageListener>()
-    open var webSocketStatusListeners = mutableMapOf<String, WebSocketStatusListener>()
-    open var httpMsgListeners = mutableMapOf<String, HttpMessageListener>()
+     var socketMsgListeners = mutableMapOf<String, WebSocketMessageListener>()
+     var webSocketStatusListeners = mutableMapOf<String, WebSocketStatusListener>()
+     var httpMsgListeners = mutableMapOf<String, HttpMessageListener>()
 
     /**
      * 作为数据的缓存类
      */
-    open val msgs: MutableList<BaseMessageModel> = mutableListOf()
+     val msgs: MutableList<BaseMessageModel> = mutableListOf()
 
 
     /**

@@ -19,7 +19,7 @@ open class BenChatRowFile : BenChatRow {
     /**
      * file name
      */
-    protected var fileNameView: TextView? = null
+     var fileNameView: TextView? = null
 
     /**
      * file's size
@@ -30,6 +30,8 @@ open class BenChatRowFile : BenChatRow {
      * file state
      */
     protected var fileStateView: TextView? = null
+
+    override var percentageView:TextView?=null
 
     constructor(context: Context?, isSender: Boolean) : super(context!!, isSender)
     constructor(
@@ -50,9 +52,9 @@ open class BenChatRowFile : BenChatRow {
 
     override fun onFindViewById() {
         fileNameView = findViewById<View>(R.id.tv_file_name) as TextView
-        fileSizeView = findViewById<View>(R.id.tv_file_size) as TextView
+//        fileSizeView = findViewById<View>(R.id.tv_file_size) as TextView
         fileStateView = findViewById<View>(R.id.tv_file_state) as TextView
-        percentageView = findViewById<View>(R.id.percentage) as TextView
+//        percentageView = findViewById<View>(R.id.percentage) as TextView
     }
 
     override fun onSetUpView() {
@@ -61,24 +63,18 @@ open class BenChatRowFile : BenChatRow {
         val localPath = innerMsg.localPath
         val size = innerMsg.fileSize
         val name = innerMsg.name
-
+        fileSizeView?.visibility = View.INVISIBLE
         fileNameView?.text = "" + name
         fileSizeView?.text = (TextFormater.getDataSize(size))
         if (message?.direct === Direct.SEND) {
-            if (BenFileUtils.isFileExistByUri(context, Uri.parse(localPath))
-                && message!!.status === MessageStatus.SUCCESS
-            ) {
-                fileStateView?.setText(R.string.have_uploaded)
-            } else {
-                fileStateView!!.text = ""
-            }
+            message!!.status === MessageStatus.SUCCESS
         }
         if (message!!.direct === Direct.RECEIEVE) {
-            if (BenFileUtils.isFileExistByUri(context, (Uri.parse(localPath)))) {
-                fileStateView?.setText(R.string.have_downloaded)
-            } else {
-                fileStateView?.setText(R.string.did_not_download)
-            }
+//                fileStateView?.setText(R.string.have_downloaded)
+//            if (BenFileUtils.isFileExistByUri(context, (Uri.parse(localPath)))) {
+//            } else {
+//                fileStateView?.setText(R.string.did_not_download)
+//            }
         }
     }
 

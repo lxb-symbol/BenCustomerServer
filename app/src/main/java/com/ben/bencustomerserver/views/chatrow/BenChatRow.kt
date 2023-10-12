@@ -67,7 +67,7 @@ abstract class BenChatRow : LinearLayout {
     /**
      * percent
      */
-    protected var percentageView: TextView? = null
+    protected open var percentageView: TextView? = null
 
     /**
      * progress
@@ -446,7 +446,8 @@ abstract class BenChatRow : LinearLayout {
                 ImageLoaderUtils.load(context, userAvatarView, R.drawable.icon_head_bolt)
             }
         } else {//人工
-            if (!isSender) {
+            Log.i("abc--->",message.toString())
+            if (!isSender) {//接收方
                 ImageLoaderUtils.load(
                     context,
                     userAvatarView,

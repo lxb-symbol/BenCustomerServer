@@ -5,9 +5,9 @@ data class TextMessage(
 ) : IMessageModel
 
 data class FileMessage(
-    val name: String? = "",
+    var name: String? = "",
     val fileSize: Long = 0,
-    val localPath: String? = "",
+    var localPath: String? = "",
     var netPath: String? = ""
 ) : IMessageModel
 

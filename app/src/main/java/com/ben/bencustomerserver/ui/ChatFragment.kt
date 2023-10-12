@@ -1,6 +1,7 @@
 package com.ben.bencustomerserver.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
@@ -16,6 +17,7 @@ import com.ben.bencustomerserver.listener.OnChatLayoutListener
 import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.BenFileUtils
+import com.ben.bencustomerserver.utils.UriUtils
 import com.ben.bencustomerserver.utils.VersionUtils
 import com.ben.bencustomerserver.views.CustomerServerEmojiMenu
 import com.ben.bencustomerserver.vm.ChatViewModel
@@ -147,6 +149,17 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            mViewBinding.cl.chatInputMenu().hideExtendContainer()
+            if (requestCode == REQUEST_CODE_SELECT_FILE) {
+                onActivityResultForLocalFiles(data)
+            }
+        }
+    }
+
+
     protected open fun selectVideoFromLocal() {
 
         PictureSelectUtil.get().selectVideos(requireContext(), 1, object : ResultListener {
@@ -194,31 +207,25 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun onChatError(code: Int, errorMsg: String?) {
-        TODO("Not yet implemented")
     }
 
 
-    private fun onActivityResultForMapLocation(data: Intent?) {
 
-    }
 
-    private fun onActivityResultForDingMsg(data: Intent?) {
-        TODO("Not yet implemented")
-    }
 
     private fun onActivityResultForLocalFiles(data: Intent?) {
         val uri = data?.data
-        val filePath = BenFileUtils.getFilePath(context, uri)
-        if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
-            mViewBinding.cl.sendFileMessage(Uri.parse(filePath))
-        } else {
-            BenFileUtils.saveUriPermission(context, uri, data)
-            mViewBinding.cl.sendFileMessage(uri)
+        Log.i("symbol onActivityResultForLocalFiles-->", "---$uri")
+
+        uri?.let {
+            val path = UriUtils.copyFileProviderUri(requireContext(), uri)
+            mViewBinding.cl.sendFileMessage(Uri.parse(path))
         }
+
+
     }
 
 

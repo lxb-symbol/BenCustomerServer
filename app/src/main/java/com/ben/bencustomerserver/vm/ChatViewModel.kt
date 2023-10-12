@@ -255,7 +255,8 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                     Log.e("symbol-4", "-->$msg")
                     val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
                     val localPath = innerMsg.localPath
-                    uploadImg(msg.msgId, File(localPath), object : INetCallback<UpFileEntity> {
+                    val f = File(localPath)
+                    uploadImg(msg.msgId, f, object : INetCallback<UpFileEntity> {
                         override fun onSuccess(data: UpFileEntity) {
                             (msg.innerMessage as ImageMessage).netPath = data.src
 
@@ -294,7 +295,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
                             WsManager.mWebSocket?.let {
                                 var str = MessageUtil.generateWsMessageVoice(msg)
-                                Log.e("symbol: voice",str)
+                                Log.e("symbol: voice", str)
                                 it.send(str)
                                 RecieveMessageManager.msgs.add(msg)
                                 callback?.let {
@@ -388,7 +389,9 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                 if (isHuman) {// 人工都是 socket
                     val innerMsg: FileMessage = msg.innerMessage as FileMessage
                     val localPath = innerMsg.localPath
-                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                    val f = File(localPath)
+                    innerMsg.name =f.name
+                    uploadFile(f, object : INetCallback<UpFileEntity> {
                         override fun onSuccess(data: UpFileEntity) {
                             Log.e("symbol-4", "-->" + data.name)
                             Log.e("symbol-4", "-->" + data.src)

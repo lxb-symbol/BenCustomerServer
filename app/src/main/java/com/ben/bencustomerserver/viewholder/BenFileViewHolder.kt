@@ -14,20 +14,8 @@ class BenFileViewHolder(itemView: View, itemClickListener: MessageListItemClickL
     override fun onBubbleClick(message: BaseMessageModel?) {
         super.onBubbleClick(message)
 
-        val filePath: Uri = Uri.parse("")
         //检查Uri读权限
-        BenFileUtils.takePersistableUriPermission(itemView.context , filePath)
-        if (BenFileUtils.isFileExistByUri(itemView.context, filePath)) {
-            BenCompat.openFile(itemView.context, filePath)
-        } else {
-            // download the file
-//            context.startActivity(
-//                Intent(
-//                    context,
-//
-//                ).putExtra("msg", message)
-//            )
-        }
+
 
     }
 

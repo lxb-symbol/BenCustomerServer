@@ -465,7 +465,7 @@ object UriUtils {
      * @param uri
      * @return
      */
-    private fun copyFileProviderUri(context: Context, uri: Uri): String {
+    public fun copyFileProviderUri(context: Context, uri: Uri): String {
         //如果是分享过来的文件，则将其写入到私有目录下
         val filename = getFileNameByUri(context, uri)
         if (TextUtils.isEmpty(filename)) {
