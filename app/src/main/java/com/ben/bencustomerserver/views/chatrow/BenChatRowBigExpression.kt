@@ -9,7 +9,7 @@ import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
 
 /**
- * big emoji icons
+ * 表情
  *
  */
 class BenChatRowBigExpression : BenChatRowText {
@@ -38,6 +38,11 @@ class BenChatRowBigExpression : BenChatRowText {
     override fun onSetUpView() {
         // symbol 无大表情消息
         val messageInner  =message?.innerMessage
+
+        //todo 现实内容
+
+
+
 
     }
 }

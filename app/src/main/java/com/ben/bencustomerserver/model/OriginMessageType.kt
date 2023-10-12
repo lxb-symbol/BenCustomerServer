@@ -38,6 +38,9 @@ object OriginMessageType {
      */
     const val EXT_MSG_ZERO_3 = "ZERO_3"
 
+    /**
+     * 弃用 TAG_FACE
+     */
     const val TAG_FACE = "face["
     const val TAG_VIDEO = "video("
     const val TAG_FILE = "file("

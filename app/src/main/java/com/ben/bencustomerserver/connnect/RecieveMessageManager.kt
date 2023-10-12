@@ -217,7 +217,7 @@ object RecieveMessageManager {
                 seller_code = MMkvTool.getSellerCode(),
                 to_id = MMkvTool.getUserId() ?: "",
                 to_name = MMkvTool.getUserName() ?: "",
-                to_avatar =MMkvTool.getUserAvatar()?:"",
+                to_avatar = MMkvTool.getUserAvatar() ?: "",
                 innerMessage = TextMessage(bean.content),
             )
             msgs.add(model)
@@ -367,10 +367,7 @@ object RecieveMessageManager {
             }
 
             MessageType.CMD -> {
-                var extStr = ""
-                if (bean.content.contains(OriginMessageType.TAG_FACE)) {
-                    extStr = OriginMessageType.EXT_MSG_EXPRESSION
-                }
+
                 with(model) {
                     isBolt = false
                     messageType = MessageType.TXT
@@ -387,7 +384,7 @@ object RecieveMessageManager {
                     to_name = MMkvTool.getUserName() ?: ""
                     to_avatar = MMkvTool.getUserAvatar() ?: ""
                     innerMessage = TextMessage(bean.content)
-                    extString = extStr
+                    extString = ""
                 }
 
 
@@ -448,12 +445,8 @@ object RecieveMessageManager {
      */
     fun getMessageTypeByContentAndExt(content: String): MessageType {
 
-        if (content.startsWith(OriginMessageType.TAG_FACE)) {
-            return MessageType.CMD
-        } else if (content.startsWith(OriginMessageType.TAG_IMG)) {
+        if (content.startsWith(OriginMessageType.TAG_IMG)) {
             return MessageType.IMAGE
-        } else if (content.startsWith(OriginMessageType.TAG_FACE)) {
-            return MessageType.FILE
         } else if (content.startsWith(OriginMessageType.TAG_VIDEO)) {
             return MessageType.VIDEO
         } else if (content.startsWith(OriginMessageType.TAG_VOICE)) {

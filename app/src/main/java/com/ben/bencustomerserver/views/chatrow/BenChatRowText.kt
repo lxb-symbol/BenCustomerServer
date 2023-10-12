@@ -12,6 +12,7 @@ import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.TextMessage
+import com.ben.bencustomerserver.utils.BenEmojiUtil
 
 open class BenChatRowText : BenChatRow {
     private var contentView: TextView? = null
@@ -51,10 +52,12 @@ open class BenChatRowText : BenChatRow {
             itemClickListener?.onBubbleClick(message)
         }
         contentView?.let {
-            it.text = textBody?.content
+            val sp = BenEmojiUtil.getSmiledText(context, textBody?.content)
+            it.text = sp
         }
-//            val span: Spannable = BenSmileUtils.getSmiledText(context, txtBody.getMessage())
     }
+
+
 
 
     /**

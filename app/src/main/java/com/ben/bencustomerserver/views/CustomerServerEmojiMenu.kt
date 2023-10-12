@@ -12,6 +12,8 @@ import com.ben.bencustomerserver.databinding.BenChatViewCsEmojiLayoutBinding
 import com.ben.bencustomerserver.listener.BenEmojiconMenuListener
 import com.ben.bencustomerserver.listener.IChatEmojiconMenu
 import com.ben.bencustomerserver.listener.OnItemClickListener
+import com.ben.bencustomerserver.model.BenEmojiEntity
+import com.ben.bencustomerserver.utils.BenEmojiUtil
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.yalantis.ucrop.decoration.GridSpacingItemDecoration
 
@@ -21,7 +23,7 @@ class CustomerServerEmojiMenu @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), IChatEmojiconMenu {
 
-    private var emojis: MutableList<String>
+    private var emojis =BenEmojiUtil.emojiEntities
     private lateinit var binding: BenChatViewCsEmojiLayoutBinding
     private  lateinit var adapter: CsEmojiAdapter
     private var listener: BenEmojiconMenuListener? = null
@@ -33,7 +35,6 @@ class CustomerServerEmojiMenu @JvmOverloads constructor(
         binding.rv.layoutManager = GridLayoutManager(context, 7)
         binding.rv.addItemDecoration(GridSpacingItemDecoration(7,24,true))
         adapter = CsEmojiAdapter()
-        emojis=MMkvTool.getEmojis()
         adapter.addAll(emojis)
         Log.e("symbol","CustomServerEmojiMenu ${emojis.size} ")
         binding.rv.adapter = adapter

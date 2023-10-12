@@ -21,6 +21,8 @@ import com.ben.bencustomerserver.listener.IChatExtendMenu
 import com.ben.bencustomerserver.listener.IChatInputMenu
 import com.ben.bencustomerserver.listener.IChatPrimaryMenu
 import com.ben.bencustomerserver.listener.ISwitchHumenListener
+import com.ben.bencustomerserver.model.BenEmojiEntity
+import com.ben.bencustomerserver.utils.BenEmojiUtil
 import com.ben.bencustomerserver.utils.BenSmileUtils.getSmiledText
 
 /**
@@ -45,7 +47,7 @@ class BenChatInputMenu : LinearLayout,
     private var chatExtendMenuContainer: FrameLayout? = null
     private lateinit var mTvHuman: TextView
     var menuListener: ChatInputMenuListener? = null
-    open var switchHumanListener:ISwitchHumenListener? =null
+    open var switchHumanListener: ISwitchHumenListener? = null
 
     /**
      * 聊天输入框
@@ -281,6 +283,13 @@ class BenChatInputMenu : LinearLayout,
                     menuListener!!.onExpressionClicked(emojicon)
                 }
             }
+        } else if (emojicon is BenEmojiEntity) {
+            primaryMenu!!.onEmojiconInputEvent(
+                BenEmojiUtil.getSmiledText(
+                    context,
+                    emojicon.name
+                )
+            )
         } else {
             if (menuListener != null) {
                 menuListener!!.onExpressionClicked(emojicon)
@@ -303,7 +312,6 @@ class BenChatInputMenu : LinearLayout,
     companion object {
         private val TAG = BenChatInputMenu::class.java.simpleName
     }
-
 
 
 }

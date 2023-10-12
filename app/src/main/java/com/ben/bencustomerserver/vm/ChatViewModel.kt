@@ -294,6 +294,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
                             WsManager.mWebSocket?.let {
                                 var str = MessageUtil.generateWsMessageVoice(msg)
+                                Log.e("symbol: voice",str)
                                 it.send(str)
                                 RecieveMessageManager.msgs.add(msg)
                                 callback?.let {

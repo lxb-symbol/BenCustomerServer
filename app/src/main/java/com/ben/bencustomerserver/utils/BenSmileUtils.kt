@@ -75,7 +75,7 @@ object BenSmileUtils {
     const val ee_47 = "[(O)]"
     private val spannableFactory = Spannable.Factory
         .getInstance()
-    private val emoticons: MutableMap<Pattern, Any> = HashMap()
+    val emoticons: MutableMap<Pattern, Any> = HashMap()
 
     init {
         val emojicons = data

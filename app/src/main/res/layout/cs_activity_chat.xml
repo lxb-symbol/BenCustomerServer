@@ -47,6 +47,7 @@
                 android:padding="@dimen/dp_10" />
         </LinearLayout>
 
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fcv"
             android:layout_width="match_parent"

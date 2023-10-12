@@ -2,6 +2,7 @@ package com.ben.bencustomerserver.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableString
 import android.util.Log
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.connnect.RecieveMessageManager
@@ -9,6 +10,7 @@ import com.ben.bencustomerserver.connnect.WebSocketService
 import com.ben.bencustomerserver.connnect.wsURL
 import com.ben.bencustomerserver.databinding.CsActivityChatBinding
 import com.ben.bencustomerserver.repositories.ChatRepository
+import com.ben.bencustomerserver.utils.BenEmojiUtil
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.utils.PathUtil
 import com.ben.bencustomerserver.vm.ChatViewModel
@@ -25,6 +27,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
     private lateinit var chatFragment: ChatFragment
 
     override fun initData() {
+
         mViewModel.saveUserId("symbol-8374782")
         mViewModel.saveUserName("symbol2023")
         mViewModel.saveUserAvatar("https://symbol-file.oss-cn-beijing.aliyuncs.com/b1aa0c85f414485bc77a122592eea150.jpg")
@@ -52,7 +55,6 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
     override fun initView() {
 
         initSome()
-
         chatFragment = ChatFragment()
         val bundle = Bundle()
         chatFragment.arguments = bundle

@@ -188,9 +188,7 @@ object MessageUtil {
 
     fun generateTextModel(content: String): BaseMessageModel {
         var msgType: MessageType = MessageType.TXT
-        if (content.startsWith(OriginMessageType.TAG_FACE)) {
-            msgType = MessageType.CMD
-        }
+
         return BaseMessageModel(
             content =content,
             messageType = msgType,
@@ -269,7 +267,7 @@ object MessageUtil {
      */
     fun generateWsMessageVoice(msg: BaseMessageModel): String {
         val inMsg: VoiceMessage = msg.innerMessage as VoiceMessage
-        val content = "audio[${inMsg.netPath}),${inMsg.duration}]"
+        val content = "audio[${inMsg.netPath},${inMsg.duration}]"
         val img = MessageTemplateBean(
             content = content,
             from_id = MMkvTool.getUserId() ?: "",
