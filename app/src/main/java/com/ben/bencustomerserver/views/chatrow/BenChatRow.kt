@@ -23,6 +23,9 @@ import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.utils.BenDateUtils
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.lib_picture_selector.ImageLoaderUtils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.symbol.lib_net.net.RetrofitClient
 import retrofit2.Retrofit
 import java.util.Date
@@ -446,7 +449,6 @@ abstract class BenChatRow : LinearLayout {
                 ImageLoaderUtils.load(context, userAvatarView, R.drawable.icon_head_bolt)
             }
         } else {//人工
-            Log.i("abc--->",message.toString())
             if (!isSender) {//接收方
                 ImageLoaderUtils.load(
                     context,

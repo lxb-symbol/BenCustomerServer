@@ -65,6 +65,7 @@ class BenChatRowImage : BenChatRowFile {
         showImageView(msg.innerMessage as ImageMessage)
     }
 
+
     override fun onMessageSuccess() {
         super.onMessageSuccess()
         //即使是sender，发送成功后也要在执行，防止出现图片尺寸不对的问题

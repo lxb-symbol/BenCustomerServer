@@ -497,12 +497,12 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
         viewModelScope.launch {
             when (val result = repository.getEmojis(code)) {
                 is NetResult.Success -> {
-                    Log.e("symbol", "表情：${result.data}")
+//                    Log.e("symbol", "表情：${result.data}")
                     covertToJsonAndSave(result.data)
                 }
 
                 is NetResult.Error -> {
-                    Log.e("symbol", "表情：${result.exception.message}")
+//                    Log.e("symbol", "表情：${result.exception.message}")
                 }
             }
         }
