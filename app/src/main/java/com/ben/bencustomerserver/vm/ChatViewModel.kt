@@ -101,7 +101,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
         val map = HashMap<String, String>()
         map["uid"] = "${MMkvTool.getUserId()}"
         map["page"] = "$page"
-        map["t"] = "${System.currentTimeMillis()}"
+        map["t"] = "${MMkvTool.getTime()}"
         map["u"] = "${MMkvTool.getSellerCode()}"
         map["tk"] = "${MMkvTool.getToken()}"
 

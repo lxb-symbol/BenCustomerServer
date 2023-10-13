@@ -39,14 +39,14 @@ object RecieveMessageManager {
 
     const val TAG = "symbol-RecieveMessageManager:"
 
-     var socketMsgListeners = mutableMapOf<String, WebSocketMessageListener>()
-     var webSocketStatusListeners = mutableMapOf<String, WebSocketStatusListener>()
-     var httpMsgListeners = mutableMapOf<String, HttpMessageListener>()
+    var socketMsgListeners = mutableMapOf<String, WebSocketMessageListener>()
+    var webSocketStatusListeners = mutableMapOf<String, WebSocketStatusListener>()
+    var httpMsgListeners = mutableMapOf<String, HttpMessageListener>()
 
     /**
      * 作为数据的缓存类
      */
-     val msgs: MutableList<BaseMessageModel> = mutableListOf()
+    val msgs: MutableList<BaseMessageModel> = mutableListOf()
 
 
     /**
@@ -316,7 +316,7 @@ object RecieveMessageManager {
                     MessageRegular.getVoiceUrl(it)
                 }
                 val duration = tmp?.let { MessageRegular.getVoiceDuration(it).replace(",", "") }
-                val duration2 =(duration?:"0").toInt()/1000
+                val duration2 = (duration ?: "0").toInt() / 1000
                 with(model) {
                     isBolt = false
                     messageType = MessageType.VOICE
@@ -466,12 +466,13 @@ object RecieveMessageManager {
      */
     fun parseMessageFromNet(bean: NetMessageBean) {
         val contentmsg = bean.content
+        val msgDirect = if (TextUtils.equals("mine", bean.type)) Direct.SEND else Direct.RECEIEVE
         val model = BaseMessageModel()
         if (TextUtils.isEmpty(bean.content)) {//添加一条消息
             val model = BaseMessageModel(
                 messageType = MessageType.TXT,
                 cmd = OriginMessageType.TYPE_CHAT_MESSAGE,
-                direct = Direct.RECEIEVE,
+                direct = msgDirect,
                 msgId = bean.log_id.toString(),
                 status = MessageStatus.SUCCESS,
                 from_id = bean.from_id,
@@ -482,7 +483,7 @@ object RecieveMessageManager {
                 to_name = bean.to_name,
                 innerMessage = TextMessage(bean.content)
             )
-            msgs.add(model)
+//            msgs.add(model)
             return
         }
         when (getMessageTypeByContentAndExt(contentmsg)) {
@@ -491,7 +492,7 @@ object RecieveMessageManager {
                     messageType = MessageType.TXT
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
-                    direct = Direct.RECEIEVE
+                    direct = msgDirect
                     msgId = bean.log_id.toString()
                     status = MessageStatus.SUCCESS
                     from_id = bean.from_id
@@ -512,7 +513,7 @@ object RecieveMessageManager {
                     messageType = MessageType.IMAGE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
-                    direct = Direct.RECEIEVE
+                    direct = msgDirect
                     msgId = bean.log_id.toString()
                     status = MessageStatus.CREATE
                     from_id = bean.from_id
@@ -545,7 +546,7 @@ object RecieveMessageManager {
                     messageType = MessageType.VOICE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
-                    direct = Direct.RECEIEVE
+                    direct = msgDirect
                     msgId = bean.log_id.toString()
                     status = MessageStatus.CREATE
                     from_id = bean.from_id
@@ -575,7 +576,7 @@ object RecieveMessageManager {
                     messageType = MessageType.VOICE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
-                    direct = Direct.RECEIEVE
+                    direct = msgDirect
                     msgId = bean.log_id.toString()
                     status = MessageStatus.CREATE
                     from_id = bean.from_id
@@ -599,7 +600,7 @@ object RecieveMessageManager {
                     messageType = MessageType.VIDEO
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
-                    direct = Direct.RECEIEVE
+                    direct = msgDirect
                     msgId = bean.log_id.toString()
                     status = MessageStatus.CREATE
                     from_id = bean.from_id
@@ -622,7 +623,7 @@ object RecieveMessageManager {
                 val model = BaseMessageModel(
                     messageType = MessageType.CMD,
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE,
-                    direct = Direct.RECEIEVE,
+                    direct = msgDirect,
                     msgId = bean.log_id.toString(),
                     status = MessageStatus.SUCCESS,
                     from_id = bean.from_id,
@@ -649,7 +650,7 @@ object RecieveMessageManager {
                     messageType = MessageType.FILE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
-                    direct = Direct.RECEIEVE
+                    direct = msgDirect
                     msgId = bean.log_id.toString()
                     status = MessageStatus.CREATE
                     from_id = bean.from_id
@@ -665,7 +666,6 @@ object RecieveMessageManager {
                         fileSize = 0
                     )
                 }
-
             }
 
             else -> {
