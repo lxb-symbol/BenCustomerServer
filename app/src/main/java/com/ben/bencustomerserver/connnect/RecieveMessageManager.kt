@@ -316,6 +316,7 @@ object RecieveMessageManager {
                     MessageRegular.getVoiceUrl(it)
                 }
                 val duration = tmp?.let { MessageRegular.getVoiceDuration(it).replace(",", "") }
+                val duration2 =(duration?:"0").toInt()/1000
                 with(model) {
                     isBolt = false
                     messageType = MessageType.VOICE
@@ -333,7 +334,7 @@ object RecieveMessageManager {
                     to_avatar = MMkvTool.getUserAvatar() ?: ""
                     innerMessage = VoiceMessage(
                         netPath = url,
-                        duration = (duration ?: "0").toInt()
+                        duration = duration2
                     )
                 }
             }

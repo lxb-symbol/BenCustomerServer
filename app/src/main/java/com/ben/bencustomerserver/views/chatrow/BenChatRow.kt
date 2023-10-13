@@ -441,7 +441,8 @@ abstract class BenChatRow : LinearLayout {
      * set avatar and nickname
      */
     protected fun setAvatarAndNick() {
-        Log.i("symbol-7", "sendAvatarAndNick isSender: $isSender")
+//        Log.i("symbol-7", "sendAvatarAndNick isSender: $isSender")
+        Log.i("symbol-7", "sendAvatarAndNick isSender: ${message.toString()}")
         if (message?.isBolt == true) {// 机器人聊天
             if (isSender) {// 发送方
                 ImageLoaderUtils.load(context, userAvatarView, message?.from_avatar)

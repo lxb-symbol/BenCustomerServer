@@ -31,7 +31,7 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
     override fun loadServerMessages(pageSize: Int) {
         Log.i("BenChatMessagePresenterImpl","loadServerMessages")
 
-        (viewModel as ChatViewModel).chatMessages(0)
+        (viewModel as ChatViewModel).chatMessages(1)
         if (isActive) {
             runOnUI {
                 if (mView != null) {

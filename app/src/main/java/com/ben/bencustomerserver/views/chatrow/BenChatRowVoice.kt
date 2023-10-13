@@ -48,7 +48,7 @@ class BenChatRowVoice : BenChatRowFile {
         val len: Int = voiceBody.duration
         var padding = 0
         if (len > 0) {
-            voiceLengthView?.text = len.toString()
+            voiceLengthView?.text = "$len''"
             voiceLengthView!!.visibility = View.VISIBLE
         } else {
             voiceLengthView!!.visibility = View.INVISIBLE

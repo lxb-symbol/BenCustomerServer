@@ -34,6 +34,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         mViewModel.saveSellerCode("5c6cbcb7d55ca")
         mViewModel.getEmojis(null)
         MMkvTool.putIsHuman(false)
+
         mViewModel.getHumanTak().postValue(MMkvTool.getIsHuman())
         mViewModel.getTokenAndWsResul().observe(this) {
             Log.e("symbol:", "${it.token}   <---> ${it.socket_url}")
@@ -47,6 +48,8 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
 
         mViewModel.getHumanTak().observe(this) {
             mViewBinding.tvTitle.text = if (it) "人工客服" else "机器人"
+            // 切换到人工之后获取，历史消息列表
+            chatFragment.mViewBinding.cl.loadData()
         }
 
 
