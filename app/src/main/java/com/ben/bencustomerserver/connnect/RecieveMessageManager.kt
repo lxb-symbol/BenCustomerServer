@@ -116,8 +116,6 @@ object RecieveMessageManager {
 
 
             OriginMessageType.TYPE_CHAT_MESSAGE -> {// 处理具体消息
-                // 处理文本
-//                handleChatNormalSocketType(dataJson)
                 // 处理图文视频等
                 handleOtherSocketType(dataJson)
 
@@ -634,7 +632,6 @@ object RecieveMessageManager {
                     to_name = bean.to_name,
                     innerMessage = TextMessage(bean.content)
                 )
-                msgs.add(model)
 
 
             }
@@ -673,12 +670,15 @@ object RecieveMessageManager {
             }
         }
 
-        if (!TextUtils.isEmpty(model.content) && !TextUtils.isEmpty(model.from_id)) {
-            model.direct = Direct.RECEIEVE
+        if (!TextUtils.isEmpty(model.from_id)) {
             msgs.add(model)
+            for (listener in httpMsgListeners.values) {
+                model.let {
+                    listener.receiveBoltMessage(it)
+                }
+            }
         }
     }
-
 
     /**
      * 机器人回复的消息

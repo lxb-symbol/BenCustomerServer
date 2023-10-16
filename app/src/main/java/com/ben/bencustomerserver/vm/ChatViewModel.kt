@@ -109,11 +109,9 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
             when (val result = repository.getMessageList(map)) {
                 is NetResult.Success -> {
                     _messages.postValue(result.data)
-                    _messages.value?.let {
+                    result.data?.let {
                         Log.e("symbol-3", " 历史消息条数： ${it.size}")
-                        it.let { tmp ->
-                            coverNetMessageToBaseViewModel(tmp)
-                        }
+                        coverNetMessageToBaseViewModel(it)
                     }
                 }
 

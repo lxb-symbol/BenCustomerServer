@@ -64,6 +64,8 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
         mViewModel.getFinalResultMessages().observe(this) {
             Log.e("symbol-3:", "聊天消息数目：${it.size}")
+            // TODO:  待完善
+            mViewBinding.cl.loadData()
         }
     }
 
