@@ -33,6 +33,8 @@ import com.bumptech.glide.request.RequestOptions
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.Objects
 
 object BenImageUtils : ImageUtils() {
@@ -105,7 +107,7 @@ object BenImageUtils : ImageUtils() {
 //        }
 //        return showImage(context, imageView, localThumbUri, thumbnailUrl, width, height)
         // TODO:
-        return ViewGroup.LayoutParams(-1,-1)
+        return ViewGroup.LayoutParams(-1, -1)
     }
 
     fun getImageShowSize(context: Context?, message: BaseMessageModel): ViewGroup.LayoutParams {
@@ -241,7 +243,7 @@ object BenImageUtils : ImageUtils() {
 //            }
 //        }
 //        return showImage(context, imageView, imageUri, thumbnailUrl, width, height)
-        return ViewGroup.LayoutParams(-1,-1)
+        return ViewGroup.LayoutParams(-1, -1)
     }
 
     /**
@@ -355,4 +357,35 @@ object BenImageUtils : ImageUtils() {
         }
         return srcImg
     }
+
+    fun saveImg(context: Context, sourceUri: Uri,result:(uri:Uri)->Unit) {
+        try {
+            // 输出Uri（目标位置）
+           val targetUri =
+                Uri.parse("${context.externalCacheDir.toString()}/img/${System.currentTimeMillis()}.png")
+
+            // 打开输入流和输出流
+            val inputStream: InputStream? = context.contentResolver.openInputStream(sourceUri)
+            val outputStream: OutputStream? = context.contentResolver.openOutputStream(targetUri)
+
+            inputStream?.let { input ->
+                outputStream?.let { output ->
+                    // 从输入流读取到输出流
+                    val buffer = ByteArray(1024)
+                    var length: Int
+                    while (input.read(buffer).also { length = it } > 0) {
+                        output.write(buffer, 0, length)
+                    }
+                    // 关闭流
+                    input.close()
+                    output.close()
+                    result.invoke(targetUri)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
+
 }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
+import android.os.FileUtils
 import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
@@ -17,6 +18,7 @@ import com.ben.bencustomerserver.listener.OnChatLayoutListener
 import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.BenFileUtils
+import com.ben.bencustomerserver.utils.BenImageUtils
 import com.ben.bencustomerserver.utils.UriUtils
 import com.ben.bencustomerserver.utils.VersionUtils
 import com.ben.bencustomerserver.views.CustomerServerEmojiMenu
@@ -62,11 +64,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         //        获取聊天消息
         mViewModel.chatMessages(1)
 
-        mViewModel.getFinalResultMessages().observe(this) {
-            Log.e("symbol-3:", "聊天消息数目：${it.size}")
-            // TODO:  待完善
-            mViewBinding.cl.loadData()
-        }
+
     }
 
 
@@ -198,6 +196,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
             override fun onResult(medias: MutableList<LocalMedia>?) {
                 medias?.let {
                     mViewBinding.cl.sendImageMessage(Uri.parse(it[0].availablePath))
+
                 }
             }
 
@@ -213,9 +212,6 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
 
     override fun onChatError(code: Int, errorMsg: String?) {
     }
-
-
-
 
 
     private fun onActivityResultForLocalFiles(data: Intent?) {
@@ -239,7 +235,7 @@ open class ChatFragment : BaseFragment<ChatViewModel, FragmentChatBinding>(), On
         PictureSelectUtil.get().takePicture(requireContext(), object : ResultListener {
             override fun onResult(medias: MutableList<LocalMedia>?) {
                 medias?.let {
-                    mViewBinding.cl.sendImageMessage(Uri.parse(it[0].path))
+                    mViewBinding.cl.sendImageMessage(Uri.parse(it[0].realPath))
                 }
             }
 
