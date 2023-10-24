@@ -48,8 +48,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.mmkv)
-
     api(libs.bundles.nets)
+    api(libs.utilcode)
 
 
 }

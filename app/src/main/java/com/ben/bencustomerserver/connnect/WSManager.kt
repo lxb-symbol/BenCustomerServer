@@ -49,7 +49,7 @@ object WsManager : CoroutineScope by MainScope() {
 
 
     private var reconnectJob: Job? = null
-    private var connectionStatus = ConnectionStatus.DISCONNECTED // 初始状态为断开连接
+    open var connectionStatus = ConnectionStatus.DISCONNECTED // 初始状态为断开连接
     private const val mMaxRetryCount = 10 // 最大重试次数
     private val mNetWorkCallback by lazy {
         object : ConnectivityManager.NetworkCallback() {
@@ -120,6 +120,8 @@ object WsManager : CoroutineScope by MainScope() {
         connect()
         NetworkStatusMonitor.register(mNetWorkCallback)
     }
+
+
 
     private fun connect() {
         if (mWebSocket != null) {

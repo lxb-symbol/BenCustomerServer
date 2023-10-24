@@ -82,13 +82,14 @@ class BenVoiceViewHolder(itemView: View, itemClickListener: MessageListItemClick
         val inMsg = message.innerMessage as VoiceMessage
         val netPath = inMsg.netPath
 
-        val filePath =itemView.context.externalCacheDir?.path
-        val name = "${netPath.hashCode()}.amr"
+        val filePath = itemView.context.externalCacheDir?.path
+        val name = "${netPath.hashCode()}.mp4"
         MainScope().launch {
-            val b =   HttpUtils.downFile(itemView.context,netPath?:"",filePath?:"",name)
-            Log.i("symbol-5","b-->$b")
-            if(b){
-                (message?.innerMessage as VoiceMessage)?.localPath="$filePath/$name"
+            val b = HttpUtils.downFile(itemView.context, netPath ?: "", filePath ?: "", name)
+            Log.i("symbol-5", "voice-->$b")
+            if (b) {
+                (message.innerMessage as VoiceMessage).localPath = "$filePath/$name"
+                message.status = MessageStatus.SUCCESS
                 chatRow?.updateView(message)
             }
         }

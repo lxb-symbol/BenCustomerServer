@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ben.bencustomerserver.connnect.ConnectionStatus
 import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.connnect.WsManager
 import com.ben.bencustomerserver.listener.INetCallback
@@ -23,11 +24,14 @@ import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.blankj.utilcode.util.NetworkUtils
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.exception.ResultException
 import com.symbol.lib_net.model.NetResult
 import com.tencent.mmkv.MMKV
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -44,6 +48,8 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     // 上传错误之后，发送消息 ID
     private val _errorUp = MutableLiveData<String>()
 
+    private val _netError = MutableLiveData<String>()
+
 
     /**
      * 最终网络和  socket转化后的数据
@@ -53,6 +59,8 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
     private val _isHumanTalk = MutableLiveData<Boolean>()
 
     fun getErrorUpId() = _errorUp
+
+    fun getNetErrorMsg() = _netError
 
     fun getHumanTak() = _isHumanTalk
 
@@ -109,7 +117,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
             when (val result = repository.getMessageList(map)) {
                 is NetResult.Success -> {
                     _messages.postValue(result.data)
-                    result.data?.let {
+                    result.data.let {
                         Log.e("symbol-3", " 历史消息条数： ${it.size}")
                         coverNetMessageToBaseViewModel(it)
                     }
@@ -159,6 +167,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                 }
 
                 is NetResult.Error -> {
+                    _netError.postValue(result.exception.message)
                     Log.e("symbol", "getTokenAndWs is error: ${result.exception.message}")
                 }
             }
@@ -177,39 +186,54 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
             MessageType.TXT -> {
                 if (isHuman) {
-                    WsManager.mWebSocket?.let {
-                        val str = MessageUtil.generateWsMessageTxt(msg)
-                        Log.i("symbol", "send ws TXT : $str")
-                        it.send(str)
-                        msg.status = MessageStatus.SUCCESS
+                    val str = MessageUtil.generateWsMessageTxt(msg)
+                    viewModelScope.launch(Dispatchers.IO) {
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
+                        }
                         RecieveMessageManager.msgs.add(msg)
-                        callback?.let {
-                            it.onSuccess("")
+                        WsManager.mWebSocket?.let {
+                            if (!NetworkUtils.isAvailable()) {
+                                msg.status = MessageStatus.FAIL
+                            } else {
+                                msg.status = MessageStatus.SUCCESS
+                            }
+                            it.send(str)
+                            RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                            callback?.onSuccess("")
                         }
                     }
                 } else {
-                    msg.status = MessageStatus.SUCCESS
-                    RecieveMessageManager.msgs.add(msg)
-                    queryBolt(msg.content, object : INetCallback<String> {
-                        override fun onSuccess(data: String) {
-                            Log.i("symbol--4", "$data")
-                            callback?.let {
-                                it.onSuccess("")
-                            }
+                    viewModelScope.launch(Dispatchers.IO) {
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
                         }
-
-                        override fun onError(code: Int, msg: String) {
-                            Log.i("symbol--4", "$msg")
-                            callback?.let {
-                                it.onError(code, msg)
+                        RecieveMessageManager.msgs.add(msg)
+                        queryBolt(msg.content, object : INetCallback<String> {
+                            override fun onSuccess(data: String) {
+                                Log.i("symbol--4", "$data")
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onSuccess("")
                             }
 
-                            if (code == -3 || code == -1) {// 来自机器人的回复,取 msg 的值
-                                RecieveMessageManager.addBoltResponseData(msg, MessageType.TXT, "")
+                            override fun onError(code: Int, msg1: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, msg1)
+                                if (code == -3 || code == -1) {// 来自机器人的回复,取 msg 的值
+                                    RecieveMessageManager.addBoltResponseData(
+                                        msg1,
+                                        MessageType.TXT,
+                                        ""
+                                    )
+                                }
                             }
-                        }
-                    })
-
+                        })
+                    }
                 }
             }
 
@@ -225,110 +249,139 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
             MessageType.IMAGE -> {
                 if (isHuman) {// 人工都是 socket
-                    val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
-                    val localPath = innerMsg.localPath
-                    uploadImg(msg.msgId, File(localPath), object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            (msg.innerMessage as ImageMessage).netPath = data.src
-
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
-                            WsManager.mWebSocket?.let {
-                                var str = MessageUtil.generateWsMessageImage(msg)
-                                it.send(str)
-                                msg.status = MessageStatus.SUCCESS
-                                RecieveMessageManager.msgs.add(msg)
-                                callback?.let {
-                                    it.onSuccess("")
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
+                        val localPath = innerMsg.localPath
+                        if (!NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
+                        }
+                        RecieveMessageManager.msgs.add(msg)
+                        uploadImg(msg.msgId, File(localPath), object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as ImageMessage).netPath = data.src
+                                WsManager.mWebSocket?.let {
+                                    val str = MessageUtil.generateWsMessageImage(msg)
+                                    it.send(str)
+                                    if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                        msg.status = MessageStatus.SUCCESS
+                                    } else {
+                                        msg.status = MessageStatus.FAIL
+                                    }
+                                    RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                    callback?.onSuccess("")
                                 }
                             }
-                        }
 
-                        override fun onError(code: Int, msg1: String) {
-                            RecieveMessageManager.msgs.add(msg)
-                        }
-
-                    })
-                } else {
-                    Log.e("symbol-4", "-->$msg")
-                    val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
-                    val localPath = innerMsg.localPath
-                    val f = File(localPath)
-                    uploadImg(msg.msgId, f, object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            (msg.innerMessage as ImageMessage).netPath = data.src
-
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
-                            // TODO 缺少
-                            msg.status = MessageStatus.SUCCESS
-                            RecieveMessageManager.msgs.add(msg)
-                            callback?.let {
-                                it.onSuccess("")
+                            override fun onError(code: Int, msg1: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onSuccess("")
                             }
-                        }
-
-                        override fun onError(code: Int, errorMsg: String) {
+                        })
+                    }
+                } else {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
+                        val localPath = innerMsg.localPath
+                        val f = File(localPath)
+                        if (!NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
                             msg.status = MessageStatus.FAIL
-                            RecieveMessageManager.msgs.add(msg)
-
                         }
+                        RecieveMessageManager.msgs.add(msg)
+                        uploadImg(msg.msgId, f, object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as ImageMessage).netPath = data.src
+                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                    msg.status = MessageStatus.SUCCESS
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onSuccess("")
+                            }
 
-                    })
+                            override fun onError(code: Int, errorMsg: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, errorMsg)
+                            }
+                        })
 
+                    }
                 }
 
             }
 
             MessageType.VOICE -> {
                 if (isHuman) {// 人工都是 socket
-                    val innerMsg: VoiceMessage = msg.innerMessage as VoiceMessage
-                    val localPath = innerMsg.localPath
-                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
-                            (msg.innerMessage as VoiceMessage).netPath = data.src
-                            msg.status = MessageStatus.SUCCESS
-
-                            WsManager.mWebSocket?.let {
-                                var str = MessageUtil.generateWsMessageVoice(msg)
-                                Log.e("symbol: voice", str)
-                                it.send(str)
-                                RecieveMessageManager.msgs.add(msg)
-                                callback?.let {
-                                    it.onSuccess("")
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val innerMsg: VoiceMessage = msg.innerMessage as VoiceMessage
+                        val localPath = innerMsg.localPath
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
+                        }
+                        RecieveMessageManager.msgs.add(msg)
+                        uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as VoiceMessage).netPath = data.src
+                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                    msg.status = MessageStatus.SUCCESS
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
+                                WsManager.mWebSocket?.let {
+                                    var str = MessageUtil.generateWsMessageVoice(msg)
+                                    it.send(str)
+                                    RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                    callback?.onSuccess("")
                                 }
                             }
-                        }
 
-                        override fun onError(code: Int, em: String) {
-                            Log.e("symbol-4", "-->$em")
-                            msg.status = MessageStatus.FAIL
-
-                        }
-                    })
-                } else {
-                    val innerMsg: VoiceMessage = msg.innerMessage as VoiceMessage
-                    val localPath = innerMsg.localPath
-                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
-                            (msg.innerMessage as VoiceMessage).netPath = data.src
-                            msg.status = MessageStatus.SUCCESS
-                            //TODO 缺少接口
-                            RecieveMessageManager.msgs.add(msg)
-                            callback?.let {
-                                it.onSuccess("")
+                            override fun onError(code: Int, em: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, em)
                             }
-                        }
+                        })
+                    }
 
-                        override fun onError(code: Int, msg: String) {
-                            Log.e("symbol-4", "-->$msg")
-                        }
+                } else {
+                    viewModelScope.launch(Dispatchers.IO) {
 
-                    })
+                        val innerMsg: VoiceMessage = msg.innerMessage as VoiceMessage
+                        val localPath = innerMsg.localPath
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
+                        }
+                        RecieveMessageManager.msgs.add(msg)
+                        uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as VoiceMessage).netPath = data.src
+                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                    msg.status = MessageStatus.SUCCESS
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onSuccess("")
+                            }
+
+                            override fun onError(code: Int, msg1: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, msg1)
+                            }
+
+                        })
+                    }
                 }
 
             }
@@ -337,106 +390,132 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                 if (isHuman) {// 人工都是 socket
                     val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
                     val localPath = innerMsg.localPath
+                    if (NetworkUtils.isAvailable()) {
+                        msg.status = MessageStatus.CREATE
+                    } else {
+                        msg.status = MessageStatus.FAIL
+                    }
+                    RecieveMessageManager.msgs.add(msg)
                     uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
                         override fun onSuccess(data: UpFileEntity) {
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
                             (msg.innerMessage as VideoMessage).netPath = data.src
-                            msg.status = MessageStatus.SUCCESS
-
+                            if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                msg.status = MessageStatus.SUCCESS
+                            } else {
+                                msg.status = MessageStatus.FAIL
+                            }
                             WsManager.mWebSocket?.let {
                                 var str = MessageUtil.generateWsMessageVideo(msg)
                                 it.send(str)
-                                RecieveMessageManager.msgs.add(msg)
-                                callback?.let {
-                                    it.onSuccess("")
-                                }
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onSuccess("")
                             }
                         }
 
-                        override fun onError(code: Int, msg: String) {
-                            Log.e("symbol-4", "-->$msg")
+                        override fun onError(code: Int, msg1: String) {
+                            msg.status = MessageStatus.FAIL
+                            RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                            callback?.onError(code, msg1)
                         }
                     })
                 } else {
-                    val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
-                    val localPath = innerMsg.localPath
-                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
-                            (msg.innerMessage as VideoMessage).netPath = data.src
-                            msg.status = MessageStatus.SUCCESS
-
-                            //TODO 缺少接口
-                            RecieveMessageManager.msgs.add(msg)
-                            callback?.let {
-                                it.onSuccess("")
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
+                        val localPath = innerMsg.localPath
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
+                        }
+                        RecieveMessageManager.msgs.add(msg)
+                        uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as VideoMessage).netPath = data.src
+                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                    msg.status = MessageStatus.SUCCESS
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onSuccess("")
                             }
-                        }
 
-                        override fun onError(code: Int, msg: String) {
-                            Log.e("symbol-4", "-->$msg")
-                        }
-
-                    })
+                            override fun onError(code: Int, msg1: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, msg1)
+                            }
+                        })
+                    }
                 }
             }
 
             MessageType.FILE -> {
                 if (isHuman) {// 人工都是 socket
-                    val innerMsg: FileMessage = msg.innerMessage as FileMessage
-                    val localPath = innerMsg.localPath
-                    val f = File(localPath)
-                    innerMsg.name =f.name
-                    uploadFile(f, object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
-                            (msg.innerMessage as FileMessage).netPath = data.src
-                            msg.status = MessageStatus.SUCCESS
-
-                            WsManager.mWebSocket?.let {
-                                var str = MessageUtil.generateWsMessageFile(msg)
-                                it.send(str)
-                                RecieveMessageManager.msgs.add(msg)
-                                callback?.let {
-                                    it.onSuccess("")
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val innerMsg: FileMessage = msg.innerMessage as FileMessage
+                        val localPath = innerMsg.localPath
+                        val f = File(localPath)
+                        innerMsg.name = f.name
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
+                        }
+                        RecieveMessageManager.msgs.add(msg)
+                        uploadFile(f, object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as FileMessage).netPath = data.src
+                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                    msg.status = MessageStatus.SUCCESS
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
+                                WsManager.mWebSocket?.let {
+                                    var str = MessageUtil.generateWsMessageFile(msg)
+                                    it.send(str)
+                                    RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                    callback?.onSuccess("")
                                 }
                             }
-                        }
 
-                        override fun onError(code: Int, msg: String) {
-                        }
+                            override fun onError(code: Int, msg1: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, msg1)
+                            }
 
-                    })
+                        })
+                    }
                 } else {
-                    val innerMsg: FileMessage = msg.innerMessage as FileMessage
-                    val localPath = innerMsg.localPath
-                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            Log.e("symbol-4", "-->" + data.name)
-                            Log.e("symbol-4", "-->" + data.src)
-                            (msg.innerMessage as FileMessage).netPath = data.src
-                            msg.status = MessageStatus.SUCCESS
-
-                            RecieveMessageManager.msgs.add(msg)
-                            callback?.let {
-                                it.onSuccess("")
-                            }
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val innerMsg: FileMessage = msg.innerMessage as FileMessage
+                        val localPath = innerMsg.localPath
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
                         }
-
-                        override fun onError(code: Int, emsg: String) {
-                            msg.status = MessageStatus.SUCCESS
-                            callback?.let {
-                                it.onError(code, emsg)
+                        RecieveMessageManager.msgs.add(msg)
+                        uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as FileMessage).netPath = data.src
+                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                    msg.status = MessageStatus.SUCCESS
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
+                                callback?.onSuccess("")
                             }
-                        }
 
-                    })
-
+                            override fun onError(code: Int, emsg: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, emsg)
+                            }
+                        })
+                    }
                 }
-
             }
 
             else -> {

@@ -513,7 +513,7 @@ object RecieveMessageManager {
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
                     msgId = bean.log_id.toString()
-                    status = MessageStatus.CREATE
+                    status = MessageStatus.SUCCESS
                     from_id = bean.from_id
                     from_avatar = bean.from_avatar
                     from_name = bean.from_name
@@ -546,7 +546,7 @@ object RecieveMessageManager {
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
                     msgId = bean.log_id.toString()
-                    status = MessageStatus.CREATE
+                    status = MessageStatus.SUCCESS
                     from_id = bean.from_id
                     from_avatar = bean.from_avatar
                     from_name = bean.from_name
@@ -569,14 +569,16 @@ object RecieveMessageManager {
                 val url = tmp?.let {
                     MessageRegular.getVoiceUrl(it)
                 }
-                val duration = tmp?.let { MessageRegular.getVoiceDuration(it) }
+                val duration = tmp?.let { MessageRegular.getVoiceDuration(it).replace(",", "") }
+                val duration2 = (duration ?: "0").toInt() / 1000
+
                 with(model) {
                     messageType = MessageType.VOICE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
                     msgId = bean.log_id.toString()
-                    status = MessageStatus.CREATE
+                    status = MessageStatus.SUCCESS
                     from_id = bean.from_id
                     from_avatar = bean.from_avatar
                     from_name = bean.from_name
@@ -585,7 +587,7 @@ object RecieveMessageManager {
                     to_name = bean.to_name
                     innerMessage = VoiceMessage(
                         netPath = url,
-                        duration = (duration ?: "0").toInt()
+                        duration = duration2
                     )
                 }
             }
@@ -600,7 +602,7 @@ object RecieveMessageManager {
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
                     msgId = bean.log_id.toString()
-                    status = MessageStatus.CREATE
+                    status = MessageStatus.SUCCESS
                     from_id = bean.from_id
                     from_avatar = bean.from_avatar
                     from_name = bean.from_name
@@ -632,7 +634,6 @@ object RecieveMessageManager {
                     to_name = bean.to_name,
                     innerMessage = TextMessage(bean.content)
                 )
-
 
             }
 
@@ -735,6 +736,15 @@ object RecieveMessageManager {
     fun addSocketMessageListener(key: String, lis: WebSocketMessageListener) {
         if (socketMsgListeners.containsKey(key)) return
         socketMsgListeners[key] = lis
+    }
+
+
+    fun updateMessage(id: String, status: MessageStatus) {
+        for (msg in msgs) {
+            if (TextUtils.equals(id, msg.msgId)) {
+                msg.status = status
+            }
+        }
     }
 
 

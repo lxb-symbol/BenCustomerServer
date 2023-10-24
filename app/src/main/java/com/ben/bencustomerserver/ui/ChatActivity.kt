@@ -15,6 +15,7 @@ import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.utils.PathUtil
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.module_base.ui.BaseActivity
+import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient
 import com.tencent.mmkv.MMKV
 import java.lang.ref.WeakReference
@@ -51,6 +52,9 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
             chatFragment.mViewBinding.cl.loadData()
         }
 
+        mViewModel.getNetErrorMsg().observe(this) {
+            ToastUtils.showToast(this@ChatActivity,it)
+        }
 
     }
 

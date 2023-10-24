@@ -53,7 +53,7 @@ class BenChatRowImage : BenChatRowFile {
         val imgBody = message?.innerMessage as ImageMessage
         // received messages
         if (message!!.direct === Direct.RECEIEVE) {
-            message?.status=MessageStatus.SUCCESS
+            message?.status = MessageStatus.SUCCESS
             onViewUpdate(message!!)
         }
         showImageView(imgBody)
@@ -97,13 +97,29 @@ class BenChatRowImage : BenChatRowFile {
      */
     @SuppressLint("StaticFieldLeak")
     private fun showImageView(message: ImageMessage) {
-        val url = RetrofitClient.BASE_URL + message.netPath
-        Log.i("symbol", "imgage url :$url")
-        imageView?.let {
-            Glide.with(context)
-                .load(url)
-                .apply(RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
-                .into(it)
+        val localUrl = message.localPath
+        if (!TextUtils.isEmpty(localUrl)) {
+            imageView?.let {
+                Glide.with(context)
+                    .load(localUrl)
+                    .apply(
+                        RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    )
+                    .into(it)
+            }
+
+        } else {
+            val url = RetrofitClient.BASE_URL + message.netPath
+            Log.i("symbol", "imgage url :$url")
+            imageView?.let {
+                Glide.with(context)
+                    .load(url)
+                    .apply(
+                        RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    )
+                    .into(it)
+            }
+
         }
 
     }
