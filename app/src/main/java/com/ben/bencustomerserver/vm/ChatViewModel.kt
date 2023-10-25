@@ -32,6 +32,7 @@ import com.symbol.lib_net.exception.ResultException
 import com.symbol.lib_net.model.NetResult
 import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -194,6 +195,8 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
+                        Log.i("symbol", "msg.size:${RecieveMessageManager.msgs.size}")
                         WsManager.mWebSocket?.let {
                             if (!NetworkUtils.isAvailable()) {
                                 msg.status = MessageStatus.FAIL
@@ -207,23 +210,29 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                     }
                 } else {
                     viewModelScope.launch(Dispatchers.IO) {
-                        if (NetworkUtils.isAvailable()) {
-                            msg.status = MessageStatus.CREATE
-                        } else {
-                            msg.status = MessageStatus.FAIL
-                        }
                         RecieveMessageManager.msgs.add(msg)
                         queryBolt(msg.content, object : INetCallback<String> {
                             override fun onSuccess(data: String) {
                                 Log.i("symbol--4", "$data")
+                                if (NetworkUtils.isAvailable()) {
+                                    msg.status = MessageStatus.CREATE
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
                                 RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+
                                 callback?.onSuccess("")
                             }
 
                             override fun onError(code: Int, msg1: String) {
-                                msg.status = MessageStatus.FAIL
-                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
-                                callback?.onError(code, msg1)
+                                if (code == 1003) {
+                                    msg.status = MessageStatus.FAIL
+                                    RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                    callback?.onError(code, msg1)
+                                } else {
+                                    msg.status = MessageStatus.SUCCESS
+                                    callback?.onSuccess("")
+                                }
                                 if (code == -3 || code == -1) {// 来自机器人的回复,取 msg 的值
                                     RecieveMessageManager.addBoltResponseData(
                                         msg1,
@@ -258,6 +267,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
                         uploadImg(msg.msgId, File(localPath), object : INetCallback<UpFileEntity> {
                             override fun onSuccess(data: UpFileEntity) {
                                 (msg.innerMessage as ImageMessage).netPath = data.src
@@ -292,6 +302,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
                         uploadImg(msg.msgId, f, object : INetCallback<UpFileEntity> {
                             override fun onSuccess(data: UpFileEntity) {
                                 (msg.innerMessage as ImageMessage).netPath = data.src
@@ -327,6 +338,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
                         uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
                             override fun onSuccess(data: UpFileEntity) {
                                 (msg.innerMessage as VoiceMessage).netPath = data.src
@@ -362,6 +374,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
                         uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
                             override fun onSuccess(data: UpFileEntity) {
                                 (msg.innerMessage as VoiceMessage).netPath = data.src
@@ -388,36 +401,39 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 
             MessageType.VIDEO -> {
                 if (isHuman) {// 人工都是 socket
-                    val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
-                    val localPath = innerMsg.localPath
-                    if (NetworkUtils.isAvailable()) {
-                        msg.status = MessageStatus.CREATE
-                    } else {
-                        msg.status = MessageStatus.FAIL
-                    }
-                    RecieveMessageManager.msgs.add(msg)
-                    uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
-                        override fun onSuccess(data: UpFileEntity) {
-                            (msg.innerMessage as VideoMessage).netPath = data.src
-                            if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
-                                msg.status = MessageStatus.SUCCESS
-                            } else {
-                                msg.status = MessageStatus.FAIL
-                            }
-                            WsManager.mWebSocket?.let {
-                                var str = MessageUtil.generateWsMessageVideo(msg)
-                                it.send(str)
-                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
-                                callback?.onSuccess("")
-                            }
-                        }
-
-                        override fun onError(code: Int, msg1: String) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
+                        val localPath = innerMsg.localPath
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
                             msg.status = MessageStatus.FAIL
-                            RecieveMessageManager.updateMessage(msg.msgId, msg.status)
-                            callback?.onError(code, msg1)
                         }
-                    })
+                        RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
+                        uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
+                            override fun onSuccess(data: UpFileEntity) {
+                                (msg.innerMessage as VideoMessage).netPath = data.src
+                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                    msg.status = MessageStatus.SUCCESS
+                                } else {
+                                    msg.status = MessageStatus.FAIL
+                                }
+                                WsManager.mWebSocket?.let {
+                                    var str = MessageUtil.generateWsMessageVideo(msg)
+                                    it.send(str)
+                                    RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                    callback?.onSuccess("")
+                                }
+                            }
+
+                            override fun onError(code: Int, msg1: String) {
+                                msg.status = MessageStatus.FAIL
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
+                                callback?.onError(code, msg1)
+                            }
+                        })
+                    }
                 } else {
                     viewModelScope.launch(Dispatchers.IO) {
                         val innerMsg: VideoMessage = msg.innerMessage as VideoMessage
@@ -428,6 +444,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
                         uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
                             override fun onSuccess(data: UpFileEntity) {
                                 (msg.innerMessage as VideoMessage).netPath = data.src
@@ -463,15 +480,16 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
                         uploadFile(f, object : INetCallback<UpFileEntity> {
                             override fun onSuccess(data: UpFileEntity) {
                                 (msg.innerMessage as FileMessage).netPath = data.src
-                                if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
-                                    msg.status = MessageStatus.SUCCESS
-                                } else {
-                                    msg.status = MessageStatus.FAIL
-                                }
                                 WsManager.mWebSocket?.let {
+                                    if (WsManager.connectionStatus == ConnectionStatus.CONNECTED) {
+                                        msg.status = MessageStatus.SUCCESS
+                                    } else {
+                                        msg.status = MessageStatus.FAIL
+                                    }
                                     var str = MessageUtil.generateWsMessageFile(msg)
                                     it.send(str)
                                     RecieveMessageManager.updateMessage(msg.msgId, msg.status)
@@ -497,6 +515,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             msg.status = MessageStatus.FAIL
                         }
                         RecieveMessageManager.msgs.add(msg)
+                        callback?.onSuccess("")
                         uploadFile(File(localPath), object : INetCallback<UpFileEntity> {
                             override fun onSuccess(data: UpFileEntity) {
                                 (msg.innerMessage as FileMessage).netPath = data.src
@@ -505,6 +524,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                                 } else {
                                     msg.status = MessageStatus.FAIL
                                 }
+                                RecieveMessageManager.updateMessage(msg.msgId, msg.status)
                                 callback?.onSuccess("")
                             }
 
@@ -537,7 +557,6 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         it.onSuccess(result.data)
                     }
                 }
-
                 is NetResult.Error -> {
                     Log.e("symbol", "getTokenAndWs is error: ${result.exception.message}")
                     callback?.let {
@@ -625,6 +644,13 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    fun launchOnMain(doSome: () -> Unit) {
+        viewModelScope.launch {
+            delay(300)
+            doSome.invoke()
         }
     }
 

@@ -27,7 +27,7 @@ open class BenShowBigImgActivity : BaseActivity<EmptyViewModel, CsActivityBenSho
         }else if (path?.startsWith("/upload")==true){
             ImageLoaderUtils.load(BenShowBigImgActivity@ this, mViewBinding.iv, RetrofitClient.BASE_URL+path)
         }else{
-            ImageLoaderUtils.load(BenShowBigImgActivity@ this, mViewBinding.iv, Uri.parse(path))
+            ImageLoaderUtils.load(BenShowBigImgActivity@ this, mViewBinding.iv,path)
         }
     }
 

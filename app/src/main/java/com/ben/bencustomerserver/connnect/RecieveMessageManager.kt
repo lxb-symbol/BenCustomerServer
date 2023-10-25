@@ -27,6 +27,7 @@ import com.symbol.lib_net.net.RetrofitClient
 import com.tencent.mmkv.MMKV
 import org.json.JSONObject
 import java.lang.ref.WeakReference
+import kotlin.streams.toList
 
 
 /***
@@ -743,6 +744,7 @@ object RecieveMessageManager {
         for (msg in msgs) {
             if (TextUtils.equals(id, msg.msgId)) {
                 msg.status = status
+                break
             }
         }
     }
