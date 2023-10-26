@@ -71,4 +71,6 @@ interface IChatInputMenu {
      * @return
      */
     fun onBackPressed(): Boolean
+
+    fun showHumanButton(show:Boolean)
 }

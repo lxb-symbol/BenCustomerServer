@@ -78,9 +78,9 @@ class BenChatRowVoice : BenChatRowFile {
     override fun onViewUpdate(msg: BaseMessageModel) {
         super.onViewUpdate(msg)
         // Only the received message has the attachment download status.
-        if (message?.direct === Direct.SEND) {
-            return
-        }
+//        if (message?.direct === Direct.SEND) {
+//            return
+//        }
 
     }
 

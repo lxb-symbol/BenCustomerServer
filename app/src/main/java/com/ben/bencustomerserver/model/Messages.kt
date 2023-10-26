@@ -12,7 +12,7 @@ data class FileMessage(
 ) : IMessageModel
 
 data class ImageMessage(
-    val localPath: String? = "",
+    var localPath: String? = "",
     var netPath: String? = ""
 ) : IMessageModel
 

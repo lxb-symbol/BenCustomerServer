@@ -50,10 +50,11 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
             mViewBinding.tvTitle.text = if (it) "人工客服" else "机器人"
             // 切换到人工之后获取，历史消息列表
             chatFragment.mViewBinding.cl.loadData()
+            chatFragment.mViewBinding.cl.chatInputMenu().showHumanButton(it)
         }
 
         mViewModel.getNetErrorMsg().observe(this) {
-            ToastUtils.showToast(this@ChatActivity,it)
+            ToastUtils.showToast(this@ChatActivity, it)
         }
 
     }

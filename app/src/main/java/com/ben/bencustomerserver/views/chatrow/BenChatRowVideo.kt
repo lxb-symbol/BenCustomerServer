@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
 import com.ben.bencustomerserver.model.MessageStatus
@@ -20,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
@@ -73,14 +75,17 @@ class BenChatRowVideo : BenChatRowFile {
         } else {
             val netPath = RetrofitClient.BASE_URL + innerMessage.netPath
             showVideoThumbView(netPath)
-            MainScope().launch {
+            MainScope().launch(Dispatchers.IO) {
                 val filePath = context.externalCacheDir?.path
                 val name = "${netPath.hashCode()}.mp4"
                 val b = HttpUtils.downFile(context, netPath, filePath ?: "", name)
                 Log.i("symbol-5", "video-->$b")
                 if (b) {
-                    showVideoThumbView(str = "$filePath/$name")
+                    MainScope().launch {
+                        showVideoThumbView(str = "$filePath/$name")
+                    }
                     (message?.innerMessage as VideoMessage).localPath = "$filePath/$name"
+                    RecieveMessageManager.updateMessageLocalUrl(message?.msgId,"$filePath/$name")
                 }
             }
 
@@ -95,6 +100,8 @@ class BenChatRowVideo : BenChatRowFile {
      */
     @SuppressLint("StaticFieldLeak")
     private fun showVideoThumbView(str: String) {
+        Log.i("symbol-5", "video a-->$str")
+
         imageView?.let {
             Glide.with(context).load(str)
                 .apply(RequestOptions.centerCropTransform().frame(1000))

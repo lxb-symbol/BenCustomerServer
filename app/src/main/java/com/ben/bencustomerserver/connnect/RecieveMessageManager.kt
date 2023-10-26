@@ -571,7 +571,7 @@ object RecieveMessageManager {
                     MessageRegular.getVoiceUrl(it)
                 }
                 val duration = tmp?.let { MessageRegular.getVoiceDuration(it).replace(",", "") }
-                val duration2 = (duration ?: "0").toInt() / 1000
+                val duration2 = (duration ?: "0").toInt()
 
                 with(model) {
                     messageType = MessageType.VOICE
@@ -611,8 +611,8 @@ object RecieveMessageManager {
                     to_id = bean.to_id
                     to_name = bean.to_name
                     innerMessage = VideoMessage(
-                        netPath = "",
-                        localPath = videoUrl,
+                        netPath = videoUrl,
+                        localPath = "",
                         name = videoName
                     )
                 }
@@ -651,7 +651,7 @@ object RecieveMessageManager {
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
                     msgId = bean.log_id.toString()
-                    status = MessageStatus.CREATE
+                    status = MessageStatus.SUCCESS
                     from_id = bean.from_id
                     from_avatar = bean.from_avatar
                     from_name = bean.from_name
@@ -744,6 +744,23 @@ object RecieveMessageManager {
         for (msg in msgs) {
             if (TextUtils.equals(id, msg.msgId)) {
                 msg.status = status
+                break
+            }
+        }
+    }
+
+    fun updateMessageLocalUrl(id: String?, path: String) {
+        for (msg in msgs) {
+            if (TextUtils.equals(id, msg.msgId)) {
+                if (msg.messageType == MessageType.VIDEO) {
+                    (msg.innerMessage as VideoMessage).localPath = path
+                } else if (msg.messageType == MessageType.IMAGE) {
+                    (msg.innerMessage as ImageMessage).localPath = path
+
+                } else if (msg.messageType == MessageType.FILE) {
+                    (msg.innerMessage as FileMessage).localPath = path
+                }
+
                 break
             }
         }

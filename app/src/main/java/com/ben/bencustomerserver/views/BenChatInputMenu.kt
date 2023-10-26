@@ -97,6 +97,7 @@ class BenChatInputMenu : LinearLayout,
         }
     }
 
+
     override fun setCustomPrimaryMenu(menu: IChatPrimaryMenu?) {
         primaryMenu = menu
         showPrimaryMenu()
@@ -156,6 +157,10 @@ class BenChatInputMenu : LinearLayout,
             return false
         }
         return true
+    }
+
+    override fun showHumanButton(show: Boolean) {
+        mTvHuman.visibility = if (show) View.GONE else View.VISIBLE
     }
 
     private fun showPrimaryMenu() {

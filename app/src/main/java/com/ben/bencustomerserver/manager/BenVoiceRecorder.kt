@@ -69,6 +69,11 @@ class BenVoiceRecorder(private val handler: Handler) {
                     msg.what = recorder!!.maxAmplitude * 13 / 0x7FFF
                     handler.sendMessage(msg)
                     SystemClock.sleep(100)
+                    val seconds = (Date().time - startTime).toInt() / 1000
+                    if (seconds>60){
+
+                    }
+
                 }
             } catch (e: Exception) {
                 // from the crash report website, found one NPE crash from
