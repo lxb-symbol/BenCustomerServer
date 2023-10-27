@@ -43,23 +43,8 @@ android {
 }
 
 dependencies {
-    implementation(libs.core.ktx)
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.lifcycle.exteion)
-    implementation(libs.viewmodel.lifcycle)
-    implementation(libs.rv)
-    implementation(libs.glide)
-    implementation(libs.vrvh)
-    implementation(libs.xxpermission)
-    implementation(libs.mmkv)
-    implementation(project(mapOf("path" to ":module-base")))
-    implementation(project(mapOf("path" to ":lib-net")))
-    implementation(project(mapOf("path" to ":lib-picture-selector")))
-    implementation(libs.androidx.swiperefreshlayout)
-    implementation(libs.okhttp)
-    testImplementation(libs.junit)
 
+    implementation(project(mapOf("path" to ":lib-bencs")))
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
 

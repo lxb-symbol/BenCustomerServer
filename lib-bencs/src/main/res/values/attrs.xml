@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <declare-styleable name="BenChatMessageListLayout">
+        <!-- 文本消息文本字体大小 -->
+        <attr name="ben_chat_item_text_size" format="dimension"/>
+        <!-- 文本消息文本颜色 -->
+        <attr name="ben_chat_item_text_color" format="reference|color"/>
+        <!-- 文本消息文本最小高度 -->
+        <attr name="ben_chat_item_min_height" format="dimension"/>
+        <!-- 时间线文本字体大小 -->
+        <attr name="ben_chat_item_time_text_size" format="dimension"/>
+        <!-- 时间线文本字体颜色 -->
+        <attr name="ben_chat_item_time_text_color" format="reference|color"/>
+        <!-- 时间线背景色 -->
+        <attr name="ben_chat_item_time_background" format="reference|color"/>
+        <!-- 设置默认头像 -->
+        <attr name="ben_chat_item_avatar_default_src" format="reference"/>
+        <!-- 头像大小 宽和高一样 -->
+        <!--<attr name="ben_chat_item_avatar_size" format="dimension"/>-->
+        <!-- 头像形状 -->
+        <attr name="ben_chat_item_avatar_shape_type" format="enum">
+            <enum name="none" value="0" />
+            <enum name="round" value="1" />
+            <enum name="rectangle" value="2" />
+        </attr>
+        <!-- 头像圆角半径 -->
+        <!--<attr name="ben_chat_item_avatar_radius" format="dimension"/>-->
+        <!-- 描边宽度 -->
+        <!--<attr name="ben_chat_item_avatar_border_width" format="dimension"/>-->
+        <!-- 描边颜色 -->
+        <!--<attr name="ben_chat_item_avatar_border_color" format="reference|color"/>-->
+        <!-- 条目背景资源 -->
+        <attr name="ben_chat_item_receiver_background" format="reference|color"/>
+        <attr name="ben_chat_item_sender_background" format="reference|color"/>
+        <!-- 是否展示头像 -->
+        <!--<attr name="ben_chat_item_show_avatar" format="boolean"/>-->
+        <!-- 是否展示昵称 -->
+        <attr name="ben_chat_item_show_nickname" format="boolean"/>
+        <!-- 条目的展示形式 -->
+        <attr name="ben_chat_item_show_type" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="left" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BenImageView">
+        <attr name="ben_border_color" format="color" />
+        <attr name="ben_border_width" format="dimension" />
+        <attr name="ben_press_alpha" format="integer" />
+        <attr name="ben_press_color" format="color" />
+        <attr name="ben_radius" format="dimension" />
+        <attr name="ben_shape_type" format="enum">
+            <enum name="none" value="0" />
+            <enum name="round" value="1" />
+            <enum name="rectangle" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BenChatExtendMenu">
+        <attr name="numColumns" format="integer" />
+        <attr name="numRows" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="BenEmojiconMenu">
+        <attr name="bigEmojiconRows" format="integer" />
+        <attr name="emojiconColumns" format="integer" />
+    </declare-styleable>
+
+
+    <declare-styleable name="BenVideoPlayer">
+        <!--播放资源-->
+        <attr name="ben_source" format="string" />
+        <!--播放按钮-->
+        <attr name="ben_playDrawable" format="reference" />
+        <!--暂定按钮-->
+        <attr name="ben_pauseDrawable" format="reference" />
+        <!--播放开始时隐藏控制盘-->
+        <attr name="ben_hideControlsOnPlay" format="boolean" />
+        <!--自动播放-->
+        <attr name="ben_autoPlay" format="boolean" />
+        <!--controls不可用-->
+        <attr name="ben_disableControls" format="boolean" />
+        <!--主题颜色-->
+        <attr name="ben_themeColor" format="color" />
+        <!--全屏-->
+        <attr name="ben_autoFullscreen" format="boolean" />
+        <!--自动循环播放-->
+        <attr name="ben_loop" format="boolean" />
+    </declare-styleable>
+
+
+
+</resources>
