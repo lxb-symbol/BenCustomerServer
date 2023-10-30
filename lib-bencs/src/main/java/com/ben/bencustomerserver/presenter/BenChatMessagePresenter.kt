@@ -3,6 +3,7 @@ package com.ben.bencustomerserver.presenter
 import androidx.lifecycle.ViewModel
 import com.ben.bencustomerserver.listener.IChatMessageListView
 import com.ben.bencustomerserver.listener.ILoadDataView
+import com.ben.bencustomerserver.model.SearchDirection
 
 abstract class BenChatMessagePresenter : BenBasePresenter() {
     //TODO 先屏蔽掉
@@ -55,13 +56,12 @@ abstract class BenChatMessagePresenter : BenBasePresenter() {
      * @param pageSize
      * @param direction
      *
-     * TODO(" 暂时屏蔽"）
      */
-//    abstract fun loadMoreLocalHistoryMessages(
-//        msgId: String?,
-//        pageSize: Int,
-//        direction: EMConversation.EMSearchDirection?
-//    )
+    abstract fun loadMoreLocalHistoryMessages(
+        msgId: String?,
+        pageSize: Int,
+        direction: SearchDirection
+    )
 
     /**
      * 从服务器加载数据

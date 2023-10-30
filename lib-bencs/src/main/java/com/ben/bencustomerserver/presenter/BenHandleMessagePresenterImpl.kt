@@ -275,6 +275,12 @@ class BenHandleMessagePresenterImpl : BenHandleMessagePresenter() {
                 }
             }
 
+            override fun receiveHistoryMessageFromNet(model: BaseMessageModel) {
+                if (isActive ){
+                    mView?.sendMessageFinish(model)
+                }
+            }
+
         })
 
         RecieveMessageManager.addSocketMessageListener(this.toString(),

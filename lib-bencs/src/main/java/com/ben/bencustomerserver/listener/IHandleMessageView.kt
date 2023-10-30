@@ -112,4 +112,5 @@ interface IHandleMessageView : ILoadDataView {
      * @param error
      */
     fun removeReactionMessageFail(message: BaseMessageModel?, code: Int, error: String?)
+
 }

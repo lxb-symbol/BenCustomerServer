@@ -32,6 +32,7 @@ import com.ben.bencustomerserver.model.BenReactionEmojiconEntity
 import com.ben.bencustomerserver.model.SearchDirection
 import com.ben.bencustomerserver.presenter.BenChatMessagePresenter
 import com.ben.bencustomerserver.presenter.BenChatMessagePresenterImpl
+import com.blankj.utilcode.util.ThreadUtils
 
 class BenChatMessageListLayout @JvmOverloads constructor(
     context: Context,
@@ -214,7 +215,7 @@ class BenChatMessageListLayout @JvmOverloads constructor(
         if (loadDataType == LoadDataType.ROAM) {
             presenter!!.loadMoreServerMessages(msgId, pageSize)
         } else {
-            presenter!!.loadMoreLocalMessages(msgId, pageSize)
+            presenter!!.loadMoreLocalHistoryMessages(msgId, pageSize, SearchDirection.UP)
         }
     }
 
@@ -503,15 +504,16 @@ class BenChatMessageListLayout @JvmOverloads constructor(
 
     override fun loadMoreLocalHistoryMsgSuccess(
         data: List<BaseMessageModel>?,
-        direction: SearchDirection?
-    ) {
-
+        direction: SearchDirection?) {
+        finishRefresh()
+        ThreadUtils.runOnUiThreadDelayed(
+            { moveToPosition(0) }, 200
+        )
     }
 
     fun loadMoreLocalHistoryMsgSuccess(
         data: List<BaseMessageModel>,
     ) {
-
     }
 
     override fun loadNoMoreLocalHistoryMsg() {

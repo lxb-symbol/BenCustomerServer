@@ -445,7 +445,7 @@ object RecieveMessageManager {
     /***
      * 获取消息类型根据内容
      */
-    fun getMessageTypeByContentAndExt(content: String): MessageType {
+    private fun getMessageTypeByContentAndExt(content: String): MessageType {
 
         if (content.startsWith(OriginMessageType.TAG_IMG)) {
             return MessageType.IMAGE
@@ -695,9 +695,10 @@ object RecieveMessageManager {
 
         if (!TextUtils.isEmpty(model.from_id)) {
             msgs.add(model)
+            sortMsgs()
             for (listener in httpMsgListeners.values) {
                 model.let {
-                    listener.receiveBoltMessage(it)
+                    listener.receiveHistoryMessageFromNet(it)
                 }
             }
         }
@@ -788,4 +789,8 @@ object RecieveMessageManager {
     }
 
 
+
+    fun sortMsgs(){
+        msgs.sortBy { it.msgTime }
+    }
 }

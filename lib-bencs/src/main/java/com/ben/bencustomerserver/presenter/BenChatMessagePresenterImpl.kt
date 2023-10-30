@@ -5,13 +5,14 @@ import android.util.Log
 import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.MessageStatus
+import com.ben.bencustomerserver.model.SearchDirection
 import com.ben.bencustomerserver.vm.ChatViewModel
 
 class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
 
-    var currentPage = 1;
+    var currentPage = 1
     override fun loadLocalMessages(pageSize: Int) {
-        Log.i("BenChatMessagePresenterImpl","loadLocalMessages")
+        Log.i("BenChatMessagePresenterImpl", "loadLocalMessages")
         if (isActive) {
             runOnUI {
                 if (mView != null) {
@@ -20,8 +21,9 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
             }
         }
     }
+
     override fun loadMoreLocalMessages(msgId: String?, pageSize: Int) {
-        Log.i("BenChatMessagePresenterImpl","loadMoreLocalMessages")
+        Log.i("BenChatMessagePresenterImpl", "loadMoreLocalMessages")
         currentPage++
         (viewModel as ChatViewModel).chatMessages(currentPage)
         if (isActive) {
@@ -32,8 +34,23 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
             }
         }
     }
+
+    override fun loadMoreLocalHistoryMessages(
+        msgId: String?,
+        pageSize: Int,
+        direction: SearchDirection
+    ) {
+        currentPage++
+        (viewModel as ChatViewModel).chatMessages(currentPage)
+        if (isActive) {
+            runOnUI {
+                mView!!.loadMoreLocalHistoryMsgSuccess(null, SearchDirection.UP)
+            }
+        }
+    }
+
     override fun loadServerMessages(pageSize: Int) {
-        Log.i("BenChatMessagePresenterImpl","loadServerMessages")
+        Log.i("BenChatMessagePresenterImpl", "loadServerMessages")
 
         (viewModel as ChatViewModel).chatMessages(currentPage)
         if (isActive) {
@@ -45,12 +62,13 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
         }
 
     }
+
     override fun loadMoreServerMessages(msgId: String?, pageSize: Int) {
         currentPage++
 
         (viewModel as ChatViewModel).chatMessages(currentPage)
 
-        Log.i("BenChatMessagePresenterImpl","loadServerMessages")
+        Log.i("BenChatMessagePresenterImpl", "loadServerMessages")
         if (isActive) {
             runOnUI {
                 if (mView != null) {
@@ -59,6 +77,7 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
             }
         }
     }
+
     override fun refreshCurrentConversation() {
         currentPage = 1
         RecieveMessageManager.msgs.clear()
@@ -95,7 +114,6 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
     fun isMessageId(msgId: String?): Boolean {
         //可以允许消息id为空
         return TextUtils.isEmpty(msgId)
-        // TODO: 2023/9/7
     }
 
     /**
