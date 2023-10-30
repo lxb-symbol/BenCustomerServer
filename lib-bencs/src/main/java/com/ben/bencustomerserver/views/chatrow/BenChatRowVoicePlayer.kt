@@ -84,10 +84,10 @@ class BenChatRowVoicePlayer private constructor(cxt: Context) {
             audioManager.isSpeakerphoneOn = true
             player.setAudioStreamType(AudioManager.STREAM_RING)
         } else {
-            audioManager.isSpeakerphoneOn = false // 关闭扬声器
+            audioManager.isSpeakerphoneOn = true // 关闭扬声器
             // 把声音设定成Earpiece（听筒）出来，设定为正在通话中
-            audioManager.mode = AudioManager.MODE_IN_CALL
-            player.setAudioStreamType(AudioManager.STREAM_VOICE_CALL)
+            audioManager.mode = AudioManager.MODE_NORMAL
+            player.setAudioStreamType(AudioManager.STREAM_RING)
         }
     }
 

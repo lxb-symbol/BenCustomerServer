@@ -23,7 +23,9 @@ open class BenShowBigImgActivity : BaseActivity<EmptyViewModel, CsActivityBenSho
         path = intent.getStringExtra("path")
         if (path?.startsWith("http://") == true){
             ImageLoaderUtils.load(BenShowBigImgActivity@ this, mViewBinding.iv, path)
-        }else if (path?.startsWith("/upload")==true){
+        }else if (path?.startsWith("https://")==true){
+            ImageLoaderUtils.load(BenShowBigImgActivity@ this, mViewBinding.iv, path)
+        } else if (path?.startsWith("/upload")==true){
             ImageLoaderUtils.load(BenShowBigImgActivity@ this, mViewBinding.iv, RetrofitClient.BASE_URL+path)
         }else{
             ImageLoaderUtils.load(BenShowBigImgActivity@ this, mViewBinding.iv,path)
