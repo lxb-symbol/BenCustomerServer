@@ -19,7 +19,9 @@ import com.ben.bencustomerserver.model.TextMessage
 import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.model.WsChatMessage
+import com.ben.bencustomerserver.utils.BenDateUtils
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.ben.bencustomerserver.utils.appContext
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.google.gson.GsonBuilder
 import com.luck.picture.lib.utils.ToastUtils
@@ -468,10 +470,12 @@ object RecieveMessageManager {
         val msgDirect = if (TextUtils.equals("mine", bean.type)) Direct.SEND else Direct.RECEIEVE
         val model = BaseMessageModel()
         if (TextUtils.isEmpty(bean.content)) {//添加一条消息
+            var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
             val model = BaseMessageModel(
                 messageType = MessageType.TXT,
                 cmd = OriginMessageType.TYPE_CHAT_MESSAGE,
                 direct = msgDirect,
+                msgTime = time ?: 0,
                 msgId = bean.log_id.toString(),
                 status = MessageStatus.SUCCESS,
                 from_id = bean.from_id,
@@ -487,11 +491,14 @@ object RecieveMessageManager {
         }
         when (getMessageTypeByContentAndExt(contentmsg)) {
             MessageType.TXT -> {
+                var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
+
                 with(model) {
                     messageType = MessageType.TXT
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
+                    msgTime = time?:0
                     msgId = bean.log_id.toString()
                     status = MessageStatus.SUCCESS
                     from_id = bean.from_id
@@ -508,11 +515,14 @@ object RecieveMessageManager {
             MessageType.IMAGE -> {
                 val imgContent = bean.content
                 val imgUrl = MessageRegular.matchImageMessageUrl(imgContent)
+                var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
+
                 with(model) {
                     messageType = MessageType.IMAGE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
+                    msgTime=time?:0
                     msgId = bean.log_id.toString()
                     status = MessageStatus.SUCCESS
                     from_id = bean.from_id
@@ -541,11 +551,13 @@ object RecieveMessageManager {
                 val addrName = tmp?.let {
                     MessageRegular.getLocationMessageAttr(tmp, 2)
                 }
+                var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
                 with(model) {
                     messageType = MessageType.VOICE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
+                    msgTime =time?:0
                     msgId = bean.log_id.toString()
                     status = MessageStatus.SUCCESS
                     from_id = bean.from_id
@@ -572,12 +584,14 @@ object RecieveMessageManager {
                 }
                 val duration = tmp?.let { MessageRegular.getVoiceDuration(it).replace(",", "") }
                 val duration2 = (duration ?: "0").toInt()
+                var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
 
                 with(model) {
                     messageType = MessageType.VOICE
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
+                    msgTime =time?:0
                     msgId = bean.log_id.toString()
                     status = MessageStatus.SUCCESS
                     from_id = bean.from_id
@@ -597,11 +611,14 @@ object RecieveMessageManager {
                 val videoContent = bean.content
                 val videoUrl = MessageRegular.matchVideoUrl(videoContent)
                 val videoName = MessageRegular.matchVideoName(videoContent)
+                var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
+
                 with(model) {
                     messageType = MessageType.VIDEO
                     content = bean.content
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
+                    msgTime =time?:0
                     msgId = bean.log_id.toString()
                     status = MessageStatus.SUCCESS
                     from_id = bean.from_id
@@ -620,12 +637,14 @@ object RecieveMessageManager {
             }
 
             MessageType.CMD -> {
+                var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
 
                 val model = BaseMessageModel(
                     messageType = MessageType.CMD,
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE,
                     direct = msgDirect,
                     msgId = bean.log_id.toString(),
+                    msgTime =time?:0,
                     status = MessageStatus.SUCCESS,
                     from_id = bean.from_id,
                     from_avatar = bean.from_avatar,
@@ -643,11 +662,13 @@ object RecieveMessageManager {
                 val fileContent = bean.content
                 val fileUrl = MessageRegular.matchFileUrl(fileContent)
                 val name = MessageRegular.matchFileName(fileContent)
+                var time = BenDateUtils.stringToDate(bean.create_time, BenDateUtils.FORMAT_DATE_STR)?.time
 
                 with(model) {
                     msgId = bean.log_id.toString()
                     messageType = MessageType.FILE
                     content = bean.content
+                    msgTime = time?:0
                     cmd = OriginMessageType.TYPE_CHAT_MESSAGE
                     direct = msgDirect
                     msgId = bean.log_id.toString()

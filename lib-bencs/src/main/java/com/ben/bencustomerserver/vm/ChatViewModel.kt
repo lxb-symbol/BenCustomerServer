@@ -234,11 +234,11 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                                     callback?.onSuccess("")
                                 }
                                 if (code == -3 || code == -1) {// 来自机器人的回复,取 msg 的值
-                                    RecieveMessageManager.addBoltResponseData(
-                                        msg1,
-                                        MessageType.TXT,
-                                        ""
-                                    )
+//                                    RecieveMessageManager.addBoltResponseData(
+//                                        msg1,
+//                                        MessageType.TXT,
+//                                        ""
+//                                    )
                                 }
                             }
                         })
@@ -262,7 +262,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
                         val localPath = innerMsg.localPath
                         if (!NetworkUtils.isAvailable()) {
-                            msg.status = MessageStatus.CREATE
+                            msg.status = MessageStatus.INPROGRESS
                         } else {
                             msg.status = MessageStatus.FAIL
                         }

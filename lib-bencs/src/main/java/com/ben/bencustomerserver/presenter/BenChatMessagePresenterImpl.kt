@@ -8,6 +8,8 @@ import com.ben.bencustomerserver.model.MessageStatus
 import com.ben.bencustomerserver.vm.ChatViewModel
 
 class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
+
+    var currentPage = 1;
     override fun loadLocalMessages(pageSize: Int) {
         Log.i("BenChatMessagePresenterImpl","loadLocalMessages")
         if (isActive) {
@@ -20,6 +22,8 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
     }
     override fun loadMoreLocalMessages(msgId: String?, pageSize: Int) {
         Log.i("BenChatMessagePresenterImpl","loadMoreLocalMessages")
+        currentPage++
+        (viewModel as ChatViewModel).chatMessages(currentPage)
         if (isActive) {
             runOnUI {
                 if (mView != null) {
@@ -31,7 +35,7 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
     override fun loadServerMessages(pageSize: Int) {
         Log.i("BenChatMessagePresenterImpl","loadServerMessages")
 
-        (viewModel as ChatViewModel).chatMessages(1)
+        (viewModel as ChatViewModel).chatMessages(currentPage)
         if (isActive) {
             runOnUI {
                 if (mView != null) {
@@ -42,7 +46,9 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
 
     }
     override fun loadMoreServerMessages(msgId: String?, pageSize: Int) {
+        currentPage++
 
+        (viewModel as ChatViewModel).chatMessages(currentPage)
 
         Log.i("BenChatMessagePresenterImpl","loadServerMessages")
         if (isActive) {
@@ -54,7 +60,9 @@ class BenChatMessagePresenterImpl : BenChatMessagePresenter() {
         }
     }
     override fun refreshCurrentConversation() {
-        (viewModel as ChatViewModel).chatMessages(0)
+        currentPage = 1
+        RecieveMessageManager.msgs.clear()
+        (viewModel as ChatViewModel).chatMessages(currentPage)
 
         if (isActive) {
             runOnUI {

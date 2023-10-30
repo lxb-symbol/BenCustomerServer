@@ -14,6 +14,7 @@ import java.util.TimeZone
 object BenDateUtils {
     private const val INTERVAL_IN_MILLISECONDS = (30 * 1000).toLong()
     private val UTC = TimeZone.getTimeZone("UTC")
+   const val FORMAT_DATE_STR ="yyyy-MM-dd HH:mm:ss"
     fun getTimestampString(context: Context?, messageDate: Date): String {
         var format: String? = null
         val language = Locale.getDefault().language
