@@ -2,11 +2,11 @@ package com.ben.bencustomerserver.adapter
 
 import android.util.Log
 import android.view.ViewGroup
-import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.delegate.BenMessageAdapterDelegate
 import com.ben.bencustomerserver.listener.MessageListItemClickListener
 import com.ben.bencustomerserver.model.BaseMessageModel
 import com.ben.bencustomerserver.model.Direct
+import com.ben.bencustomerserver.R
 
 /**
  * 做为对话列表的adapter，继承自[BenBaseDelegateAdapter]

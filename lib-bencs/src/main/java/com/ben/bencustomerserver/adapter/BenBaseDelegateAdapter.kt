@@ -4,14 +4,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BenBaseDelegateAdapter<T : Any> : BenBaseRecyclerViewAdapter<T> {
-    private var delegatesManager: _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegatesManager
+    private var delegatesManager: BenAdapterDelegatesManager
 
     constructor() {
         delegatesManager =
-            _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegatesManager(false)
+            BenAdapterDelegatesManager(false)
     }
 
-    constructor(delegatesManager: _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegatesManager) {
+    constructor(delegatesManager: BenAdapterDelegatesManager) {
         this.delegatesManager = delegatesManager
     }
 

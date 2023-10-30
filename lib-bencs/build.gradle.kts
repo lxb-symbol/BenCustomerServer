@@ -1,20 +1,16 @@
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    alias(libs.plugins.com.android.application)
+    alias(libs.plugins.com.android.library)
+    alias(libs.plugins.org.jetbrains.kotlin.android)
+
 }
 
 android {
-    namespace = "com.ben.bencustommerserver"
-    compileSdk = 33
+    namespace = "com.ben.bencustomerserver"
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.ben.bencustommerserver"
-        minSdk = 24
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = libs.versions.min.sdk.get().toInt()
     }
 
     buildTypes {
@@ -29,6 +25,13 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    buildFeatures{
+        viewBinding =true
+        dataBinding =true
     }
 }
 
@@ -49,6 +52,6 @@ dependencies {
     implementation(project(mapOf("path" to ":lib-picture-selector")))
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.okhttp)
-    testImplementation(libs.junit)
+
 
 }

@@ -3,7 +3,6 @@ package com.ben.bencustomerserver.ui
 import android.net.Uri
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.databinding.CsActivityBenShowImgBinding
-import com.ben.bencustomerserver.databinding.CsActivityChatBinding
 import com.ben.bencustomerserver.vm.EmptyViewModel
 import com.ben.lib_picture_selector.ImageLoaderUtils
 import com.ben.module_base.ui.BaseActivity

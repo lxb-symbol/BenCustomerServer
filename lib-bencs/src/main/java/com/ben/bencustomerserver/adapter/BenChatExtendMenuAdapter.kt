@@ -4,9 +4,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.listener.OnItemClickListener
 import com.ben.bencustomerserver.views.BenChatExtendMenu.ChatMenuItemModel
+import com.ben.bencustomerserver.R
 
 class BenChatExtendMenuAdapter :
     BenBaseChatExtendMenuAdapter<BenChatExtendMenuAdapter.ViewHolder?, ChatMenuItemModel?>() {

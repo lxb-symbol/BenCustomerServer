@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
-import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.listener.OnItemClickListener
 import com.ben.bencustomerserver.listener.OnItemLongClickListener
+import com.ben.bencustomerserver.R
 
 /**
  * 作为RecyclerView Adapter的基类，有默认空白布局

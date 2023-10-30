@@ -22,7 +22,7 @@ import com.ben.bencustomerserver.listener.OnItemClickListener
 import com.ben.bencustomerserver.views.chatextend.HorizontalPageLayoutManager
 import com.ben.bencustomerserver.views.chatextend.PagingScrollHelper
 import com.ben.bencustomerserver.views.chatextend.PagingScrollHelper.onPageChangeListener
-import com.ben.bencustommerserver.R
+import com.ben.bencustomerserver.R
 import java.util.Collections
 import java.util.Objects
 import kotlin.math.ceil

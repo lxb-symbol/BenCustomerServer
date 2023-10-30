@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <queries package="${applicationId}">
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE">
+
+            </action>
+        </intent>
+        <intent>
+            <action android:name="android.media.action.ACTION_VIDEO_CAPTURE">
+
+            </action>
+        </intent>
+    </queries>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -13,30 +46,26 @@
             android:value="true" />
 
         <activity
-            android:name=".ui.ChatActivity"
+            android:name="com.ben.bencustomerserver.ui.ChatActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 
         <activity
-            android:name=".ui.BenShowBigImgActivity"
+            android:name="com.ben.bencustomerserver.ui.BenShowBigImgActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
         </activity>
 
         <activity
-            android:name=".ui.BenShowVideoActivity"
+            android:name="com.ben.bencustomerserver.ui.BenShowVideoActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
         </activity>
 
-        <service android:name=".connnect.WebSocketService" />
+        <service android:name="com.ben.bencustomerserver.connnect.WebSocketService" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -49,11 +78,9 @@
         </provider>
 
         <provider
-            android:name=".utils.ContextUtils"
-            android:authorities="@{applicationId}.contextProvider"
-            android:exported="false">
-
-        </provider>
+            android:name="com.ben.bencustomerserver.utils.ContextUtils"
+            android:authorities="${applicationId}.contextProvider"
+            android:exported="true"/>
     </application>
 
 </manifest>

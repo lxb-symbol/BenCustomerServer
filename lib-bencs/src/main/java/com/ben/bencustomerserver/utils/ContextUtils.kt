@@ -13,12 +13,10 @@ import android.net.Uri
  * @Date 2022/5/6
  * @description 提供context的工具类
  */
-val appContext: Context by lazy {
-    ContextUtils.context
-}
+lateinit  var   appContext: Context
 
 @SuppressLint("StaticFieldLeak")
-class ContextUtils : ContentProvider() {
+class  ContextUtils  :ContentProvider(){
 
     companion object {
         //  Get Context at anywhere
@@ -26,9 +24,10 @@ class ContextUtils : ContentProvider() {
 
         lateinit var resource: Resources
 
-        private fun setContextInstance(context: Context) {
-            Companion.context = context
-            resource = Companion.context.resources
+         fun setContextInstance(context: Context) {
+             appContext =context
+             this.context = context
+            resource =context.resources
         }
 
     }

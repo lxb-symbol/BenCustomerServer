@@ -5,7 +5,6 @@ import android.net.Network
 import android.util.Log
 import com.ben.bencustomerserver.model.MessageUtil
 import com.google.gson.GsonBuilder
-import com.nofish.websocket.NetworkStatusMonitor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

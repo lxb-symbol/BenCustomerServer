@@ -9,7 +9,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 
-@Suppress("unused")
 internal interface BenIUserMethods {
     fun setSource(source: Uri)
     fun setCallback(callback: BenVideoCallback)

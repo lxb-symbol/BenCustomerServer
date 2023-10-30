@@ -13,13 +13,13 @@ import java.lang.reflect.Type
 class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
     private val dataTypeWithTags = SparseArrayCompat<String>()
     private val delegates =
-        SparseArrayCompat<com.ben.bencustomerserver.adapter.BenAdapterDelegate<Any, com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>>>()
+        SparseArrayCompat<BenAdapterDelegate<Any,BenBaseRecyclerViewAdapter.ViewHolder<*>>>()
 
     @JvmField
-    var fallbackDelegate: _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate<Any, _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>>? =
+    var fallbackDelegate: BenAdapterDelegate<Any, BenBaseRecyclerViewAdapter.ViewHolder<*>>? =
         null
 
-    fun addDelegate(delegate: _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate<*, *>, tag: String): _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegatesManager {
+    fun addDelegate(delegate: BenAdapterDelegate<*, *>, tag: String):BenAdapterDelegatesManager {
         val superclass = getParameterizedType(delegate.javaClass)
         if (superclass is ParameterizedType) {
             val clazz = superclass.actualTypeArguments[0] as Class<*>
@@ -27,7 +27,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
             val viewType = if (hasConsistItemType) delegate.itemViewType else delegates.size()
             delegates.put(
                 viewType,
-                delegate as _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate<Any, _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>>
+                delegate as BenAdapterDelegate<Any, BenBaseRecyclerViewAdapter.ViewHolder<*>>
             )
             dataTypeWithTags.put(viewType, typeWithTag)
         } else {
@@ -51,13 +51,13 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
         } else getParameterizedType(clazz.superclass)
     }
 
-    fun getDelegate(viewType: Int): _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate<Any, _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>>? {
+    fun getDelegate(viewType: Int): BenAdapterDelegate<Any, BenBaseRecyclerViewAdapter.ViewHolder<*>>? {
         return delegates[viewType] ?: return fallbackDelegate
     }
 
-    val allDelegates: List<_root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate<Any, _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>>>
+    val allDelegates: List<BenAdapterDelegate<Any, BenBaseRecyclerViewAdapter.ViewHolder<*>>>
         get() {
-            val list: MutableList<_root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate<Any, _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>>> =
+            val list: MutableList<BenAdapterDelegate<Any, BenBaseRecyclerViewAdapter.ViewHolder<*>>> =
                 ArrayList()
             if (!delegates.isEmpty) {
                 for (i in 0 until delegates.size()) {
@@ -70,7 +70,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
             return list
         }
 
-    fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*> {
+    fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BenBaseRecyclerViewAdapter.ViewHolder<*> {
         val delegate = getDelegate(viewType)
             ?: throw NullPointerException("No BenAdapterDelegate added for ViewType $viewType")
 
@@ -86,7 +86,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
      * @param item
      */
     fun onBindViewHolder(
-        holder: _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>, position: Int, item: Any
+        holder: BenBaseRecyclerViewAdapter.ViewHolder<*>, position: Int, item: Any
     ) {
         val viewType = holder.adapter!!.getItemViewType(position)
         val delegate = getDelegate(viewType) ?: throw NullPointerException(
@@ -96,7 +96,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
     }
 
     fun onBindViewHolder(
-        holder: _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>,
+        holder: BenBaseRecyclerViewAdapter.ViewHolder<*>,
         position: Int,
         payloads: List<Any?>,
         item: Any
@@ -167,7 +167,7 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
         }
     }
 
-    fun getDelegateViewType(delegate: _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate<Any, _root_ide_package_.com.ben.bencustomerserver.adapter.BenBaseRecyclerViewAdapter.ViewHolder<*>>): Int {
+    fun getDelegateViewType(delegate: BenAdapterDelegate<Any, BenBaseRecyclerViewAdapter.ViewHolder<*>>): Int {
         val index = delegates.indexOfValue(delegate)
         return if (index > 0) delegates.keyAt(index) else -1
     }
@@ -211,11 +211,11 @@ class BenAdapterDelegatesManager(private val hasConsistItemType: Boolean) {
                         break
                     }
                 }
-                return if (isChat) item.direct.toString() else _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate.Companion.DEFAULT_TAG
+                return if (isChat) item.direct.toString() else BenAdapterDelegate.Companion.DEFAULT_TAG
             }
-            return _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate.Companion.DEFAULT_TAG
+            return BenAdapterDelegate.Companion.DEFAULT_TAG
         }
-        return _root_ide_package_.com.ben.bencustomerserver.adapter.BenAdapterDelegate.Companion.DEFAULT_TAG
+        return BenAdapterDelegate.Companion.DEFAULT_TAG
     }
 
     private fun indexesOfValue(array: SparseArrayCompat<String>, value: String): List<Int> {

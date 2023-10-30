@@ -48,7 +48,4 @@ dependencies {
     implementation(project(mapOf("path" to ":lib-net")))
     api(libs.lifcycle.exteion)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 }

@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
  * @param <VH>
 </VH></T> */
 abstract class BenAdapterDelegate<T, VH : RecyclerView.ViewHolder?> : Cloneable {
-    open var tag = com.ben.bencustomerserver.adapter.BenAdapterDelegate.Companion.DEFAULT_TAG
+    open var tag = DEFAULT_TAG
     open var tags: MutableList<String> = ArrayList()
 
 

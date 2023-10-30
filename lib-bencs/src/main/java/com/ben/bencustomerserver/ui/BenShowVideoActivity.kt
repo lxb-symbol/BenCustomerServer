@@ -2,13 +2,13 @@ package com.ben.bencustomerserver.ui
 
 import android.net.Uri
 import android.util.Log
-import com.ben.bencustomerserver.R
-import com.ben.bencustomerserver.databinding.CsActivityBenShowVideoBinding
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.player.BenVideoCallback
 import com.ben.bencustomerserver.player.BenVideoPlayer
 import com.ben.bencustomerserver.utils.HttpUtils
 import com.ben.bencustomerserver.vm.EmptyViewModel
+import com.ben.bencustomerserver.R
+import com.ben.bencustomerserver.databinding.CsActivityBenShowVideoBinding
 import com.ben.module_base.ui.BaseActivity
 import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient

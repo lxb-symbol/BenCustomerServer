@@ -26,8 +26,8 @@ android {
         }
     }
 
-    buildFeatures{
-        buildConfig =true 
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {
@@ -44,9 +44,6 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
     implementation(libs.mmkv)
     api(libs.bundles.nets)
     api(libs.utilcode)

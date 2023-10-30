@@ -210,17 +210,16 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                     }
                 } else {
                     viewModelScope.launch(Dispatchers.IO) {
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.CREATE
+                        } else {
+                            msg.status = MessageStatus.FAIL
+                        }
                         RecieveMessageManager.msgs.add(msg)
                         queryBolt(msg.content, object : INetCallback<String> {
                             override fun onSuccess(data: String) {
                                 Log.i("symbol--4", "$data")
-                                if (NetworkUtils.isAvailable()) {
-                                    msg.status = MessageStatus.CREATE
-                                } else {
-                                    msg.status = MessageStatus.FAIL
-                                }
                                 RecieveMessageManager.updateMessage(msg.msgId, msg.status)
-
                                 callback?.onSuccess("")
                             }
 
@@ -231,6 +230,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                                     callback?.onError(code, msg1)
                                 } else {
                                     msg.status = MessageStatus.SUCCESS
+                                    RecieveMessageManager.updateMessage(msg.msgId, msg.status)
                                     callback?.onSuccess("")
                                 }
                                 if (code == -3 || code == -1) {// 来自机器人的回复,取 msg 的值

@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ben.bencustomerserver"
+    namespace = "com.ben.bencustomerserverapp"
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.ben.bencustomerserver"
+        applicationId = "com.ben.bencustomerserverapp"
         minSdk = libs.versions.min.sdk.get().toInt()
         targetSdk = libs.versions.target.sdk.get().toInt()
         versionCode = 1
@@ -44,9 +44,18 @@ android {
 
 dependencies {
 
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.lifcycle.exteion)
+    implementation(libs.viewmodel.lifcycle)
+    implementation(libs.rv)
+    implementation(libs.glide)
+    implementation(libs.vrvh)
+    implementation(libs.xxpermission)
+    implementation(libs.mmkv)
     implementation(project(mapOf("path" to ":lib-bencs")))
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+
 
 
 }

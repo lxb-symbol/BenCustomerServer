@@ -12,7 +12,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.ben.bencustomerserver.R
-import com.ben.bencustomerserver.databinding.FragmentChatBinding
 import com.ben.bencustomerserver.listener.OnChatExtendMenuItemClickListener
 import com.ben.bencustomerserver.listener.OnChatLayoutListener
 import com.ben.bencustomerserver.listener.OnChatRecordTouchListener
@@ -23,6 +22,7 @@ import com.ben.bencustomerserver.utils.UriUtils
 import com.ben.bencustomerserver.utils.VersionUtils
 import com.ben.bencustomerserver.views.CustomerServerEmojiMenu
 import com.ben.bencustomerserver.vm.ChatViewModel
+import com.ben.bencustomerserver.databinding.FragmentChatBinding
 import com.ben.lib_picture_selector.PictureSelectUtil
 import com.ben.lib_picture_selector.ResultListener
 import com.ben.module_base.ui.BaseFragment
