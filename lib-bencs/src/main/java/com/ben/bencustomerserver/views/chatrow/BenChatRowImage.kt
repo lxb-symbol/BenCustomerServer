@@ -78,6 +78,7 @@ class BenChatRowImage : BenChatRowFile {
     override fun onMessageInProgress() {
         if (message!!.direct === Direct.SEND) {
             super.onMessageInProgress()
+            percentageView?.visibility = INVISIBLE
         } else {
             val innerMessage = message?.innerMessage as ImageMessage
             if (TextUtils.isEmpty(innerMessage.localPath)) {

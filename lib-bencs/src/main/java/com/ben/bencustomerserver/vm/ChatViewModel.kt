@@ -296,8 +296,8 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                         val innerMsg: ImageMessage = msg.innerMessage as ImageMessage
                         val localPath = innerMsg.localPath
                         val f = File(localPath)
-                        if (!NetworkUtils.isAvailable()) {
-                            msg.status = MessageStatus.CREATE
+                        if (NetworkUtils.isAvailable()) {
+                            msg.status = MessageStatus.INPROGRESS
                         } else {
                             msg.status = MessageStatus.FAIL
                         }
