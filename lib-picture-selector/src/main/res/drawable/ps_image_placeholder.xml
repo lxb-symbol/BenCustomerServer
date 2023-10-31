@@ -5,12 +5,12 @@
             <size
                 android:width="100dp"
                 android:height="100dp" />
-            <solid android:color="@color/ps_color_light_grey" />
+            <solid android:color="@color/ps_light_grey" />
         </shape>
     </item>
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ps_ic_placeholder" />
+            android:src="@drawable/libps_ic_placeholder" />
     </item>
 </layer-list>
