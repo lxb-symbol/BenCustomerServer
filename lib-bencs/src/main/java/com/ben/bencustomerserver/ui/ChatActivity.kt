@@ -2,19 +2,17 @@ package com.ben.bencustomerserver.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableString
 import android.util.Log
+import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.connnect.WebSocketService
 import com.ben.bencustomerserver.connnect.wsURL
+import com.ben.bencustomerserver.databinding.CsActivityChatBinding
+import com.ben.bencustomerserver.model.Constants
 import com.ben.bencustomerserver.repositories.ChatRepository
-import com.ben.bencustomerserver.utils.BenEmojiUtil
 import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.utils.PathUtil
 import com.ben.bencustomerserver.vm.ChatViewModel
-import com.ben.bencustomerserver.R
-import com.ben.bencustomerserver.databinding.CsActivityChatBinding
-import com.ben.bencustomerserver.model.Constants
 import com.ben.module_base.ui.BaseActivity
 import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient
@@ -91,6 +89,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
 
     override fun initViewModel(): ChatViewModel {
         val repository = ChatRepository(RetrofitClient.instance)
+
         return ChatViewModel(repository)
     }
 
