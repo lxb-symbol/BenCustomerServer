@@ -76,12 +76,12 @@ class BenChatInputMenu : LinearLayout,
         chatMenuContainer = findViewById(R.id.chat_menu_container)
         primaryMenuContainer = findViewById(R.id.primary_menu_container)
         chatExtendMenuContainer = findViewById(R.id.extend_menu_container)
-        mTvHuman.setOnClickListener {
-            mTvHuman.isEnabled = !human
-            switchHumanListener?.let {
-                it.switch(human)
-            }
-        }
+//        mTvHuman.setOnClickListener {
+//            mTvHuman.isEnabled = !human
+//            switchHumanListener?.let {
+//                it.switch(human)
+//            }
+//        }
         init()
     }
 
@@ -159,6 +159,7 @@ class BenChatInputMenu : LinearLayout,
         return true
     }
 
+    @Deprecated(message = "不采用此函数")
     override fun showHumanButton(show: Boolean) {
         mTvHuman.visibility = if (show) View.GONE else View.VISIBLE
     }

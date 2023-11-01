@@ -16,6 +16,7 @@ import com.ben.bencustomerserver.model.MessageType
 import com.ben.bencustomerserver.model.NetMessageBean
 import com.ben.bencustomerserver.model.OriginMessageType
 import com.ben.bencustomerserver.model.TextMessage
+import com.ben.bencustomerserver.model.UserInitReal
 import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.model.WsChatMessage
@@ -83,17 +84,17 @@ object RecieveMessageManager {
 
             OriginMessageType.TYPE_USER_INIT -> {
                 try {
-                    val initData = GsonBuilder().create().fromJson(dataJson, InUserInit::class.java)
-                    MMkvTool.putKFId(initData.kefu_id ?: "")
-                    MMkvTool.putKFName(initData.kefu_name ?: "")
-                    MMkvTool.putKFCode(initData.kefu_code ?: "")
-                    MMkvTool.putKFAvatar(initData.kefu_avatar ?: "")
-                    MMkvTool.putSellerId(initData.seller_id ?: "")
+                    val initData = GsonBuilder().create().fromJson(dataJson, UserInitReal::class.java)
+                    MMkvTool.putKFId(initData.data.kefu_code ?: "")
+                    MMkvTool.putKFName(initData.data.kefu_name ?: "")
+                    MMkvTool.putKFCode(initData.data.kefu_code ?: "")
+                    MMkvTool.putKFAvatar(initData.data.kefu_avatar?: "")
                     MMkvTool.putIsHuman(true)
                     vm.let {
                         it?.get()?.getHumanTak()?.postValue(true)
                     }
                 } catch (e: Exception) {
+
                     e.printStackTrace()
                 }
             }

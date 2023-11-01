@@ -9,6 +9,7 @@
         <item name="android:layout_marginLeft">@dimen/ben_chat_avatar_margin</item>
         <item name="android:src">@drawable/ben_default_avatar</item>
         <item name="android:scaleType">fitXY</item>
+        <item name="ben_shape_type">round</item>
     </style>
 
     <style name="ben_chat_input_button_size">
@@ -18,12 +19,10 @@
     </style>
 
 
-
     <style name="message_menu_popup_window_anim_style">
         <item name="android:windowEnterAnimation">@anim/message_menu_popupwindow_show_anim</item>
         <item name="android:windowExitAnimation">@anim/message_menu_popupwindow_hidden_anim</item>
     </style>
-
 
 
     <style name="ben_row_sent_iv_userhead_style">

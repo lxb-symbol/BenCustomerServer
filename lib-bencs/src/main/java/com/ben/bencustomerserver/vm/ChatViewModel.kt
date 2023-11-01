@@ -24,6 +24,7 @@ import com.ben.bencustomerserver.model.VideoMessage
 import com.ben.bencustomerserver.model.VoiceMessage
 import com.ben.bencustomerserver.repositories.ChatRepository
 import com.ben.bencustomerserver.utils.MMkvTool
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.NetworkUtils
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -180,6 +181,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
      *  发送消息
      */
     fun sendMessage(msg: BaseMessageModel, callback: INetCallback<String>?) {
+        // 人工
         val isHuman = MMkvTool.getIsHuman()
         msg.isBolt = !isHuman
         msg.direct = Direct.SEND
@@ -203,6 +205,7 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                             } else {
                                 msg.status = MessageStatus.SUCCESS
                             }
+                            LogUtils.e("symbol-->:",""+str)
                             it.send(str)
                             RecieveMessageManager.updateMessage(msg.msgId, msg.status)
                             callback?.onSuccess("")
@@ -233,12 +236,12 @@ class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
                                     RecieveMessageManager.updateMessage(msg.msgId, msg.status)
                                     callback?.onSuccess("")
                                 }
-                                if (code == -3 || code == -1) {// 来自机器人的回复,取 msg 的值
-//                                    RecieveMessageManager.addBoltResponseData(
-//                                        msg1,
-//                                        MessageType.TXT,
-//                                        ""
-//                                    )
+                                if (code == -3 ) {// 来自机器人的回复,取 msg 的值 -1
+                                    RecieveMessageManager.addBoltResponseData(
+                                        msg1,
+                                        MessageType.TXT,
+                                        ""
+                                    )
                                 }
                             }
                         })

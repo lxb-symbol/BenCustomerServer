@@ -12,7 +12,7 @@
         android:background="@color/color_e9e9e9"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/ll_title"
             android:layout_width="match_parent"
             android:layout_height="62dp"
@@ -27,13 +27,16 @@
                 android:id="@+id/iv_back"
                 android:layout_width="@dimen/dp_42"
                 android:layout_height="@dimen/dp_42"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
                 android:padding="@dimen/dp_12"
                 android:src="@drawable/icon_back_black" />
 
             <TextView
                 android:id="@+id/tv_title"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="机器人"
@@ -41,11 +44,17 @@
                 android:textSize="@dimen/sp_18"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="@dimen/dp_42"
-                android:layout_height="@dimen/dp_42"
-                android:padding="@dimen/dp_10" />
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tv_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:minWidth="@dimen/dp_42"
+                android:padding="@dimen/dp_10"
+                android:text="转人工"
+                android:textColor="@color/color_333333" />
+        </RelativeLayout>
 
 
         <androidx.fragment.app.FragmentContainerView

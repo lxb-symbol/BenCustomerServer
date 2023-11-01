@@ -20,6 +20,21 @@ data class UserInit(
 )
 
 
+data class UserInitReal(
+    val code: Int,
+    val data: InUserInitReal,
+    val msg: String
+)
+
+data class InUserInitReal(
+    val kefu_avatar: String,
+    val kefu_code: String,
+    val kefu_name: String
+)
+
+
+
+
 data class InUserInit(
     val uid: String? = MMkvTool.getUserId(),
     val name: String? = MMkvTool.getUserName(),

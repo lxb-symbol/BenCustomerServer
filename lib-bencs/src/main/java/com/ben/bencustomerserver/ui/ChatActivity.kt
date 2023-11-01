@@ -3,6 +3,7 @@ package com.ben.bencustomerserver.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.ben.bencustomerserver.R
 import com.ben.bencustomerserver.connnect.RecieveMessageManager
 import com.ben.bencustomerserver.connnect.WebSocketService
@@ -42,7 +43,7 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         sellerCode?.let { mViewModel.saveSellerCode(it) }
 
         MMkvTool.putIsHuman(false)
-        mViewModel.getHumanTak().postValue(MMkvTool.getIsHuman())
+        mViewModel.getHumanTak().postValue(false)
         mViewModel.getTokenAndWsResul().observe(this) {
             Log.e("symbol:", "${it.token}   <---> ${it.socket_url}")
             wsURL = it.socket_url
@@ -54,10 +55,16 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         }
 
         mViewModel.getHumanTak().observe(this) {
-            mViewBinding.tvTitle.text = if (it) "人工客服" else "机器人"
+            mViewBinding.tvTitle.text = if (it) "客服" else "客服"
             // 切换到人工之后获取，历史消息列表
             chatFragment.mViewBinding.cl.loadData()
-            chatFragment.mViewBinding.cl.chatInputMenu().showHumanButton(it)
+            if (!it) mViewBinding.tvRight.visibility = View.VISIBLE else mViewBinding.tvRight.visibility=View.GONE
+            if (!it){
+                MMkvTool.putIsHuman(false)
+            }
+        }
+        mViewBinding.tvRight.setOnClickListener { _ ->
+            chatFragment.mViewBinding.cl.switch(true)
         }
 
         mViewModel.getNetErrorMsg().observe(this) {

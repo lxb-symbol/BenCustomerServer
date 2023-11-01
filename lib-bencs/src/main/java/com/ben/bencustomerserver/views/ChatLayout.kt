@@ -468,7 +468,8 @@ class ChatLayout @JvmOverloads constructor(
             val mv = it as ChatViewModel
             mv.getHumanTak().postValue(isHume)
         }
-        if (!isHume) {// 转人工的信息
+        if (isHume){
+            // 转人工的信息
             presenter.sendSwitchHumeMessage()
         }
     }
