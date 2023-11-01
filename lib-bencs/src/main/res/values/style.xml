@@ -34,6 +34,7 @@
         <item name="android:layout_marginRight">@dimen/dp_18</item>
         <item name="android:src">@color/btn_gray_normal</item>
         <item name="android:scaleType">fitXY</item>
+        <item name="ben_shape_type">round</item>
     </style>
 
 

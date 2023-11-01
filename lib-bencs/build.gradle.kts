@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.org.jetbrains.kotlin.android)
     id("com.jfrog.artifactory") version "5.1.10"
     id("maven-publish")
+    signing
 }
 
 val localDependency: String by project
@@ -66,10 +67,13 @@ tasks.register("androidSourcesJar", Jar::class.java) {
 
 publishing {
     publications {
+
         //以下 "aar" 可以自定义
         register("aar", MavenPublication::class.java) {
             this.groupId = "io.github.lxb-symbol"
             this.artifactId = moduleCommonArtifactId
+            this.version =versionName
+
 //            artifact(tasks["androidSourcesJar"])//打包 jar
             artifact("$buildDir/outputs/aar/${artifactId}-${versionName}.aar")//打包 aar
 
@@ -78,9 +82,7 @@ publishing {
             pom {
                 withXml {
                     val root = asNode()
-                    val dependencies =
-                        (root["dependencies"] as groovy.util.NodeList).firstOrNull() as groovy.util.Node?
-                            ?: root.appendNode("dependencies")
+                    val dependencies = (root["dependencies"] as groovy.util.NodeList).firstOrNull() as groovy.util.Node? ?: root.appendNode("dependencies")
                     configurations.configureEach {
                         this.dependencies.forEach {
                             if (this.name == "implementation") {
@@ -95,6 +97,19 @@ publishing {
                             }
                         }
                     }
+                }
+            }
+
+
+        }
+
+        repositories {
+            maven {
+                name = "Release"
+                setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = project.findProperty("ossrhUsername") as String?
+                    password = project.findProperty("ossrhPassword") as String?
                 }
             }
         }
@@ -116,8 +131,9 @@ tasks.named<org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask>("artifacto
     publications(publishing.publications["aar"])
 }
 
-
-
+//signing {
+//    sign (publishing.publications["aar"])
+//}
 
 
 

@@ -75,10 +75,11 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         supportFragmentManager.beginTransaction()
             .replace(mViewBinding.fcv.id, chatFragment)
             .commit()
+        mViewBinding.ivBack.setOnClickListener { finish() }
 
     }
 
-    fun initSome() {
+    private fun initSome() {
         RecieveMessageManager.vm = WeakReference(mViewModel)
         MMKV.initialize(this)
         PathUtil.instance?.initDirs("", MMkvTool.getUserName() ?: "", this)
