@@ -15,6 +15,7 @@ import com.ben.bencustomerserver.utils.MMkvTool
 import com.ben.bencustomerserver.utils.PathUtil
 import com.ben.bencustomerserver.vm.ChatViewModel
 import com.ben.module_base.ui.BaseActivity
+import com.blankj.utilcode.util.LogUtils
 import com.luck.picture.lib.utils.ToastUtils
 import com.symbol.lib_net.net.RetrofitClient
 import com.tencent.mmkv.MMKV
@@ -55,12 +56,12 @@ class ChatActivity : BaseActivity<ChatViewModel, CsActivityChatBinding>() {
         }
 
         mViewModel.getHumanTak().observe(this) {
-            mViewBinding.tvTitle.text = if (it) "客服" else "客服"
-            // 切换到人工之后获取，历史消息列表
             chatFragment.mViewBinding.cl.loadData()
-            if (!it) mViewBinding.tvRight.visibility = View.VISIBLE else mViewBinding.tvRight.visibility=View.GONE
-            if (!it){
-                MMkvTool.putIsHuman(false)
+            LogUtils.i("symbol-->",it)
+            if (!it) {
+                mViewBinding.tvRight.visibility = View.VISIBLE
+            } else {
+                mViewBinding.tvRight.visibility = View.INVISIBLE
             }
         }
         mViewBinding.tvRight.setOnClickListener { _ ->

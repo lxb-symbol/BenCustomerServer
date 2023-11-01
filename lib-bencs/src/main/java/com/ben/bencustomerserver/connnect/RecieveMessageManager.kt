@@ -72,6 +72,16 @@ object RecieveMessageManager {
                     vm.let {
                         it?.get()?.getHumanTak()?.postValue(false)
                     }
+                    MMkvTool.putKFCode("")
+                    MMkvTool.putKFId("")
+                }
+                OriginMessageType.TYPE_CUSTOMER_IN -> {// customerIn
+                    MMkvTool.putIsHuman(false)
+                    vm.let {
+                        it?.get()?.getHumanTak()?.postValue(false)
+                    }
+                    MMkvTool.putKFCode("")
+                    MMkvTool.putKFId("")
                 }
             }
             return
